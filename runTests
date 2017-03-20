@@ -1,0 +1,23 @@
+#!/bin/sh
+echo "=== Test01.sil ==="
+java -classpath ./bin:./lib/ecj-4.6.1.jar Relang < test01.sil
+echo "=== Test02.sil ==="
+java -classpath ./bin:./lib/ecj-4.6.1.jar Relang < test02.sil
+echo "=== Test03.sil ==="
+java -classpath ./bin:./lib/ecj-4.6.1.jar Relang < test03.sil
+echo "=== Test04.sil ==="
+java -classpath ./bin:./lib/ecj-4.6.1.jar Relang < test04.sil
+echo "=== Test05.sil ==="
+java -classpath ./bin:./lib/ecj-4.6.1.jar Relang < test05.sil
+echo "=== Test06.sil ==="
+java -classpath ./bin:./lib/ecj-4.6.1.jar Relang < test06.sil
+echo "=== Test07.sil ==="
+java -classpath ./bin:./lib/ecj-4.6.1.jar Relang < test07.sil
+echo "=== Test08.sil ==="
+java -classpath ./bin:./lib/ecj-4.6.1.jar Relang < test08.sil
+echo "=== Test09.sil ==="
+java -classpath ./bin:./lib/ecj-4.6.1.jar Relang < test09.sil
+echo "=== Test10.sil ==="
+java -classpath ./bin:./lib/ecj-4.6.1.jar Relang < test10.sil
+echo "=== Test13.sil ==="
+time java -classpath ./bin:./lib/ecj-4.6.1.jar Relang < test13.sil

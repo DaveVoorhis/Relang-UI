@@ -1,0 +1,11 @@
+java -classpath ./bin:./lib/ecj-4.6.1.jar Relang < test01.sil
+java -classpath ./bin:./lib/ecj-4.6.1.jar Relang < test02.sil
+java -classpath ./bin:./lib/ecj-4.6.1.jar Relang < test03.sil
+java -classpath ./bin:./lib/ecj-4.6.1.jar Relang < test04.sil
+java -classpath ./bin:./lib/ecj-4.6.1.jar Relang < test05.sil
+java -classpath ./bin:./lib/ecj-4.6.1.jar Relang < test06.sil
+java -classpath ./bin:./lib/ecj-4.6.1.jar Relang < test07.sil
+java -classpath ./bin:./lib/ecj-4.6.1.jar Relang < test08.sil
+java -classpath ./bin:./lib/ecj-4.6.1.jar Relang < test09.sil
+java -classpath ./bin:./lib/ecj-4.6.1.jar Relang < test10.sil
+java -classpath ./bin:./lib/ecj-4.6.1.jar Relang < test13.sil
