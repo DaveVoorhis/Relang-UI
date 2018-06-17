@@ -1,0 +1,3 @@
+RelI is the Relang user interface.
+
+Reli in Mandarin Chinese (热力) means "heat" in English...
