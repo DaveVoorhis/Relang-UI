@@ -8,7 +8,7 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
-package org.reldb.reli.macos;
+package org.reldb.relang.reli.macos;
 
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;

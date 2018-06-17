@@ -11,7 +11,7 @@
  *     EclipseSource Inc - modified to run without workbench
  *     Reldb.org - stripped out extraneous code
  *******************************************************************************/
-package org.reldb.reli.macos;
+package org.reldb.relang.reli.macos;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;

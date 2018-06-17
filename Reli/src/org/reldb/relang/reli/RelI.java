@@ -1,11 +1,11 @@
-package org.reldb.reli;
+package org.reldb.relang.reli;
 
 /*
  * Based on snippet from http://www.eclipse.org/swt/snippets/
  */
 import org.eclipse.swt.*;
 import org.eclipse.swt.widgets.*;
-import org.reldb.reli.macos.CocoaUIEnhancer;
+import org.reldb.relang.reli.macos.CocoaUIEnhancer;
 
 public class RelI {
 

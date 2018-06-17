@@ -13,7 +13,7 @@ public class RelI {
 			addJarToClasspath(swtJar);
 		}
 		addJarToClasspath(new File("lib/ecj-4.7.3a.jar"));
-		org.reldb.reli.RelI.main(args);
+		org.reldb.relang.reli.RelI.main(args);
 	}
 
 	public static void addJarToClasspath(File jarFile) {

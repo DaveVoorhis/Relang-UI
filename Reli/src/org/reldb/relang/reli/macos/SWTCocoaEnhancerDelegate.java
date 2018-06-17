@@ -9,7 +9,7 @@
  *     Adobe Systems, Inc. - initial API and implementation
  *     IBM Corporation - cleanup
  *******************************************************************************/
-package org.reldb.reli.macos;
+package org.reldb.relang.reli.macos;
 
 import org.eclipse.swt.internal.cocoa.NSObject;
 

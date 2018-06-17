@@ -5,4 +5,4 @@
  * @author dave
  *
  */
-package org.reldb.relang.parser2;
+package org.reldb.relang.lang.parser;
