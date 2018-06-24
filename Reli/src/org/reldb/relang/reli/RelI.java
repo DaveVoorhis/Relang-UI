@@ -55,13 +55,13 @@ public class RelI {
 
 	static Shell createShell() {
 		final Shell shell = new Shell(SWT.SHELL_TRIM);
-		createMenuBar(shell);
+//		createMenuBar(shell);
 
 		shell.addDisposeListener(e -> {
 			Display display = Display.getCurrent();
 			Menu bar = display.getMenuBar();
 			boolean hasAppMenuBar = (bar != null);
-			if (!hasAppMenuBar) {
+			if (!hasAppMenuBar && shell != null && shell.getMenuBar() != null) {
 				shell.getMenuBar().dispose();
 				Shell[] shells = display.getShells();
 				if ((shells.length == 1) && (shells[0] == shell)) {
@@ -80,9 +80,9 @@ public class RelI {
 		Display.setAppName(APP_NAME);
 		final Display display = new Display();
 		
-		if (SWT.getPlatform().equals("cocoa")) {
-			new CocoaUIEnhancer(APP_NAME).earlyStartup();
-		}
+	//	if (SWT.getPlatform().equals("cocoa")) {
+	//		new CocoaUIEnhancer(APP_NAME).earlyStartup();
+	//	}
 
 		Shell shell = createShell();
 		shell.open();
