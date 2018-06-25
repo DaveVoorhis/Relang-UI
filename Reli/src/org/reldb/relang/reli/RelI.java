@@ -5,7 +5,7 @@ package org.reldb.relang.reli;
  */
 import org.eclipse.swt.*;
 import org.eclipse.swt.widgets.*;
-import org.reldb.relang.reli.macos.CocoaUIEnhancer;
+import org.reldb.swt.os_specific.OSSpecificLaunch;
 
 public class RelI {
 
@@ -55,7 +55,7 @@ public class RelI {
 
 	static Shell createShell() {
 		final Shell shell = new Shell(SWT.SHELL_TRIM);
-//		createMenuBar(shell);
+		createMenuBar(shell);
 
 		shell.addDisposeListener(e -> {
 			Display display = Display.getCurrent();
@@ -79,16 +79,14 @@ public class RelI {
 	public static void main(String[] args) {
 		Display.setAppName(APP_NAME);
 		final Display display = new Display();
-		
-	//	if (SWT.getPlatform().equals("cocoa")) {
-	//		new CocoaUIEnhancer(APP_NAME).earlyStartup();
-	//	}
 
+		OSSpecificLaunch.launch(APP_NAME);
+		
 		Shell shell = createShell();
 		shell.open();
 
 		while (!display.isDisposed()) {
-			if (!display.readAndDispatch())
+			if (display != null && !display.readAndDispatch())
 				display.sleep();
 		}
 	}

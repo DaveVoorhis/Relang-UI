@@ -2,13 +2,12 @@
 <classpath>
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType/JavaSE-1.8"/>
 	<classpathentry kind="src" path="src"/>
-	<classpathentry kind="lib" path="lib/swt_macos_64.jar"/>
-	<classpathentry kind="lib" path="lib/ecj-4.7.3a.jar"/>
-	<classpathentry kind="lib" path="lib/org.eclipse.rap.filedialog-3.4.0.jar"/>
-	<classpathentry kind="lib" path="lib/org.eclipse.rap.fileupload-3.4.0.jar"/>
-	<classpathentry kind="lib" path="lib/org.eclipse.rap.rwt_3.4.0.20171130-0837.jar"/>
-	<classpathentry kind="lib" path="lib/swt_linux_64.jar"/>
-	<classpathentry kind="lib" path="lib/swt_win_64.jar"/>
-	<classpathentry kind="lib" path="lib/swt_3.jar"/>
+	<classpathentry kind="lib" path="/_Deploy/lib/macos_64/swt.jar"/>
+	<classpathentry kind="lib" path="/_Deploy/lib/ecj-4.7.3a.jar"/>
+	<classpathentry kind="lib" path="/_Deploy/lib/org.eclipse.rap.filedialog-3.4.0.jar"/>
+	<classpathentry kind="lib" path="/_Deploy/lib/org.eclipse.rap.fileupload-3.4.0.jar"/>
+	<classpathentry kind="lib" path="/_Deploy/lib/org.eclipse.rap.rwt_3.4.0.20171130-0837.jar"/>
+	<classpathentry kind="lib" path="/_Deploy/lib/swt_3.jar"/>
+	<classpathentry kind="lib" path="/_Deploy/lib/macos_64/swt_reldb.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>

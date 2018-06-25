@@ -1,7 +1,6 @@
 import java.awt.GraphicsEnvironment;
 import java.io.File;
 import java.lang.reflect.Method;
-import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLClassLoader;
 
@@ -23,25 +22,16 @@ public class RelI {
 	}
 
 	public static void addJarToClasspath(File jarFile) {
-		if (JarUtilities.isRunningFromJAR()) {
-			try {
-				URLClassLoader child = new URLClassLoader (new URL[] {new URL("file://./my.jar")}, RelI.class.getClassLoader());
-			} catch (MalformedURLException e) {
-				System.out.println("ERROR: " + e + " in RelI::addJarToClasspath.");
-				e.printStackTrace();
-			}			
-		} else {
-			try {
-				URL url = jarFile.toURI().toURL();
-				URLClassLoader urlClassLoader = (URLClassLoader) ClassLoader.getSystemClassLoader();
-				Class<?> urlClass = URLClassLoader.class;
-				Method method = urlClass.getDeclaredMethod("addURL", new Class<?>[] { URL.class });
-				method.setAccessible(true);
-				method.invoke(urlClassLoader, new Object[] { url });
-			} catch (Throwable t) {
-				System.out.println("ERROR: " + t + " in RelI::addJarToClasspath.");
-				t.printStackTrace();
-			}
+		try {
+			URL url = jarFile.toURI().toURL();
+			URLClassLoader urlClassLoader = (URLClassLoader) ClassLoader.getSystemClassLoader();
+			Class<?> urlClass = URLClassLoader.class;
+			Method method = urlClass.getDeclaredMethod("addURL", new Class<?>[] { URL.class });
+			method.setAccessible(true);
+			method.invoke(urlClassLoader, new Object[] { url });
+		} catch (Throwable t) {
+			System.out.println("ERROR: " + t + " in RelI::addJarToClasspath.");
+			t.printStackTrace();
 		}
 	}
 
