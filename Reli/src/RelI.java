@@ -6,6 +6,7 @@ import java.net.URLClassLoader;
 
 import org.reldb.relang.reli.JarUtilities;
 
+// TODO - need to change JAR loading to suit directory hierarchy in lib.
 public class RelI {
 	public static void main(String args[]) {
 		if (JarUtilities.isRunningFromJAR())
