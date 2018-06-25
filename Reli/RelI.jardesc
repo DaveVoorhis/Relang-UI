@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <jardesc>
-    <jar path="Reli/RelI.jar"/>
+    <jar path="_Deploy/lib/RelI.jar"/>
     <options buildIfNeeded="true" compress="true" descriptionLocation="/Reli/RelI.jardesc" exportErrors="true" exportWarnings="true" includeDirectoryEntries="false" overwrite="true" saveDescription="true" storeRefactorings="false" useSourceFolders="false"/>
     <storedRefactorings deprecationInfo="true" structuralOnly="false"/>
     <selectedProjects/>
@@ -12,10 +12,5 @@
     </manifest>
     <selectedElements exportClassFiles="true" exportJavaFiles="false" exportOutputFolder="false">
         <javaElement handleIdentifier="=Reli/src"/>
-        <file path="/Reli/.gitignore"/>
-        <file path="/Reli/.project"/>
-        <file path="/Reli/README.md"/>
-        <file path="/Reli/.classpath"/>
-        <folder path="/Reli/lib"/>
     </selectedElements>
 </jardesc>

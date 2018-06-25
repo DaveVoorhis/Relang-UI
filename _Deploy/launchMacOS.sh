@@ -1,1 +1,1 @@
-java -XstartOnFirstThread -jar RelI.jar
+java -cp "lib/*:lib/macos_64/*" -XstartOnFirstThread RelI
