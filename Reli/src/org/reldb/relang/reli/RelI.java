@@ -5,7 +5,7 @@ package org.reldb.relang.reli;
  */
 import org.eclipse.swt.*;
 import org.eclipse.swt.widgets.*;
-import org.reldb.swt.os_specific.OSSpecificLaunch;
+import org.reldb.swt.os_specific.OSSpecific;
 
 public class RelI {
 
@@ -80,7 +80,7 @@ public class RelI {
 		Display.setAppName(APP_NAME);
 		final Display display = new Display();
 
-		OSSpecificLaunch.launch(APP_NAME);
+		OSSpecific.launch(APP_NAME);
 		
 		Shell shell = createShell();
 		shell.open();
