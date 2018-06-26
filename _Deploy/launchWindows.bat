@@ -1,0 +1,1 @@
+@java -cp "lib/*;lib/win_64/*" RelI
