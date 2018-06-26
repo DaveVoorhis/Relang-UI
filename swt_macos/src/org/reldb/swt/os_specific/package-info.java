@@ -1,5 +1,5 @@
 /**
- * 
+ * MacOS-specific SWT startup code.
  */
 /**
  * @author dave

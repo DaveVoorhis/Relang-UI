@@ -1,5 +1,5 @@
 /**
- * 
+ * Windows-specific SWT startup code.
  */
 /**
  * @author dave
