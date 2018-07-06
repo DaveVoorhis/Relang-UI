@@ -138,9 +138,8 @@ public class RelI {
 		Shell shell = createShell();
 		shell.open();
 
-		while (!display.isDisposed()) {
-			if (display != null && !display.readAndDispatch())
+		while (!display.isDisposed())
+			if (!display.readAndDispatch())
 				display.sleep();
-		}
 	}
 }
