@@ -118,14 +118,12 @@ public class RelI {
 				if ((shells.length == 1) && (shells[0] == shell)) {
 					if (!display.isDisposed()) 
 						display.dispose();
-					System.out.println("RelI last shell?");
 				}
 			}
-			System.out.println("RelI shell disposing. Shell count == " + shells.length);
+			if (shells.length <= 1)
+				System.exit(0);
 		});
 		
-		shell.addListener(SWT.Close, event -> System.out.println("RelI shell closing"));
-
 		return shell;
 	}
 	
