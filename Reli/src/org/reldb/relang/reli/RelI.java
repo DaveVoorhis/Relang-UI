@@ -135,11 +135,18 @@ public class RelI {
 		return shell;
 	}
 
+	private static void closeSplash() {
+		SplashScreen splash = SplashScreen.getSplashScreen();
+		if (splash != null)
+			splash.close();
+	}
+	
 	// https://stackoverflow.com/questions/21022788/is-there-a-chance-to-get-splashimage-work-for-swt-applications-that-require
 	private static void executeSplashInteractor(Runnable r) {
 		// On non Mac systems no problem
 		if (!SWT.getPlatform().equals("cocoa")) {
 			r.run();
+			closeSplash();
 			return;
 		}
 
@@ -150,9 +157,7 @@ public class RelI {
 			r.run();
 			sem.release();
 			display.asyncExec(() -> {});
-			SplashScreen splash = SplashScreen.getSplashScreen();
-			if (splash != null)
-				splash.close();
+			closeSplash();
 		});
 		splashInteractor.start();
 
