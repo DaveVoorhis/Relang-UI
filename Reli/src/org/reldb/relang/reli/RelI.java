@@ -5,6 +5,7 @@ package org.reldb.relang.reli;
  */
 import org.eclipse.swt.*;
 import org.eclipse.swt.widgets.*;
+import org.reldb.relang.reli.version.Version;
 import org.reldb.swt.os_specific.OSSpecific;
 
 public class RelI {
@@ -126,16 +127,16 @@ public class RelI {
 		
 		return shell;
 	}
-	
-	private static String APP_NAME = "RelI";
 
 	public static void main(String[] args) {
-		Display.setAppName(APP_NAME);
+		Display.setAppName(Version.getAppName());
 		final Display display = new Display();
 
-		OSSpecific.launch(APP_NAME);
+		OSSpecific.launch(Version.getAppName());
 		
 		Shell shell = createShell();
+		shell.setImages(Version.getIcons());
+		shell.setText(Version.getAppID());
 		shell.open();
 
 		while (!display.isDisposed())
