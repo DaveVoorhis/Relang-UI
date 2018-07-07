@@ -1,1 +1,1 @@
-java -cp "lib/*:lib/macos_64/*" -XstartOnFirstThread RelI
+java -splash:lib/Splash.png -cp "lib/*:lib/macos_64/*" -XstartOnFirstThread RelI

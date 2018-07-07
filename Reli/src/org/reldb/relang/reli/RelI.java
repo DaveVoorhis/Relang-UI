@@ -1,8 +1,10 @@
 package org.reldb.relang.reli;
 
+import java.awt.SplashScreen;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.LinkedList;
+import java.util.concurrent.Semaphore;
 
 /*
  * Based on snippet from http://www.eclipse.org/swt/snippets/
@@ -133,11 +135,48 @@ public class RelI {
 		return shell;
 	}
 
+	// https://stackoverflow.com/questions/21022788/is-there-a-chance-to-get-splashimage-work-for-swt-applications-that-require
+	private static void executeSplashInteractor(Runnable r) {
+		// On non Mac systems no problem
+		if (!SWT.getPlatform().equals("cocoa")) {
+			r.run();
+			return;
+		}
+
+		// Mac
+		Display display = Display.getDefault();
+		final Semaphore sem = new Semaphore(0);
+		Thread splashInteractor = new Thread(() -> {
+			r.run();
+			sem.release();
+			display.asyncExec(() -> {});
+			SplashScreen splash = SplashScreen.getSplashScreen();
+			if (splash != null)
+				splash.close();
+		});
+		splashInteractor.start();
+
+		// Interact with splash screen
+		while (!display.isDisposed() && !sem.tryAcquire()) {
+			if (!display.readAndDispatch()) {
+				display.sleep();
+			}
+		}
+	}
+	
 	public static void main(String[] args) {
 		Display.setAppName(Version.getAppName());
 		final Display display = new Display();
 
 		OSSpecific.launch(Version.getAppName());
+		
+		executeSplashInteractor(() -> {
+			try {
+				Thread.sleep(3000);
+			} catch (InterruptedException e) {
+				e.printStackTrace();
+			}			
+		});
 		
 		Shell shell = createShell();
 		
@@ -156,8 +195,7 @@ public class RelI {
 				System.out.println("Unable to load " + resourceSpec);
 			}
 		}
-		shell.setImages(iconImages.toArray(new Image[0]));
-		
+		shell.setImages(iconImages.toArray(new Image[0]));		
 		shell.setText(Version.getAppID());
 		shell.open();
 
