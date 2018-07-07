@@ -1,9 +1,14 @@
 package org.reldb.relang.reli;
 
+import java.io.IOException;
+import java.io.InputStream;
+import java.util.LinkedList;
+
 /*
  * Based on snippet from http://www.eclipse.org/swt/snippets/
  */
 import org.eclipse.swt.*;
+import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.widgets.*;
 import org.reldb.relang.reli.version.Version;
 import org.reldb.swt.os_specific.OSSpecific;
@@ -135,7 +140,24 @@ public class RelI {
 		OSSpecific.launch(Version.getAppName());
 		
 		Shell shell = createShell();
-		shell.setImages(Version.getIcons());
+		
+		ClassLoader loader = RelI.class.getClassLoader();
+		LinkedList<Image> iconImages = new LinkedList<>();
+		for (String resourceSpec: Version.getIconsPaths()) {
+			InputStream inputStream = loader.getResourceAsStream(resourceSpec);
+			if (inputStream != null) {
+				iconImages.add(new Image(display, inputStream));
+				try {
+					inputStream.close();
+				} catch (IOException e) {
+					e.printStackTrace();
+				}
+			} else {
+				System.out.println("Unable to load " + resourceSpec);
+			}
+		}
+		shell.setImages(iconImages.toArray(new Image[0]));
+		
 		shell.setText(Version.getAppID());
 		shell.open();
 

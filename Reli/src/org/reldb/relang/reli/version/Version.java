@@ -1,7 +1,5 @@
 package org.reldb.relang.reli.version;
 
-import org.eclipse.swt.graphics.Image;
-
 public class Version {
 
 	public static String getAppName() {
@@ -16,9 +14,16 @@ public class Version {
 		return getAppName() + " " + getVersionNumber();
 	}
 
-	public static Image[] getIcons() {
-		// TODO Auto-generated method stub
-		return null;
+	public static String[] getIconsPaths() {
+		return new String[] {
+			"org/reldb/relang/reli/resources/Candle16.png",
+			"org/reldb/relang/reli/resources/Candle32.png",
+			"org/reldb/relang/reli/resources/Candle64.png",
+			"org/reldb/relang/reli/resources/Candle128.png",
+			"org/reldb/relang/reli/resources/Candle256.png",
+			"org/reldb/relang/reli/resources/Candle512.png",
+			"org/reldb/relang/reli/resources/Candle1024.png",
+		};
 	}
 	
 }

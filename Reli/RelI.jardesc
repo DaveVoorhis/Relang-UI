@@ -12,6 +12,5 @@
     </manifest>
     <selectedElements exportClassFiles="true" exportJavaFiles="false" exportOutputFolder="false">
         <javaElement handleIdentifier="=Reli/src"/>
-        <folder path="/Reli/resources"/>
     </selectedElements>
 </jardesc>
