@@ -174,6 +174,25 @@ public class RelI {
 		
 		return true;
 	}
+
+	private static Image[] loadIcons(Display display) {
+		ClassLoader loader = RelI.class.getClassLoader();
+		LinkedList<Image> iconImages = new LinkedList<>();
+		for (String resourceSpec: Version.getIconsPaths()) {
+			InputStream inputStream = loader.getResourceAsStream(resourceSpec);
+			if (inputStream != null) {
+				iconImages.add(new Image(display, inputStream));
+				try {
+					inputStream.close();
+				} catch (IOException e) {
+					e.printStackTrace();
+				}
+			} else {
+				System.out.println("Unable to load icon " + resourceSpec);
+			}
+		}
+		return iconImages.toArray(new Image[0]);		
+	}
 	
 	public static void main(String[] args) {
 		Display.setAppName(Version.getAppName());
@@ -190,23 +209,7 @@ public class RelI {
 		});
 		
 		Shell shell = createShell();
-		
-		ClassLoader loader = RelI.class.getClassLoader();
-		LinkedList<Image> iconImages = new LinkedList<>();
-		for (String resourceSpec: Version.getIconsPaths()) {
-			InputStream inputStream = loader.getResourceAsStream(resourceSpec);
-			if (inputStream != null) {
-				iconImages.add(new Image(display, inputStream));
-				try {
-					inputStream.close();
-				} catch (IOException e) {
-					e.printStackTrace();
-				}
-			} else {
-				System.out.println("Unable to load " + resourceSpec);
-			}
-		}
-		shell.setImages(iconImages.toArray(new Image[0]));		
+		shell.setImages(loadIcons(display));
 		shell.setText(Version.getAppID());
 		shell.open();
 
