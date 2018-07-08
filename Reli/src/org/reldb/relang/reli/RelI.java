@@ -141,20 +141,26 @@ public class RelI {
 			splash.close();
 	}
 	
-	// https://stackoverflow.com/questions/21022788/is-there-a-chance-to-get-splashimage-work-for-swt-applications-that-require
-	private static void executeSplashInteractor(Runnable r) {
-		// On non Mac systems no problem
+	// If there is a splash screen, return true and execute splashInteraction.
+	// If there is no splash screen, return false. Do not execute splashInteraction.
+	//
+	// Based on https://stackoverflow.com/questions/21022788/is-there-a-chance-to-get-splashimage-work-for-swt-applications-that-require
+	private static boolean executeSplashInteractor(Runnable splashInteraction) {
+		if (SplashScreen.getSplashScreen() == null)
+			return false;
+		
+		// Non-MacOS
 		if (!SWT.getPlatform().equals("cocoa")) {
-			r.run();
+			splashInteraction.run();
 			closeSplash();
-			return;
+			return true;
 		}
 
-		// Mac
+		// MacOS
 		Display display = Display.getDefault();
 		final Semaphore sem = new Semaphore(0);
 		Thread splashInteractor = new Thread(() -> {
-			r.run();
+			splashInteraction.run();
 			sem.release();
 			display.asyncExec(() -> {});
 			closeSplash();
@@ -162,11 +168,11 @@ public class RelI {
 		splashInteractor.start();
 
 		// Interact with splash screen
-		while (!display.isDisposed() && !sem.tryAcquire()) {
-			if (!display.readAndDispatch()) {
+		while (!display.isDisposed() && !sem.tryAcquire())
+			if (!display.readAndDispatch())
 				display.sleep();
-			}
-		}
+		
+		return true;
 	}
 	
 	public static void main(String[] args) {
