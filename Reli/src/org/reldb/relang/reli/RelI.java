@@ -12,6 +12,7 @@ import java.util.concurrent.Semaphore;
 import org.eclipse.swt.*;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.widgets.*;
+import org.eclipse.wb.swt.ResourceManager;
 import org.reldb.relang.reli.version.Version;
 import org.reldb.swt.os_specific.OSSpecific;
 
@@ -29,6 +30,7 @@ public class RelI {
 
 		MenuItem newDatasheet = new MenuItem(menu, SWT.PUSH);
 		newDatasheet.setText("New");
+		newDatasheet.setImage(IconLoader.loadIcon("add-new-document"));
 		newDatasheet.setAccelerator(SWT.MOD1 | 'N');
 		newDatasheet.addListener(SWT.Selection, event -> {
 			Shell s1 = createShell();
@@ -37,6 +39,7 @@ public class RelI {
 		
 		MenuItem openDatasheet = new MenuItem(menu, SWT.PUSH);
 		openDatasheet.setText("Open Datasheet...");
+		openDatasheet.setImage(IconLoader.loadIcon("open-folder-outline"));
 		openDatasheet.setAccelerator(SWT.MOD1 | 'O');
 		openDatasheet.addListener(SWT.Selection, event -> {
 			
@@ -216,5 +219,7 @@ public class RelI {
 		while (!display.isDisposed())
 			if (!display.readAndDispatch())
 				display.sleep();
+		
+		ResourceManager.dispose();
 	}
 }
