@@ -6,9 +6,6 @@ import java.io.InputStream;
 import java.util.LinkedList;
 import java.util.concurrent.Semaphore;
 
-/*
- * Based on snippet from http://www.eclipse.org/swt/snippets/
- */
 import org.eclipse.swt.*;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.widgets.*;
@@ -20,6 +17,7 @@ public class RelI {
 
 	static boolean createdScreenBar = false;
 	
+	
 	static void createFileMenu(Menu bar) {
 		
 		MenuItem fileItem = new MenuItem(bar, SWT.CASCADE);			
@@ -28,20 +26,11 @@ public class RelI {
 		Menu menu = new Menu(fileItem);
 		fileItem.setMenu(menu);
 
-		MenuItem newDatasheet = new MenuItem(menu, SWT.PUSH);
-		newDatasheet.setText("New");
-		newDatasheet.setImage(IconLoader.loadIcon("add-new-document"));
-		newDatasheet.setAccelerator(SWT.MOD1 | 'N');
-		newDatasheet.addListener(SWT.Selection, event -> {
-			Shell s1 = createShell();
-			s1.open();
+		MenuItem newDatasheet = new DecoratedMenuItem(menu, "&New Datasheet\tCtrl-N", SWT.MOD1 | 'N', IconLoader.loadIcon("add-new-document"), event -> {
+			createShell().open();
 		});
 		
-		MenuItem openDatasheet = new MenuItem(menu, SWT.PUSH);
-		openDatasheet.setText("Open Datasheet...");
-		openDatasheet.setImage(IconLoader.loadIcon("open-folder-outline"));
-		openDatasheet.setAccelerator(SWT.MOD1 | 'O');
-		openDatasheet.addListener(SWT.Selection, event -> {
+		MenuItem openDatasheet = new DecoratedMenuItem(menu, "Open Datasheet...\tCtrl-O", SWT.MOD1 | 'O', IconLoader.loadIcon("open-folder-outline"), event -> {
 			
 		});
 		
@@ -62,6 +51,40 @@ public class RelI {
 	static void createEditMenu(Menu bar) {		
 		MenuItem editItem = new MenuItem(bar, SWT.CASCADE);
 		editItem.setText("Edit");
+		
+		Menu menu = new Menu(editItem);
+		editItem.setMenu(menu);
+		
+		MenuItem undo = new DecoratedMenuItem(menu, "Undo", SWT.MOD1 | 'Z', IconLoader.loadIcon("undo"), event -> {
+			
+		});
+		
+		MenuItem redo = new DecoratedMenuItem(menu, "Redo", SWT.MOD1 | SWT.SHIFT | 'Z', IconLoader.loadIcon("redo"), event -> {
+			
+		});
+		
+		new MenuItem(menu, SWT.SEPARATOR);
+		
+		MenuItem cut = new DecoratedMenuItem(menu, "Cut", SWT.MOD1 | 'X', IconLoader.loadIcon("cut"), event -> {
+			
+		});
+		
+		MenuItem copy = new DecoratedMenuItem(menu, "Copy", SWT.MOD1 | 'C', IconLoader.loadIcon("copy"), event -> {
+			
+		});
+		
+		MenuItem paste = new DecoratedMenuItem(menu, "Paste", SWT.MOD1 | 'V', IconLoader.loadIcon("paste"), event -> {
+			
+		});
+		
+		MenuItem delete = new DecoratedMenuItem(menu, "Delete", SWT.DEL, IconLoader.loadIcon("rubbish-bin"), event -> {
+			
+		});
+		
+		MenuItem selectAll = new DecoratedMenuItem(menu, "Select All", SWT.MOD1 | 'A', IconLoader.loadIcon("select-all"), event -> {
+			
+		});
+		
 	}
 
 	static void createDataMenu(Menu bar) {
@@ -72,24 +95,15 @@ public class RelI {
 		Menu menu = new Menu(dataItem);
 		dataItem.setMenu(menu);
 
-		MenuItem newGrid = new MenuItem(menu, SWT.PUSH);
-		newGrid.setText("New Grid...");
-		newGrid.setAccelerator(SWT.MOD1 | 'G');
-		newGrid.addListener(SWT.Selection, event -> {
+		MenuItem newGrid = new DecoratedMenuItem(menu, "Add Grid...", SWT.MOD1 | 'G', IconLoader.loadIcon("newgrid"), event -> {
 			
 		});
 		
-		MenuItem loadFile = new MenuItem(menu, SWT.PUSH);
-		loadFile.setText("Load...");
-		loadFile.setAccelerator(SWT.MOD1 | 'L');
-		loadFile.addListener(SWT.Selection, event -> {
+		MenuItem linkFile = new DecoratedMenuItem(menu, "Link...", SWT.MOD1 | 'L', IconLoader.loadIcon("link"), event -> {
 			
 		});
 		
-		MenuItem importFile = new MenuItem(menu, SWT.PUSH);
-		importFile.setText("Import...");
-		importFile.setAccelerator(SWT.MOD1 | 'I');
-		importFile.addListener(SWT.Selection, event -> {
+		MenuItem importFile = new DecoratedMenuItem(menu, "Import...", SWT.MOD1 | 'I', IconLoader.loadIcon("import"), event -> {
 			
 		});
 	}
