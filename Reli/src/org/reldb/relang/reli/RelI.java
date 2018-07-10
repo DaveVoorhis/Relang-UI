@@ -17,9 +17,26 @@ public class RelI {
 
 	static boolean createdScreenBar = false;
 	
+	static boolean isMac() {
+		return SWT.getPlatform().equals("cocoa");
+	}
 	
-	static void createFileMenu(Menu bar) {
-		
+	static void quit() {
+		Display d = Display.getCurrent();
+		Shell[] shells = d.getShells();
+		for (Shell shell : shells)
+			shell.close();
+	}
+	
+	static void about() {
+		System.out.println("RelI: about");
+	}
+	
+	static void preferences() {
+		System.out.println("RelI: preferences");
+	}
+	
+	static void createFileMenu(Menu bar) {	
 		MenuItem fileItem = new MenuItem(bar, SWT.CASCADE);			
 		fileItem.setText("File");
 		
@@ -33,19 +50,8 @@ public class RelI {
 		MenuItem openDatasheet = new DecoratedMenuItem(menu, "Open Datasheet...\tCtrl-O", SWT.MOD1 | 'O', IconLoader.loadIcon("open-folder-outline"), event -> {
 			
 		});
-		
-		if (!SWT.getPlatform().equals("cocoa")) {
-			MenuItem exit = new MenuItem(menu, SWT.PUSH);
-			exit.setText("Exit");
-			exit.addListener(SWT.Selection, event -> {
-				Display d = Display.getCurrent();
-				Shell[] shells = d.getShells();
-				for (Shell shell : shells) {
-					shell.close();
-				}
-			});
-		}
-		
+
+		OSSpecific.addFileMenuItems(menu);
 	}
 	
 	static void createEditMenu(Menu bar) {		
@@ -55,57 +61,67 @@ public class RelI {
 		Menu menu = new Menu(editItem);
 		editItem.setMenu(menu);
 		
-		MenuItem undo = new DecoratedMenuItem(menu, "Undo", SWT.MOD1 | 'Z', IconLoader.loadIcon("undo"), event -> {
+		MenuItem undo = new DecoratedMenuItem(menu, "Undo\tCtrl-Z", SWT.MOD1 | 'Z', IconLoader.loadIcon("undo"), event -> {
 			
 		});
 		
-		MenuItem redo = new DecoratedMenuItem(menu, "Redo", SWT.MOD1 | SWT.SHIFT | 'Z', IconLoader.loadIcon("redo"), event -> {
+		int redoAccelerator = SWT.MOD1 | (isMac() ? SWT.SHIFT | 'Z' : 'Y');
+		MenuItem redo = new DecoratedMenuItem(menu, "Redo\tCtrl-Y", redoAccelerator, IconLoader.loadIcon("redo"), event -> {
 			
 		});
 		
 		new MenuItem(menu, SWT.SEPARATOR);
 		
-		MenuItem cut = new DecoratedMenuItem(menu, "Cut", SWT.MOD1 | 'X', IconLoader.loadIcon("cut"), event -> {
+		MenuItem cut = new DecoratedMenuItem(menu, "Cut\tCtrl-X", SWT.MOD1 | 'X', IconLoader.loadIcon("cut"), event -> {
 			
 		});
 		
-		MenuItem copy = new DecoratedMenuItem(menu, "Copy", SWT.MOD1 | 'C', IconLoader.loadIcon("copy"), event -> {
+		MenuItem copy = new DecoratedMenuItem(menu, "Copy\tCtrl-C", SWT.MOD1 | 'C', IconLoader.loadIcon("copy"), event -> {
 			
 		});
 		
-		MenuItem paste = new DecoratedMenuItem(menu, "Paste", SWT.MOD1 | 'V', IconLoader.loadIcon("paste"), event -> {
+		MenuItem paste = new DecoratedMenuItem(menu, "Paste\tCtrl-V", SWT.MOD1 | 'V', IconLoader.loadIcon("paste"), event -> {
 			
 		});
 		
-		MenuItem delete = new DecoratedMenuItem(menu, "Delete", SWT.DEL, IconLoader.loadIcon("rubbish-bin"), event -> {
+		MenuItem delete = new DecoratedMenuItem(menu, "Delete\tDel", SWT.DEL, IconLoader.loadIcon("rubbish-bin"), event -> {
 			
 		});
 		
-		MenuItem selectAll = new DecoratedMenuItem(menu, "Select All", SWT.MOD1 | 'A', IconLoader.loadIcon("select-all"), event -> {
+		MenuItem selectAll = new DecoratedMenuItem(menu, "Select All\tCtrl-A", SWT.MOD1 | 'A', IconLoader.loadIcon("select-all"), event -> {
 			
 		});
 		
 	}
 
 	static void createDataMenu(Menu bar) {
-		
 		MenuItem dataItem = new MenuItem(bar, SWT.CASCADE);
 		dataItem.setText("Data");
 		
 		Menu menu = new Menu(dataItem);
 		dataItem.setMenu(menu);
 
-		MenuItem newGrid = new DecoratedMenuItem(menu, "Add Grid...", SWT.MOD1 | 'G', IconLoader.loadIcon("newgrid"), event -> {
+		MenuItem newGrid = new DecoratedMenuItem(menu, "Add Grid...\tCtrl-G", SWT.MOD1 | 'G', IconLoader.loadIcon("newgrid"), event -> {
 			
 		});
 		
-		MenuItem linkFile = new DecoratedMenuItem(menu, "Link...", SWT.MOD1 | 'L', IconLoader.loadIcon("link"), event -> {
+		MenuItem linkFile = new DecoratedMenuItem(menu, "Link...\tCtrl-L", SWT.MOD1 | 'L', IconLoader.loadIcon("link"), event -> {
 			
 		});
 		
-		MenuItem importFile = new DecoratedMenuItem(menu, "Import...", SWT.MOD1 | 'I', IconLoader.loadIcon("import"), event -> {
+		MenuItem importFile = new DecoratedMenuItem(menu, "Import...\tCtrl-I", SWT.MOD1 | 'I', IconLoader.loadIcon("import"), event -> {
 			
 		});
+	}
+	
+	static void createHelpMenu(Menu bar) {
+		MenuItem helpItem = new MenuItem(bar, SWT.CASCADE);
+		helpItem.setText("Help");
+		
+		Menu menu = new Menu(helpItem);
+		helpItem.setMenu(menu);
+		
+		OSSpecific.addHelpMenuItems(menu);
 	}
 	
 	static void createMenuBar(Shell s) {
@@ -122,6 +138,7 @@ public class RelI {
 			createFileMenu(bar);
 			createEditMenu(bar);
 			createDataMenu(bar);
+			createHelpMenu(bar);
 			
 			if (!hasAppMenuBar) 
 				s.setMenuBar(bar);
@@ -167,7 +184,7 @@ public class RelI {
 			return false;
 		
 		// Non-MacOS
-		if (!SWT.getPlatform().equals("cocoa")) {
+		if (!isMac()) {
 			splashInteraction.run();
 			closeSplash();
 			return true;
@@ -215,7 +232,11 @@ public class RelI {
 		Display.setAppName(Version.getAppName());
 		final Display display = new Display();
 
-		OSSpecific.launch(Version.getAppName());
+		OSSpecific.launch(Version.getAppName(),
+			event -> quit(),
+			event -> about(),
+			event -> preferences()
+		);
 		
 		executeSplashInteractor(() -> {
 			try {

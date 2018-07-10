@@ -19,7 +19,7 @@ import java.lang.reflect.Method;
 
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Display;
-
+import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.internal.C;
 import org.eclipse.swt.internal.Callback;
 import org.eclipse.swt.internal.cocoa.NSApplication;
@@ -29,12 +29,7 @@ import org.eclipse.swt.internal.cocoa.NSString;
 import org.eclipse.swt.internal.cocoa.OS;
 
 /**
- * The CocoaUIEnhancer provides the standard "About" and "Preference" menu items
- * and links them to the corresponding workbench commands. This must be done in
- * a MacOS X fragment because SWT doesn't provide an abstraction for the (MacOS
- * X only) application menu and we have to use MacOS specific natives. The
- * fragment is for the org.eclipse.ui plug-in because we need access to the
- * Workbench "About" and "Preference" actions.
+ * Heavy modification of Eclipse's CocoaUIEnhancer to provide the standard "About" and "Preference" menu items.
  * 
  * @noreference this class is not intended to be referenced by any client.
  * @since 1.0
@@ -49,8 +44,9 @@ public class CocoaUIEnhancer extends CocoaUtil {
 	static long sel_toolbarButtonClicked_;
 	static long sel_preferencesMenuItemSelected_;
 	static long sel_aboutMenuItemSelected_;
+	static long sel_exitMenuItemSelected_;
 
-//	private static final long NSWindowToolbarButton = 3;
+	//	private static final long NSWindowToolbarButton = 3;
 
 	/* This callback is not freed */
 	static Callback proc3Args;
@@ -95,6 +91,10 @@ public class CocoaUIEnhancer extends CocoaUtil {
 
 		args = makeArgs(wrapPointer(cls), wrapPointer(sel_aboutMenuItemSelected_), wrapPointer(proc3), "@:@");
 		invokeMethod(OS.class, "class_addMethod", args); //$NON-NLS-1$
+
+		args = makeArgs(wrapPointer(cls), wrapPointer(sel_exitMenuItemSelected_), wrapPointer(proc3), "@:@");
+		invokeMethod(OS.class, "class_addMethod", args); //$NON-NLS-1$
+		
 		invokeMethod(OS.class, "objc_registerClassPair", makeArgs(cls));
 	}
 
@@ -110,6 +110,10 @@ public class CocoaUIEnhancer extends CocoaUtil {
 	private String fAboutActionName;
 	private String fQuitActionName;
 	private String fHideActionName;
+	
+	private static Listener exitListener;
+	private static Listener aboutListener;
+	private static Listener preferencesListener;
 
 	/**
 	 * Default constructor
@@ -128,6 +132,7 @@ public class CocoaUIEnhancer extends CocoaUtil {
 				sel_toolbarButtonClicked_ = registerName("toolbarButtonClicked:"); //$NON-NLS-1$
 				sel_preferencesMenuItemSelected_ = registerName("preferencesMenuItemSelected:"); //$NON-NLS-1$
 				sel_aboutMenuItemSelected_ = registerName("aboutMenuItemSelected:"); //$NON-NLS-1$
+				sel_exitMenuItemSelected_ = registerName("exitMenuItemSelected:"); //$NON-NLS-1$
 				init();
 			}
 		} catch (Exception e) {
@@ -149,7 +154,10 @@ public class CocoaUIEnhancer extends CocoaUtil {
 	 * 
 	 * @see org.eclipse.ui.IStartup#earlyStartup()
 	 */
-	public void earlyStartup() {
+	public void earlyStartup(Listener exitListener, Listener aboutListener, Listener preferencesListener) {
+		CocoaUIEnhancer.exitListener = exitListener;
+		CocoaUIEnhancer.aboutListener = aboutListener;
+		CocoaUIEnhancer.preferencesListener = preferencesListener;
 		Display display = Display.getDefault();
 		display.syncExec(new Runnable() {
 			public void run() {
@@ -165,7 +173,7 @@ public class CocoaUIEnhancer extends CocoaUtil {
 
 	private void hookApplicationMenu() {
 		try {
-			// create About Eclipse menu command
+			// create About menu command
 			NSMenu mainMenu = NSApplication.sharedApplication().mainMenu();
 			NSMenuItem mainMenuItem = (NSMenuItem) invokeMethod(NSMenu.class, mainMenu, "itemAtIndex", new Object[] { wrapPointer(0) });
 			NSMenu appMenu = mainMenuItem.submenu();
@@ -173,6 +181,8 @@ public class CocoaUIEnhancer extends CocoaUtil {
 			// add the about action
 			NSMenuItem aboutMenuItem = (NSMenuItem) invokeMethod(NSMenu.class, appMenu, "itemAtIndex", new Object[] { wrapPointer(kAboutMenuItem) });
 			aboutMenuItem.setTitle(NSString.stringWith(fAboutActionName));
+			aboutMenuItem.setTarget(delegate);
+			invokeMethod(NSMenuItem.class, aboutMenuItem, "setAction", new Object[] { wrapPointer(sel_aboutMenuItemSelected_) });
 
 			// rename the hide action if we have an override string
 			if (fHideActionName != null) {
@@ -184,17 +194,16 @@ public class CocoaUIEnhancer extends CocoaUtil {
 			if (fQuitActionName != null) {
 				NSMenuItem quitMenuItem = (NSMenuItem) invokeMethod(NSMenu.class, appMenu, "itemAtIndex", new Object[] { wrapPointer(kQuitMenuItem) });
 				quitMenuItem.setTitle(NSString.stringWith(fQuitActionName));
+				quitMenuItem.setTarget(delegate);
+				invokeMethod(NSMenuItem.class, quitMenuItem, "setAction", new Object[] { wrapPointer(sel_exitMenuItemSelected_) });
 			}
 
 			// enable pref menu
 			NSMenuItem prefMenuItem = (NSMenuItem) invokeMethod(NSMenu.class, appMenu, "itemAtIndex", new Object[] { wrapPointer(kPreferencesMenuItem) });
 			prefMenuItem.setEnabled(true);
-
-			// Register as a target on the prefs and quit items.
 			prefMenuItem.setTarget(delegate);
 			invokeMethod(NSMenuItem.class, prefMenuItem, "setAction", new Object[] { wrapPointer(sel_preferencesMenuItemSelected_) });
-			aboutMenuItem.setTarget(delegate);
-			invokeMethod(NSMenuItem.class, aboutMenuItem, "setAction", new Object[] { wrapPointer(sel_aboutMenuItemSelected_) });
+
 		} catch (Exception e) {
 			// theoretically, one of
 			// SecurityException,Illegal*Exception,InvocationTargetException,NoSuch*Exception
@@ -283,17 +292,23 @@ public class CocoaUIEnhancer extends CocoaUtil {
 			showPreferences();
 		} else if (sel == sel_aboutMenuItemSelected_) {
 			showAbout();
+		} else if (sel == sel_exitMenuItemSelected_) {
+			doExit();
 		}
 
 		return 0;
 	}
 
 	private static void showAbout() {
-		System.out.println("CocoaUIEnhancer: About...");
+		aboutListener.handleEvent(null);
 	}
 
 	private static void showPreferences() {
-		System.out.println("CocoaUIEnhancer: Preferences...");
+		preferencesListener.handleEvent(null);
+	}
+	
+	private static void doExit() {
+		exitListener.handleEvent(null);
 	}
 	
 }
