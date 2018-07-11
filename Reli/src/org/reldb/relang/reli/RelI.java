@@ -24,7 +24,7 @@ public class RelI {
 	static void quit() {
 		Display d = Display.getCurrent();
 		Shell[] shells = d.getShells();
-		for (Shell shell : shells)
+		for (Shell shell: shells)
 			shell.close();
 	}
 	
@@ -91,7 +91,6 @@ public class RelI {
 		MenuItem selectAll = new DecoratedMenuItem(menu, "Select All\tCtrl-A", SWT.MOD1 | 'A', IconLoader.loadIcon("select-all"), event -> {
 			
 		});
-		
 	}
 
 	static void createDataMenu(Menu bar) {
@@ -124,12 +123,12 @@ public class RelI {
 		OSSpecific.addHelpMenuItems(menu);
 	}
 	
-	static void createMenuBar(Shell s) {
+	static void createMenuBar(Shell shell) {
 		Menu bar = Display.getCurrent().getMenuBar();
 		boolean hasAppMenuBar = (bar != null);
 		
 		if (bar == null)
-			bar = new Menu(s, SWT.BAR);
+			bar = new Menu(shell, SWT.BAR);
 
 		// Populate the menu bar once if this is a screen menu bar.
 		// Otherwise, we need to make a new menu bar for each shell.
@@ -141,7 +140,7 @@ public class RelI {
 			createHelpMenu(bar);
 			
 			if (!hasAppMenuBar) 
-				s.setMenuBar(bar);
+				shell.setMenuBar(bar);
 			createdScreenBar = true;
 		}
 	}
@@ -243,7 +242,7 @@ public class RelI {
 				Thread.sleep(3000);
 			} catch (InterruptedException e) {
 				e.printStackTrace();
-			}			
+			}
 		});
 		
 		Shell shell = createShell();
