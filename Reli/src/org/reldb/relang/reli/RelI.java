@@ -58,12 +58,11 @@ public class RelI {
 		OSSpecific.addFileMenuItems(menu);
 	}
 	
-	static abstract class EditTimerTask extends TimerTask {
-		Control focusControl = null;
-		Method menuItemMethod = null;
-	}
-	
 	static void createEditMenuItem(String methodName, DecoratedMenuItem menuItem) {
+		abstract class EditTimerTask extends TimerTask {
+			Control focusControl = null;
+			Method menuItemMethod = null;
+		}
 		Timer editTimer = new Timer();
 		EditTimerTask editMenuItemTimer = new EditTimerTask() {
 			public void run() {
