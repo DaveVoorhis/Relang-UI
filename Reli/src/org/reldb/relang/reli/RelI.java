@@ -58,11 +58,14 @@ public class RelI {
 		OSSpecific.addFileMenuItems(menu);
 	}
 	
+	static abstract class EditTimerTask extends TimerTask {
+		Control focusControl = null;
+		Method menuItemMethod = null;
+	}
+	
 	static void createEditMenuItem(String methodName, DecoratedMenuItem menuItem) {
 		Timer editTimer = new Timer();
-		Method menuItemMethod = null;
-		Control focusControl = null;
-		editTimer.schedule(new TimerTask() {
+		EditTimerTask editMenuItemTimer = new EditTimerTask() {
 			public void run() {
 				Display display = Display.getCurrent();
 				if (display == null)
@@ -70,22 +73,23 @@ public class RelI {
 				focusControl = display.getFocusControl();
 				if (focusControl == null)
 					return;
-				Class focusControlClass = focusControl.getClass();
+				Class<?> focusControlClass = focusControl.getClass();
 				try {
-					menuItemMethod = (Method)focusControlClass.getMethod(methodName, null);
+					menuItemMethod = (Method)focusControlClass.getMethod(methodName, new Class[] {null});
 					menuItem.setEnabled(true);
 				} catch (NoSuchMethodException | SecurityException e) {
 					menuItem.setEnabled(false);
 				}
 			}
-		}, 250);
+		};
 		menuItem.setEnabled(false);
 		menuItem.addListener(SWT.Selection, evt -> {
 			try {
-				menuItemMethod.invoke(focusControl, null);
+				editMenuItemTimer.menuItemMethod.invoke(editMenuItemTimer.focusControl, new Object[] {null});
 			} catch (IllegalAccessException | IllegalArgumentException | InvocationTargetException e) {
 			}
 		});
+		editTimer.schedule(editMenuItemTimer, 250);
 	}
 	
 	static void createEditMenu(Menu bar) {		
