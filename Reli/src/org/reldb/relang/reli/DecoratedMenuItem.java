@@ -24,5 +24,10 @@ public class DecoratedMenuItem extends MenuItem {
 		this(parentMenu, text, accelerator, null, listener);
 	}
 
+	/** MenuItem with text, accelerator, and image */
+	public DecoratedMenuItem(Menu parentMenu, String text, int accelerator, Image image) {
+		this(parentMenu, text, accelerator, image, null);
+	}
+	
 	public void checkSubclass() {}
 }

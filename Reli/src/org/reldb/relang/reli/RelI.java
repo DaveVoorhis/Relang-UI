@@ -3,7 +3,11 @@ package org.reldb.relang.reli;
 import java.awt.SplashScreen;
 import java.io.IOException;
 import java.io.InputStream;
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
 import java.util.LinkedList;
+import java.util.Timer;
+import java.util.TimerTask;
 import java.util.concurrent.Semaphore;
 
 import org.eclipse.swt.*;
@@ -43,15 +47,45 @@ public class RelI {
 		Menu menu = new Menu(fileItem);
 		fileItem.setMenu(menu);
 
-		MenuItem newDatasheet = new DecoratedMenuItem(menu, "&New Datasheet\tCtrl-N", SWT.MOD1 | 'N', IconLoader.loadIcon("add-new-document"), event -> {
+		new DecoratedMenuItem(menu, "&New Datasheet\tCtrl-N", SWT.MOD1 | 'N', IconLoader.loadIcon("add-new-document"), event -> {
 			createShell().open();
 		});
 		
-		MenuItem openDatasheet = new DecoratedMenuItem(menu, "Open Datasheet...\tCtrl-O", SWT.MOD1 | 'O', IconLoader.loadIcon("open-folder-outline"), event -> {
+		new DecoratedMenuItem(menu, "Open Datasheet...\tCtrl-O", SWT.MOD1 | 'O', IconLoader.loadIcon("open-folder-outline"), event -> {
 			
 		});
 
 		OSSpecific.addFileMenuItems(menu);
+	}
+	
+	static void createEditMenuItem(String methodName, DecoratedMenuItem menuItem) {
+		Timer editTimer = new Timer();
+		Method menuItemMethod = null;
+		Control focusControl = null;
+		editTimer.schedule(new TimerTask() {
+			public void run() {
+				Display display = Display.getCurrent();
+				if (display == null)
+					return;
+				focusControl = display.getFocusControl();
+				if (focusControl == null)
+					return;
+				Class focusControlClass = focusControl.getClass();
+				try {
+					menuItemMethod = (Method)focusControlClass.getMethod(methodName, null);
+					menuItem.setEnabled(true);
+				} catch (NoSuchMethodException | SecurityException e) {
+					menuItem.setEnabled(false);
+				}
+			}
+		}, 250);
+		menuItem.setEnabled(false);
+		menuItem.addListener(SWT.Selection, evt -> {
+			try {
+				menuItemMethod.invoke(focusControl, null);
+			} catch (IllegalAccessException | IllegalArgumentException | InvocationTargetException e) {
+			}
+		});
 	}
 	
 	static void createEditMenu(Menu bar) {		
@@ -61,36 +95,18 @@ public class RelI {
 		Menu menu = new Menu(editItem);
 		editItem.setMenu(menu);
 		
-		MenuItem undo = new DecoratedMenuItem(menu, "Undo\tCtrl-Z", SWT.MOD1 | 'Z', IconLoader.loadIcon("undo"), event -> {
-			
-		});
+		createEditMenuItem("undo", new DecoratedMenuItem(menu, "Undo\tCtrl-Z", SWT.MOD1 | 'Z', IconLoader.loadIcon("undo")));
 		
 		int redoAccelerator = SWT.MOD1 | (isMac() ? SWT.SHIFT | 'Z' : 'Y');
-		MenuItem redo = new DecoratedMenuItem(menu, "Redo\tCtrl-Y", redoAccelerator, IconLoader.loadIcon("redo"), event -> {
-			
-		});
+		createEditMenuItem("redo", new DecoratedMenuItem(menu, "Redo\tCtrl-Y", redoAccelerator, IconLoader.loadIcon("redo")));
 		
 		new MenuItem(menu, SWT.SEPARATOR);
 		
-		MenuItem cut = new DecoratedMenuItem(menu, "Cut\tCtrl-X", SWT.MOD1 | 'X', IconLoader.loadIcon("cut"), event -> {
-			
-		});
-		
-		MenuItem copy = new DecoratedMenuItem(menu, "Copy\tCtrl-C", SWT.MOD1 | 'C', IconLoader.loadIcon("copy"), event -> {
-			
-		});
-		
-		MenuItem paste = new DecoratedMenuItem(menu, "Paste\tCtrl-V", SWT.MOD1 | 'V', IconLoader.loadIcon("paste"), event -> {
-			
-		});
-		
-		MenuItem delete = new DecoratedMenuItem(menu, "Delete\tDel", SWT.DEL, IconLoader.loadIcon("rubbish-bin"), event -> {
-			
-		});
-		
-		MenuItem selectAll = new DecoratedMenuItem(menu, "Select All\tCtrl-A", SWT.MOD1 | 'A', IconLoader.loadIcon("select-all"), event -> {
-			
-		});
+		createEditMenuItem("cut", new DecoratedMenuItem(menu, "Cut\tCtrl-X", SWT.MOD1 | 'X', IconLoader.loadIcon("cut")));
+		createEditMenuItem("copy", new DecoratedMenuItem(menu, "Copy\tCtrl-C", SWT.MOD1 | 'C', IconLoader.loadIcon("copy")));
+		createEditMenuItem("paste", new DecoratedMenuItem(menu, "Paste\tCtrl-V", SWT.MOD1 | 'V', IconLoader.loadIcon("paste")));
+		createEditMenuItem("delete", new DecoratedMenuItem(menu, "Delete\tDel", SWT.DEL, IconLoader.loadIcon("rubbish-bin")));
+		createEditMenuItem("selectAll", new DecoratedMenuItem(menu, "Select All\tCtrl-A", SWT.MOD1 | 'A', IconLoader.loadIcon("select-all")));
 	}
 
 	static void createDataMenu(Menu bar) {
@@ -100,15 +116,17 @@ public class RelI {
 		Menu menu = new Menu(dataItem);
 		dataItem.setMenu(menu);
 
-		MenuItem newGrid = new DecoratedMenuItem(menu, "Add Grid...\tCtrl-G", SWT.MOD1 | 'G', IconLoader.loadIcon("newgrid"), event -> {
+		new DecoratedMenuItem(menu, "Add Grid...\tCtrl-G", SWT.MOD1 | 'G', IconLoader.loadIcon("newgrid"), event -> {
+			Shell newGridShell = createShell();
+			newGridShell.setText("New Grid");
+			newGridShell.open();
+		});
+		
+		new DecoratedMenuItem(menu, "Link...\tCtrl-L", SWT.MOD1 | 'L', IconLoader.loadIcon("link"), event -> {
 			
 		});
 		
-		MenuItem linkFile = new DecoratedMenuItem(menu, "Link...\tCtrl-L", SWT.MOD1 | 'L', IconLoader.loadIcon("link"), event -> {
-			
-		});
-		
-		MenuItem importFile = new DecoratedMenuItem(menu, "Import...\tCtrl-I", SWT.MOD1 | 'I', IconLoader.loadIcon("import"), event -> {
+		new DecoratedMenuItem(menu, "Import...\tCtrl-I", SWT.MOD1 | 'I', IconLoader.loadIcon("import"), event -> {
 			
 		});
 	}
@@ -144,7 +162,7 @@ public class RelI {
 			createdScreenBar = true;
 		}
 	}
-
+	
 	static Shell createShell() {
 		final Shell shell = new Shell(SWT.SHELL_TRIM);
 		createMenuBar(shell);
@@ -162,7 +180,7 @@ public class RelI {
 				}
 			}
 			if (shells.length <= 1)
-				System.exit(0);
+				System.exit(0);		
 		});
 		
 		return shell;
