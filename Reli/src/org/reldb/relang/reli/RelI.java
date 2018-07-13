@@ -48,7 +48,10 @@ public class RelI {
 		fileItem.setMenu(menu);
 
 		new DecoratedMenuItem(menu, "&New Datasheet\tCtrl-N", SWT.MOD1 | 'N', IconLoader.loadIcon("add-new-document"), event -> {
-			createShell().open();
+			Shell newDatasheet = createShell();
+			newDatasheet.setText("New Datasheet");
+			new Datasheet(newDatasheet);
+			newDatasheet.open();
 		});
 		
 		new DecoratedMenuItem(menu, "Open Datasheet...\tCtrl-O", SWT.MOD1 | 'O', IconLoader.loadIcon("open-folder-outline"), event -> {
@@ -122,6 +125,7 @@ public class RelI {
 		new DecoratedMenuItem(menu, "Add Grid...\tCtrl-G", SWT.MOD1 | 'G', IconLoader.loadIcon("newgrid"), event -> {
 			Shell newGridShell = createShell();
 			newGridShell.setText("New Grid");
+			new Grid(newGridShell);
 			newGridShell.open();
 		});
 		
