@@ -84,6 +84,11 @@ public class Grid extends Composite {
 		super(shell, SWT.NONE);
 		// TODO Auto-generated constructor stub
 	}
+	
+	public Editor(Composite parent, DbConnection connection, FilterSorterSource filterSorterSource) {
+		super(parent, connection, filterSorterSource.getFilterSorter().getBaseExpression());
+		this.filterSorterSource = filterSorterSource;
+	}
 
 	private NatTable table;
 
@@ -716,11 +721,6 @@ public class Grid extends Composite {
 				dataProvider.reload();
 			table.refresh();
 		}
-	}
-
-	public Editor(Composite parent, DbConnection connection, FilterSorterSource filterSorterSource) {
-		super(parent, connection, filterSorterSource.getFilterSorter().getBaseExpression());
-		this.filterSorterSource = filterSorterSource;
 	}
 
 	private static class EmptyGridData implements IDataProvider {
