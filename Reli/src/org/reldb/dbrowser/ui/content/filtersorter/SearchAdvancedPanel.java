@@ -10,7 +10,7 @@ import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Text;
-import org.reldb.rel.client.Attribute;
+import org.reldb.relang.reli.Attribute;
 
 public class SearchAdvancedPanel extends Composite {
 

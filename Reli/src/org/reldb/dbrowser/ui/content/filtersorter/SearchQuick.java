@@ -9,8 +9,7 @@ import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.ToolBar;
 import org.eclipse.swt.widgets.ToolItem;
-import org.eclipse.wb.swt.SWTResourceManager;
-import org.reldb.rel.utilities.StringUtils;
+import org.eclipse.wb.swt.ResourceManager;
 
 public class SearchQuick extends Composite implements Searcher {
 	
@@ -41,8 +40,8 @@ public class SearchQuick extends Composite implements Searcher {
 		});
 		findText.addListener(SWT.Modify, event -> {
 			if (findText.getText().trim().length() > 0) {
-				findText.setForeground(SWTResourceManager.getColor(SWT.COLOR_DARK_RED));
-				findText.setBackground(SWTResourceManager.getColor(255, 225, 225));
+				findText.setForeground(ResourceManager.getColor(SWT.COLOR_DARK_RED));
+				findText.setBackground(ResourceManager.getColor(255, 225, 225));
 			}
 		});
 		findText.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1));
@@ -101,7 +100,9 @@ public class SearchQuick extends Composite implements Searcher {
 			if (!caseSensitiveSearch)
 				regex = "(?i)" + regex;
 		}
-		return " WHERE SEARCH(TUP {*}, \"" + StringUtils.quote(regex) + "\")";
+		// TODO - fix
+//		return " WHERE SEARCH(TUP {*}, \"" + StringUtils.quote(regex) + "\")";
+		return null;
 	}
 
 	public String getState() {
@@ -113,7 +114,7 @@ public class SearchQuick extends Composite implements Searcher {
 	}
 
 	private void fireUpdate() {
-		findText.setForeground(SWTResourceManager.getColor(SWT.COLOR_BLACK));
+		findText.setForeground(ResourceManager.getColor(SWT.COLOR_BLACK));
 		findText.setBackground(null);
 		filterSorter.refresh();		
 	}

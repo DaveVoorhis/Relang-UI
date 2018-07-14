@@ -8,6 +8,10 @@ import java.util.Set;
 import java.util.Vector;
 import java.util.Map.Entry;
 
+import org.eclipse.jface.action.ContributionItem;
+import org.eclipse.jface.dialogs.MessageDialog;
+import org.eclipse.jface.window.DefaultToolTip;
+import org.eclipse.jface.window.ToolTip;
 import org.eclipse.nebula.widgets.nattable.NatTable;
 import org.eclipse.nebula.widgets.nattable.config.AbstractRegistryConfiguration;
 import org.eclipse.nebula.widgets.nattable.config.CellConfigAttributes;
@@ -78,18 +82,16 @@ import org.eclipse.swt.widgets.MenuItem;
 import org.eclipse.swt.widgets.Shell;
 import org.reldb.dbrowser.ui.content.filtersorter.FilterSorterSource;
 
-public class Grid extends Composite {
+public abstract class Grid extends Composite {
 
 	public Grid(Shell shell) {
 		super(shell, SWT.NONE);
-		// TODO Auto-generated constructor stub
-	}
-	
-	public Editor(Composite parent, DbConnection connection, FilterSorterSource filterSorterSource) {
-		super(parent, connection, filterSorterSource.getFilterSorter().getBaseExpression());
-		this.filterSorterSource = filterSorterSource;
 	}
 
+	public Grid(Composite composite) {
+		super(composite, SWT.NONE);
+	}
+	
 	private NatTable table;
 
 	protected Attribute[] heading;
@@ -102,13 +104,14 @@ public class Grid extends Composite {
 	private boolean popupEdit = false;
 
 	private int lastRowSelected = -1;
-	
-	private FilterSorterSource filterSorterSource;
 
 	enum RowAction {
 		UPDATE, INSERT
 	};
-
+	
+	protected boolean askDeleteConfirm = true;	
+	protected Vector<HashSet<String>> keys = null;
+	
 	class HeadingProvider implements IDataProvider {
 		@Override
 		public Object getDataValue(int columnIndex, int rowIndex) {
@@ -135,7 +138,8 @@ public class Grid extends Composite {
 
 		@Override
 		public int getRowCount() {
-			return 2 + ((keys == null) ? 0 : (((keys.size() > 1) ? keys.size() - 1 : 0)));
+			// return 2 + ((keys == null) ? 0 : (((keys.size() > 1) ? keys.size() - 1 : 0)));
+			return 2;
 		}
 	};
 
@@ -299,6 +303,8 @@ public class Grid extends Composite {
 		}
 
 		private String getKeySelectionExpression(int rownum) {
+			String keyspec = "";
+			/*
 			HashSet<String> key;
 			if (keys.size() == 0) {
 				key = new HashSet<String>();
@@ -307,7 +313,6 @@ public class Grid extends Composite {
 			} else
 				key = keys.get(0);
 			Row originalValues = rows.get(rownum);
-			String keyspec = "";
 			for (int column = 0; column < heading.length; column++) {
 				String attributeName = heading[column].getName();
 				if (key.contains(attributeName)) {
@@ -323,6 +328,7 @@ public class Grid extends Composite {
 					keyspec += attributeName + " = " + attributeValue;
 				}
 			}
+			*/
 			return keyspec;
 		}
 
@@ -334,6 +340,7 @@ public class Grid extends Composite {
 		}
 
 		private synchronized void updateRow(Row row, int rownum) {
+			/*
 			if (relvarName == null) {
 				row.committed();
 				processRows.remove(rownum);
@@ -368,11 +375,13 @@ public class Grid extends Composite {
 					processRows.remove(rownum);
 				}
 			}
+				*/
 
 			refreshAfterUpdate();
 		}
 
 		private String getTupleDefinitionFor(Row row) {
+			/*
 			String insertAttributes = "";
 			for (int column = 0; column < heading.length; column++) {
 				if (insertAttributes.length() > 0)
@@ -395,9 +404,12 @@ public class Grid extends Composite {
 				insertAttributes += attributeName + " " + attributeValue;
 			}
 			return "TUPLE {" + insertAttributes + "}";
+			*/
+			return null;
 		}
 
 		private synchronized void insertRow(Row row, int rownum) {
+			/*
 			if (relvarName == null) {
 				row.committed();
 				processRows.remove(rownum);
@@ -416,11 +428,12 @@ public class Grid extends Composite {
 					processRows.remove(rownum);
 				}
 			}
-
+			 */
 			refreshAfterUpdate();
 		}
 
 		public void deleteRows(Set<Range> selections) {
+			/*
 			if (relvarName == null) {
 				// TODO - implement this
 				System.out.println("Editor: deleteRows() for relvarName == null not implemented yet.");
@@ -451,6 +464,7 @@ public class Grid extends Composite {
 				else
 					refresh();
 			}
+			*/
 		}
 
 		public void processDirtyRows() {
@@ -479,7 +493,8 @@ public class Grid extends Composite {
 		}
 
 		private String getRelHeading() {
-			return new TypeInfo(connection).getHeadingDefinition("TYPE_OF(" + getAttributeSource() + ")");
+			// TODO return new TypeInfo(connection).getHeadingDefinition("TYPE_OF(" + getAttributeSource() + ")");
+			return null;
 		}
 
 		public String getLiteral() {
@@ -702,7 +717,7 @@ public class Grid extends Composite {
 
 			// Custom dialog box
 			configRegistry.registerConfigAttribute(EditConfigAttributes.CELL_EDITOR,
-					new RvaCellEditor(Editor.this, defaultValue), DisplayMode.EDIT, columnLabel);
+					new RvaCellEditor(Grid.this, defaultValue), DisplayMode.EDIT, columnLabel);
 		}
 	}
 
@@ -768,7 +783,7 @@ public class Grid extends Composite {
 	protected void init() {
 		if (heading == null) {
 			gridLayer = new DefaultGridLayer(new EmptyGridData(), new EmptyGridHeading());
-			table = new NatTable(parent, gridLayer, true);
+			table = new NatTable(getParent(), gridLayer, true);
 			table.addListener(SWT.Paint, new Listener() {
 				@Override
 				public void handleEvent(Event arg0) {
@@ -832,7 +847,7 @@ public class Grid extends Composite {
 		HeadingLabelAccumulator columnLabelAccumulator = new HeadingLabelAccumulator();
 		headingDataLayer.setConfigLabelAccumulator(columnLabelAccumulator);
 
-		table = new NatTable(parent, gridLayer, false);
+		table = new NatTable(getParent(), gridLayer, false);
 
 		// Put cursor in table when it's initialised.
 		table.addPaintListener(new PaintListener() {

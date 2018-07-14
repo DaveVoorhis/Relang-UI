@@ -10,10 +10,7 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Text;
-import org.reldb.rel.client.Attribute;
-import org.reldb.rel.client.ScalarType;
-import org.reldb.rel.client.Type;
-import org.reldb.rel.utilities.StringUtils;
+import org.reldb.relang.reli.Attribute;
 
 public class SearchAdvancedQueryBuilder extends Composite {
 	
@@ -71,10 +68,13 @@ public class SearchAdvancedQueryBuilder extends Composite {
 				continue;
 			String name = attribute.getName();
 			String value = ((Text)control[2]).getText();
+			// TODO - fix
+			/*
 			Type type = attribute.getType();
 			if (type instanceof ScalarType)
 				if (((ScalarType)type).getName().equals("CHARACTER"))
-					value = "'" + StringUtils.quote(value) + "'";			
+					value = "'" + StringUtils.quote(value) + "'";
+			*/
 			String op = queryOperationCode[operationIndex];
 			if (op.contains("%s"))
 				comparison += op.replace("%s", name).replace("%p", value);

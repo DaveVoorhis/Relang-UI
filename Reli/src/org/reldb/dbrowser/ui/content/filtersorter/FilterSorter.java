@@ -9,9 +9,8 @@ import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.ToolBar;
 import org.eclipse.swt.widgets.ToolItem;
-import org.reldb.dbrowser.ui.DbConnection;
-import org.reldb.dbrowser.ui.IconLoader;
-import org.reldb.rel.client.Attribute;
+import org.reldb.relang.reli.Attribute;
+import org.reldb.relang.reli.IconLoader;
 
 public class FilterSorter extends Composite {
 
@@ -27,8 +26,6 @@ public class FilterSorter extends Composite {
 	private Searcher searcher;
 	private Sorter sorter;
 
-	private DbConnection dbConnection;
-
 	private Searcher lastSearch = null;
 		
 	public void refresh() {
@@ -36,10 +33,9 @@ public class FilterSorter extends Composite {
 			listener.update(this);
 	}
 	
-	public FilterSorter(Composite parent, int style, String baseExpression, DbConnection dbConnection) {
+	public FilterSorter(Composite parent, int style, String baseExpression) {
 		super(parent, style);
 		this.baseExpression = baseExpression;
-		this.dbConnection = dbConnection;
 		
 		GridLayout layout = new GridLayout(2, false);
 		layout.horizontalSpacing = 0;
@@ -109,20 +105,19 @@ public class FilterSorter extends Composite {
 		stack.topControl = quickSearchPanel;
 		quickSearchPanel.ok();
 	}
-	
-	public String getBaseExpression() {
-		return baseExpression;
-	}
 
 	public Vector<Attribute> getAttributes() {
-		return dbConnection.getAttributesOf(getBaseExpression());
+		// TODO Auto-generated method stub
+		return null;
 	}
 
 	public Vector<String> getAttributeNames() {
-		Vector<String> names = new Vector<>();
-		for (Attribute attribute: getAttributes())
-			names.add(attribute.getName());
-		return names;
+		// TODO Auto-generated method stub
+		return null;
+	}
+	
+	public String getBaseExpression() {
+		return baseExpression;
 	}
 	
 	public String getQuery() {
