@@ -1027,10 +1027,9 @@ public abstract class Grid extends Composite {
 		return false;
 	}
 
-	protected abstract String getAttributeSource();
-
 	protected Tuples obtainTuples() {
-		return connection.getTuples(filterSorterSource.getFilterSorter().getQuery());
+//		return connection.getTuples(filterSorterSource.getFilterSorter().getQuery());
+		return new Tuples();
 	}
 
 	public void goToInsertRow() {
