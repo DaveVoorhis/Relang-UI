@@ -7,9 +7,8 @@ public class Heading {
 	
 	private LinkedList<Attribute> attributes = new LinkedList<Attribute>();
 	private String lastAttributeName;
-	private String typeName;
 	
-	Heading(String typeName) {this.typeName = typeName;}
+	Heading() {}
 	
 	void addAttributeName(String name) {
 		lastAttributeName = name;
@@ -31,10 +30,6 @@ public class Heading {
 		return attributes.size();
 	}
 	
-	public String getTypeName() {
-		return typeName;
-	}
-	
 	public String toString() {
 		String attributeString = "";
 		for (Attribute attribute: attributes) {
@@ -42,7 +37,7 @@ public class Heading {
 				attributeString += ", ";
 			attributeString += attribute;
 		}
-		return typeName + " {" + attributeString + "}";
+		return "{" + attributeString + "}";
 	}
 	
 	public String toCSV() {

@@ -80,9 +80,8 @@ import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.Menu;
 import org.eclipse.swt.widgets.MenuItem;
 import org.eclipse.swt.widgets.Shell;
-import org.reldb.dbrowser.ui.content.filtersorter.FilterSorterSource;
 
-public abstract class Grid extends Composite {
+public class Grid extends Composite {
 
 	public Grid(Shell shell) {
 		super(shell, SWT.NONE);
@@ -300,36 +299,6 @@ public abstract class Grid extends Composite {
 		@Override
 		public int getRowCount() {
 			return rows.size();
-		}
-
-		private String getKeySelectionExpression(int rownum) {
-			String keyspec = "";
-			/*
-			HashSet<String> key;
-			if (keys.size() == 0) {
-				key = new HashSet<String>();
-				for (int column = 0; column < heading.length; column++)
-					key.add(heading[column].getName());
-			} else
-				key = keys.get(0);
-			Row originalValues = rows.get(rownum);
-			for (int column = 0; column < heading.length; column++) {
-				String attributeName = heading[column].getName();
-				if (key.contains(attributeName)) {
-					if (keyspec.length() > 0)
-						keyspec += " AND ";
-					String attributeType = heading[column].getType().toString();
-					Object attributeValueRaw = originalValues.getOriginalColumnValue(column);
-					String attributeValue = "";
-					if (attributeValueRaw != null)
-						attributeValue = attributeValueRaw.toString();
-					if (attributeType.equals("CHARACTER"))
-						attributeValue = "'" + StringUtils.quote(attributeValue) + "'";
-					keyspec += attributeName + " = " + attributeValue;
-				}
-			}
-			*/
-			return keyspec;
 		}
 
 		private void refreshAfterUpdate() {
@@ -1029,7 +998,7 @@ public abstract class Grid extends Composite {
 
 	protected Tuples obtainTuples() {
 //		return connection.getTuples(filterSorterSource.getFilterSorter().getQuery());
-		return new Tuples();
+		return new Tuples(new Heading());
 	}
 
 	public void goToInsertRow() {
