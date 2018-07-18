@@ -12,6 +12,7 @@ import java.util.concurrent.Semaphore;
 
 import org.eclipse.swt.*;
 import org.eclipse.swt.graphics.Image;
+import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.widgets.*;
 import org.eclipse.wb.swt.ResourceManager;
 import org.reldb.relang.reli.version.Version;
@@ -125,14 +126,12 @@ public class RelI {
 		new DecoratedMenuItem(menu, "Add Grid...\tCtrl-G", SWT.MOD1 | 'G', IconLoader.loadIcon("newgrid"), event -> {
 			Shell newGridShell = createShell();
 			newGridShell.setText("New Grid");
-			Label l = new Label(newGridShell, SWT.BORDER);
-			l.setText("This is a test of a label.");
-//			Grid grid = new Grid(newGridShell);
-//			newGridShell.open();
-//			grid.tuples = grid.obtainTuples();
-//			grid.init();
-//			grid.refresh();
+			newGridShell.setLayout(new FillLayout());
+			Grid grid = new Grid(newGridShell);
 			newGridShell.open();
+			grid.tuples = grid.obtainTuples();
+			grid.init();
+			grid.refresh();
 		});
 		
 		new DecoratedMenuItem(menu, "Link...\tCtrl-L", SWT.MOD1 | 'L', IconLoader.loadIcon("link"), event -> {
