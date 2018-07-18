@@ -1,29 +1,23 @@
 package org.reldb.relang.reli;
 
-import java.util.Iterator;
-import java.util.LinkedList;
+import java.util.HashMap;
+import java.util.Vector;
+import java.util.stream.Collectors;
 
 public class Heading {
-	
-	private LinkedList<Attribute> attributes = new LinkedList<Attribute>();
-	private String lastAttributeName;
-	
-	Heading() {}
-	
-	void addAttributeName(String name) {
-		lastAttributeName = name;
-	}
-	
-	void addAttributeType(Class<?> type) {
-		attributes.add(new Attribute(lastAttributeName, type));
-	}
-	
-	public Iterator<Attribute> getAttributes() {
-		return attributes.iterator();
-	}
 
-	public Attribute[] toArray() {
-		return (Attribute[])attributes.toArray(new Attribute[0]);
+	private HashMap<String, Class<?>> attributes = new HashMap<>();
+	private Vector<String> attributeNames = new Vector<>();
+	private Vector<Class<?>> attributeTypes = new Vector<>();
+	
+	public Heading() {}
+	
+	public void add(String attributeName, Class<?> attributeType) {
+		if (attributes.containsKey(attributeName))
+			throw new InvalidValueException("ERROR: Heading: heading " + this + " already contains an attribute named " + attributeName);
+		attributes.put(attributeName, attributeType);
+		attributeNames.add(attributeName);
+		attributeTypes.add(attributeType);
 	}
 	
 	public int getCardinality() {
@@ -31,22 +25,29 @@ public class Heading {
 	}
 	
 	public String toString() {
-		String attributeString = "";
-		for (Attribute attribute: attributes) {
-			if (attributeString.length() > 0)
-				attributeString += ", ";
-			attributeString += attribute;
-		}
+		String attributeString = attributes.entrySet().stream()
+				.map(entry -> entry.getKey() + " " + entry.getValue().toString())
+				.collect(Collectors.joining(", "));
 		return "{" + attributeString + "}";
 	}
-	
-	public String toCSV() {
-		String csvHeading = "";
-		for (Attribute attribute: attributes) {
-			if (csvHeading.length() > 0)
-				csvHeading += ",";
-			csvHeading += attribute.getName();
-		}
-		return csvHeading;
+
+	public boolean hasAttribute(String name) {
+		return attributes.containsKey(name);
+	}
+
+	public Class<?> typeOf(String name) {
+		return attributes.get(name);
+	}
+
+	public String getAttributeNameAt(int columnIndex) {
+		return attributeNames.get(columnIndex);
+	}
+
+	public Object getAttributeTypeAt(int columnIndex) {
+		return attributeTypes.get(columnIndex);
+	}
+
+	public Vector<String> getAttributeNames() {
+		return attributeNames;
 	}
 }

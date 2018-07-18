@@ -2,106 +2,34 @@ package org.reldb.relang.reli;
 
 import java.util.Iterator;
 import java.util.LinkedList;
-import java.util.concurrent.ArrayBlockingQueue;
 
 public class Tuples implements Iterable<Tuple>{
-
-	private ArrayBlockingQueue<Tuple> tuples = new ArrayBlockingQueue<Tuple>(250);
-	private Heading heading = null;
-	private String typeName = null;
-	private LinkedList<Tuple> cache = null;
-	
-	public Tuples(String typeName) {
-		this.typeName = typeName;
-	}
+	private LinkedList<Tuple> tuples = new LinkedList<>();
+	private Heading heading;
 	
 	public Tuples(Heading heading) {
 		this.heading = heading;
 	}
 
-	void addValue(Object value, boolean b) {
-		try {
-			tuples.put((Tuple)value);
-		} catch (InterruptedException e) {
-			System.out.println("Tuples: tuple write interrupted.");
-		}
+	void add(Tuple tuple) {
+		if (tuple.getHeading() != heading)
+			throw new InvalidValueException("ERROR: Tuples: Attempt to add a tuple with heading " + tuple.getHeading() + " which doesn't match Tuples heading " + heading);
+		tuples.add(tuple);
 	}
 	
 	public Heading getHeading() {
 		return heading;
 	}
 
-	public int toInt() throws InvalidValueException, NumberFormatException {
-		throw new InvalidValueException("Tuples can't be cast to int.");
-	}
-
-	public long toLong() throws InvalidValueException, NumberFormatException {
-		throw new InvalidValueException("Tuples can't be cast to long.");
-	}
-
-	public double toDouble() throws InvalidValueException, NumberFormatException {
-		throw new InvalidValueException("Tuples can't be cast to double.");
-	}
-
-	public float toFloat() throws InvalidValueException, NumberFormatException {
-		throw new InvalidValueException("Tuples can't be cast to float.");
-	}
-
-	public boolean toBoolean() throws InvalidValueException {
-		throw new InvalidValueException("Tuples can't be cast to boolean.");
-	}
-
-	public String toString(int depth) {
+	public String toString() {
 		String lines = "";
 		for (Tuple tuple: this)
-			lines += ((lines.length() > 0) ? ",\n" : "") + "\t" + tuple.toString(depth + 1);
-		return ((heading != null) ? heading : typeName) + " {\n" + lines + "}"; 
+			lines += ((lines.length() > 0) ? ",\n" : "") + "\t" + tuple.toString();
+		return heading + " {\n" + lines + "}"; 
 	}
-
-	public String toString() {
-		return toString(0);
-	}
-	
-	private boolean done = false;
 
 	public Iterator<Tuple> iterator() {
-		if (cache != null)
-			return cache.iterator();
-		cache = new LinkedList<Tuple>();
-		return new Iterator<Tuple>() {
-			Tuple tuple = null;
-			public boolean hasNext() {
-				if (done)
-					return false;
-				if (tuple == null) {
-					do
-						try {
-							tuple = tuples.take();
-						} catch (InterruptedException e) {
-							return false;
-						}
-					while (tuple == null);
-					if (tuple.isNull()) {
-						done = true;
-						return false;
-					}
-				}
-				return true;
-			}
-			public Tuple next() {
-				if (!hasNext())
-					return null;
-				try {
-					if (cache != null)
-						cache.add(tuple);
-					return tuple;
-				} finally {
-					tuple = null;
-				}
-			}
-			public void remove() {
-			}			
-		};
+		return tuples.iterator();
 	}
 	
 }

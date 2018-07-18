@@ -125,7 +125,13 @@ public class RelI {
 		new DecoratedMenuItem(menu, "Add Grid...\tCtrl-G", SWT.MOD1 | 'G', IconLoader.loadIcon("newgrid"), event -> {
 			Shell newGridShell = createShell();
 			newGridShell.setText("New Grid");
-			new Grid(newGridShell);
+			Label l = new Label(newGridShell, SWT.BORDER);
+			l.setText("This is a test of a label.");
+//			Grid grid = new Grid(newGridShell);
+//			newGridShell.open();
+//			grid.tuples = grid.obtainTuples();
+//			grid.init();
+//			grid.refresh();
 			newGridShell.open();
 		});
 		

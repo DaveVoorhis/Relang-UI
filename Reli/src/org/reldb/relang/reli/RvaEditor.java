@@ -9,7 +9,7 @@ public class RvaEditor extends Grid {
 	// Relvar attribute designer
 	public RvaEditor(Composite parent) {
 		super(parent);
-		// askDeleteConfirm = false;
+		askDeleteConfirm = false;
 	}
 
 	protected String getAttributeSource() {
@@ -24,7 +24,6 @@ public class RvaEditor extends Grid {
 	public void setRVAValue(String rvaValue) {
 		this.rvaValue = rvaValue;
 		tuples = obtainTuples();
-		heading = tuples.getHeading().toArray();
 		init();
 	}
 

@@ -1,107 +1,38 @@
 package org.reldb.relang.reli;
 
-import java.util.Vector;
+import java.util.HashMap;
+import java.util.stream.Collectors;
 
 public class Tuple {
 
-	private Vector<String> attributeNames = new Vector<String>();
-	private Vector<Object> attributeValues = new Vector<Object>();
+	private HashMap<String, Object> attributes = new HashMap<>();
+	private Heading heading;
 	
-	Tuple() {}
-	
-	void addAttributeName(String name) {
-		attributeNames.add(name);
-	}
-	
-	void addValue(Object value, boolean b) {
-		attributeValues.add(value);
+	public Tuple(Heading heading) {
+		this.heading = heading;
 	}
 
-	/** Get quantity of attributes in this Tuple. */
-	public int getAttributeCount() {
-		return attributeValues.size();
+	public Heading getHeading() {
+		return heading;
 	}
-	
-	/** Get ith attribute name. */
-	public String getAttributeName(int i) {
-		return attributeNames.get(i);
-	}
-	
-	/** Get ith attribute value. */
-	public Object getAttributeValue(int i) {
-		return attributeValues.get(i);
-	}
-	
-	/** Get index of a given attribute name. -1 if not found. */
-	public int getIndexOf(String name) {
-		return attributeNames.indexOf(name);
-	}
-	
-	/** Get attribute Value for given attribute Name.  Return null if not found. */
+
 	public Object getAttributeValue(String name) {
-		int index = getIndexOf(name);
-		if (index < 0)
-			return null;
-		return getAttributeValue(index);
-	}
-	
-	/** Shortcut for getAttributeValue */
-	public Object get(int i) {
-		return getAttributeValue(i);
-	}
-	
-	/** Shortcut for getAttributeValue */
-	public Object get(String name) {
-		return getAttributeValue(name);
-	}
-	
-	/** True if this is the end-of-list Tuple in a set of TupleS. */
-	public boolean isNull() {
-		return false;
+		return attributes.get(name);
 	}
 
-	public int toInt() throws InvalidValueException, NumberFormatException {
-		throw new InvalidValueException("Tuple can't be cast to int.");
+	public void setAttributeValue(String name, Object value) {
+		if (!heading.hasAttribute(name))
+			throw new InvalidValueException("ERROR: Tuple: tuple with heading " + heading + " doesn't have an attribute named " + name);
+		if (heading.typeOf(name) != value.getClass())
+			throw new InvalidValueException("ERROR: Tuple: tuple has heading " + heading + " where type of attribute " + name + " is " + heading.typeOf(name) + " but attempting to set the attribute value to " + value.getClass());
+		attributes.put(name, value);
 	}
 
-	public long toLong() throws InvalidValueException, NumberFormatException {
-		throw new InvalidValueException("Tuple can't be cast to long.");
-	}
-
-	public double toDouble() throws InvalidValueException, NumberFormatException {
-		throw new InvalidValueException("Tuple can't be cast to double.");
-	}
-
-	public float toFloat() throws InvalidValueException, NumberFormatException {
-		throw new InvalidValueException("Tuple can't be cast to float.");
-	}
-
-	public boolean toBoolean() throws InvalidValueException {
-		throw new InvalidValueException("Tuple can't be cast to boolean.");
-	}
-	
-	public String toString(int depth) {
-		String tuples = "";
-		for (int i=0; i<getAttributeCount(); i++) {
-			if (tuples.length() > 0)
-				tuples += ", ";
-			tuples += getAttributeName(i) + " " + getAttributeValue(i).toString();
-		}
-		return "TUPLE {" + tuples + "}";
-	}
-	
 	public String toString() {
-		return toString(0);
-	}
-	
-	public String toCSV() {
-		String line = "";
-		for (int i=0; i<getAttributeCount(); i++) {
-			if (line.length() > 0)
-				line += ",";
-			line += "\"" + getAttributeValue(i).toString().replaceAll("\"", "\"\"") + "\"";
-		}
-		return line;
+		String tuples = attributes.entrySet().stream()
+				.map(entry -> entry.getKey() + " " + entry.getValue().toString())
+				.collect(Collectors.joining(", "));
+		return "TUPLE {" + tuples + "}";
 	}
 	
 }

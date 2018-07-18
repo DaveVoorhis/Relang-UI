@@ -10,7 +10,7 @@ import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Text;
-import org.reldb.relang.reli.Attribute;
+import org.reldb.relang.reli.Heading;
 
 public class SearchAdvancedPanel extends Composite {
 
@@ -36,8 +36,8 @@ public class SearchAdvancedPanel extends Composite {
 		filterDefinition.layout();
 	}
 	
-	public SearchAdvancedPanel(Vector<Attribute> attributes, Composite parent) {
-		super(parent, SWT.NONE);		
+	public SearchAdvancedPanel(Heading attributes, Composite parent) {
+		super(parent, SWT.NONE);	
 		setLayout(new GridLayout(1, false));
 		
 		filterDefinition = new Composite(this, SWT.NONE);

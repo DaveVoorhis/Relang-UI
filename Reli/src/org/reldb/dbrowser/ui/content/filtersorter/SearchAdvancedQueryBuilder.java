@@ -10,19 +10,19 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Text;
-import org.reldb.relang.reli.Attribute;
+import org.reldb.relang.reli.Heading;
 
 public class SearchAdvancedQueryBuilder extends Composite {
 	
 	private static final String[] queryOperationDisplay = new String[] {"=", "≠", "<", ">", "≤", "≥", "contains", "starts with", "doesn’t contain"};
 	private static final String[] queryOperationCode = new String[] {"=", "!=", "<", ">", "<=", ">=", "INDEX_OF(%s, %p) >= 0", "STARTS_WITH(%s, %p)", "INDEX_OF(%s, %p) < 0"}; 
 	
-	private Vector<Attribute> attributes;
+	private Heading attributes;
 	private String whereClause = "";
 	private Vector<Control[]> controls = new Vector<Control[]>();
 	private Vector<String[]> finderSavedState = null;
 	
-	public SearchAdvancedQueryBuilder(Vector<Attribute> attributes, Composite parent, Vector<String[]> finderSavedState) {
+	public SearchAdvancedQueryBuilder(Heading attributes, Composite parent, Vector<String[]> finderSavedState) {
 		super(parent, SWT.NONE);
 		this.finderSavedState = finderSavedState;
 		this.attributes = attributes;
@@ -62,11 +62,10 @@ public class SearchAdvancedQueryBuilder extends Composite {
 				continue;
 			if (output.length() > 0)
 				comparison += " ";
-			Attribute attribute = attributes.get(columnIndex);
 			int operationIndex = ((Combo)control[1]).getSelectionIndex();
 			if (operationIndex < 0)
 				continue;
-			String name = attribute.getName();
+			String name = attributes.getAttributeNameAt(columnIndex);
 			String value = ((Text)control[2]).getText();
 			// TODO - fix
 			/*
@@ -174,9 +173,7 @@ public class SearchAdvancedQueryBuilder extends Composite {
 		Combo newComboColumn;
 		newComboColumn = new Combo(this, SWT.READ_ONLY);
 		newComboColumn.setLayoutData(new GridData(SWT.LEFT, SWT.CENTER, false, false, 1, 1));
-		Vector<String> attributeNames = new Vector<>();
-		for (Attribute attribute: attributes)
-			attributeNames.add(attribute.getName());
+		Vector<String> attributeNames = attributes.getAttributeNames();
 		newComboColumn.setItems(attributeNames.toArray(new String[0]));
 		rowControls[0] = newComboColumn;
 		if (rowNum == 0)

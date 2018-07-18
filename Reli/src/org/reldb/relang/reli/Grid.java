@@ -48,8 +48,6 @@ import org.eclipse.nebula.widgets.nattable.painter.cell.TextPainter;
 import org.eclipse.nebula.widgets.nattable.painter.cell.decorator.BeveledBorderDecorator;
 import org.eclipse.nebula.widgets.nattable.painter.cell.decorator.CellPainterDecorator;
 import org.eclipse.nebula.widgets.nattable.painter.cell.decorator.LineBorderDecorator;
-import org.eclipse.nebula.widgets.nattable.resize.command.InitializeAutoResizeColumnsCommand;
-import org.eclipse.nebula.widgets.nattable.resize.command.InitializeAutoResizeRowsCommand;
 import org.eclipse.nebula.widgets.nattable.selection.ITraversalStrategy;
 import org.eclipse.nebula.widgets.nattable.selection.MoveCellSelectionCommandHandler;
 import org.eclipse.nebula.widgets.nattable.selection.command.ClearAllSelectionsCommand;
@@ -65,7 +63,6 @@ import org.eclipse.nebula.widgets.nattable.tickupdate.TickUpdateConfigAttributes
 import org.eclipse.nebula.widgets.nattable.tooltip.NatTableContentTooltip;
 import org.eclipse.nebula.widgets.nattable.ui.menu.PopupMenuBuilder;
 import org.eclipse.nebula.widgets.nattable.ui.util.CellEdgeEnum;
-import org.eclipse.nebula.widgets.nattable.util.GCFactory;
 import org.eclipse.nebula.widgets.nattable.util.GUIHelper;
 import org.eclipse.nebula.widgets.nattable.viewport.command.ShowRowInViewportCommand;
 import org.eclipse.swt.SWT;
@@ -90,11 +87,11 @@ public class Grid extends Composite {
 	public Grid(Composite composite) {
 		super(composite, SWT.NONE);
 	}
+
+	protected Tuples tuples;
 	
 	private NatTable table;
-
-	protected Attribute[] heading;
-	protected Tuples tuples;
+	
 	protected DataProvider dataProvider;
 
 	private HeadingProvider headingProvider;
@@ -114,12 +111,11 @@ public class Grid extends Composite {
 	class HeadingProvider implements IDataProvider {
 		@Override
 		public Object getDataValue(int columnIndex, int rowIndex) {
-			Attribute attribute = heading[columnIndex];
 			switch (rowIndex) {
 			case 0:
-				return attribute.getName();
+				return tuples.getHeading().getAttributeNameAt(columnIndex);
 			case 1:
-				return attribute.getType().toString();
+				return tuples.getHeading().getAttributeTypeAt(columnIndex).toString();
 			default:
 				return "";
 			}
@@ -132,7 +128,7 @@ public class Grid extends Composite {
 
 		@Override
 		public int getColumnCount() {
-			return heading.length;
+			return tuples.getHeading().getCardinality();
 		}
 
 		@Override
@@ -151,8 +147,8 @@ public class Grid extends Composite {
 		Row(Tuple tuple) {
 			originalData = new HashMap<Integer, Object>();
 			newData = new HashMap<Integer, Object>();
-			for (int column = 0; column < tuple.getAttributeCount(); column++)
-				originalData.put(column, tuple.get(column));
+			for (int column = 0; column < tuples.getHeading().getCardinality(); column++)
+				originalData.put(column, tuple.getAttributeValue(tuples.getHeading().getAttributeNameAt(column)));
 			reset();
 			action = RowAction.UPDATE;
 		}
@@ -214,8 +210,8 @@ public class Grid extends Composite {
 		}
 
 		public boolean isFilled() {
-			for (int column = 0; column < heading.length; column++) {
-				String type = heading[column].getType().toString();
+			for (int column = 0; column < tuples.getHeading().getCardinality(); column++) {
+				String type = tuples.getHeading().getAttributeTypeAt(column).toString();
 				HashMap<Integer, Object> data = isChanged(column) ? newData : originalData;
 				if (!type.equals("CHARACTER")
 						&& (data.get(column) == null || data.get(column).toString().trim().length() == 0))
@@ -237,8 +233,11 @@ public class Grid extends Composite {
 		}
 
 		public void reload() {
+			System.out.println("Grid: reload 1");
 			rows.clear();
+			System.out.println("Grid: reload 2 - tuples = " + tuples);
 			Iterator<Tuple> iterator = tuples.iterator();
+			System.out.println("Grid: reload 3 - tuples = " + tuples);
 			while (iterator.hasNext())
 				rows.add(new Row(iterator.next()));
 			rows.add(new Row());
@@ -291,9 +290,7 @@ public class Grid extends Composite {
 
 		@Override
 		public int getColumnCount() {
-			if (heading == null)
-				return 0;
-			return heading.length;
+			return tuples.getHeading().getCardinality();
 		}
 
 		@Override
@@ -457,7 +454,7 @@ public class Grid extends Composite {
 		}
 
 		public boolean isRVA(int columnIndex) {
-			String attributeType = heading[columnIndex].getType().toString();
+			String attributeType = tuples.getHeading().getAttributeTypeAt(columnIndex).toString();
 			return attributeType.startsWith("RELATION ");
 		}
 
@@ -533,25 +530,23 @@ public class Grid extends Composite {
 			configRegistry.registerConfigAttribute(EditConfigAttributes.OPEN_ADJACENT_EDITOR, Boolean.TRUE,
 					DisplayMode.EDIT);
 			// for each column...
-			if (heading != null)
-				for (int column = 0; column < heading.length; column++) {
-					Attribute attribute = heading[column];
-					String columnLabel = "column" + column;
-					String type = attribute.getType().toString();
-					if (type.equalsIgnoreCase("INTEGER"))
-						registerIntegerColumn(configRegistry, columnLabel);
-					else if (type.equalsIgnoreCase("RATIONAL"))
-						registerRationalColumn(configRegistry, columnLabel);
-					else if (type.equalsIgnoreCase("CHARACTER"))
-						registerMultiLineEditorColumn(configRegistry, columnLabel);
-					else if (type.equalsIgnoreCase("BOOLEAN"))
-						registerBooleanColumn(configRegistry, columnLabel);
-					else if (type.startsWith("RELATION ")) {
-						String defaultValue = type + " {}";
-						registerRvaColumn(configRegistry, columnLabel, defaultValue);
-					} else
-						registerDefaultColumn(configRegistry, columnLabel);
-				}
+			for (int column = 0; column < tuples.getHeading().getCardinality(); column++) {
+				String columnLabel = "column" + column;
+				String type = tuples.getHeading().getAttributeTypeAt(column).toString();
+				if (type.equalsIgnoreCase("INTEGER"))
+					registerIntegerColumn(configRegistry, columnLabel);
+				else if (type.equalsIgnoreCase("RATIONAL"))
+					registerRationalColumn(configRegistry, columnLabel);
+				else if (type.equalsIgnoreCase("CHARACTER"))
+					registerMultiLineEditorColumn(configRegistry, columnLabel);
+				else if (type.equalsIgnoreCase("BOOLEAN"))
+					registerBooleanColumn(configRegistry, columnLabel);
+				else if (type.startsWith("RELATION ")) {
+					String defaultValue = type + " {}";
+					registerRvaColumn(configRegistry, columnLabel, defaultValue);
+				} else
+					registerDefaultColumn(configRegistry, columnLabel);
+			}
 		}
 
 		private void registerDefaultColumn(IConfigRegistry configRegistry, String columnLabel) {
@@ -750,30 +745,6 @@ public class Grid extends Composite {
 	}
 
 	protected void init() {
-		if (heading == null) {
-			gridLayer = new DefaultGridLayer(new EmptyGridData(), new EmptyGridHeading());
-			table = new NatTable(getParent(), gridLayer, true);
-			table.addListener(SWT.Paint, new Listener() {
-				@Override
-				public void handleEvent(Event arg0) {
-					for (int i = 0; i < table.getColumnCount(); i++) {
-						InitializeAutoResizeColumnsCommand columnCommand = new InitializeAutoResizeColumnsCommand(table,
-								i, table.getConfigRegistry(), new GCFactory(table));
-						table.doCommand(columnCommand);
-					}
-					for (int i = 0; i < table.getRowCount(); i++) {
-						InitializeAutoResizeRowsCommand rowCommand = new InitializeAutoResizeRowsCommand(table, i,
-								table.getConfigRegistry(), new GCFactory(table));
-						table.doCommand(rowCommand);
-					}
-					table.removeListener(SWT.Paint, this);
-			        goToInsertRow();
-				}
-			});
-			table.configure();
-			return;
-		}
-
 		dataProvider = new DataProvider();
 		headingProvider = new HeadingProvider();
 
@@ -803,10 +774,10 @@ public class Grid extends Composite {
 			@Override
 			public void accumulateConfigLabels(LabelStack configLabels, int columnPosition, int rowPosition) {
 				if (keys != null && keys.size() > 0) {
-					if (rowPosition == 0 && keys.get(0).contains(heading[columnPosition].getName()))
+					if (rowPosition == 0 && keys.get(0).contains(tuples.getHeading().getAttributeNameAt(columnPosition)))
 						configLabels.addLabel("keycolumnintegrated");
 					else if (rowPosition >= 2 && keys.size() > 1
-							&& keys.get(rowPosition - 1).contains(heading[columnPosition].getName()))
+							&& keys.get(rowPosition - 1).contains(tuples.getHeading().getAttributeNameAt(columnPosition)))
 						configLabels.addLabel("keycolumnalone");
 				}
 			}
@@ -998,7 +969,23 @@ public class Grid extends Composite {
 
 	protected Tuples obtainTuples() {
 //		return connection.getTuples(filterSorterSource.getFilterSorter().getQuery());
-		return new Tuples(new Heading());
+		Heading heading = new Heading();
+		heading.add("blah", String.class);
+		heading.add("blat", Integer.class);
+
+		Tuples tuples = new Tuples(heading);
+		
+		Tuple t1 = new Tuple(heading);
+		t1.setAttributeValue("blah", "blah");
+		t1.setAttributeValue("blat", 3);
+		tuples.add(t1);
+
+		Tuple t2 = new Tuple(heading);
+		t1.setAttributeValue("blah", "zot");
+		t1.setAttributeValue("blat", 4);
+		tuples.add(t2);
+		
+		return tuples;
 	}
 
 	public void goToInsertRow() {

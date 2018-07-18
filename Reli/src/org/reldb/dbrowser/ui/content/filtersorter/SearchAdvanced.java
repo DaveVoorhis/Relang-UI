@@ -60,7 +60,7 @@ public class SearchAdvanced extends Composite implements Searcher {
 		popup = new PopupComposite(getShell());
 		popup.setLayout(new GridLayout(1, false));
 		
-		filterer = new SearchAdvancedPanel(filterSorter.getAttributes(), popup);
+		filterer = new SearchAdvancedPanel(filterSorter.getHeading(), popup);
 		filterer.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, true, 1, 1));
 		
 		Composite buttonPanel = new Composite(popup, SWT.NONE);

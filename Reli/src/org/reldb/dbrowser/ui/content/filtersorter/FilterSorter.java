@@ -9,7 +9,7 @@ import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.ToolBar;
 import org.eclipse.swt.widgets.ToolItem;
-import org.reldb.relang.reli.Attribute;
+import org.reldb.relang.reli.Heading;
 import org.reldb.relang.reli.IconLoader;
 
 public class FilterSorter extends Composite {
@@ -106,7 +106,7 @@ public class FilterSorter extends Composite {
 		quickSearchPanel.ok();
 	}
 
-	public Vector<Attribute> getAttributes() {
+	public Heading getHeading() {
 		// TODO Auto-generated method stub
 		return null;
 	}
