@@ -96,11 +96,10 @@ public class Grid extends Composite {
 		init();
 	}
 
-	protected Tuples tuples = new Tuples(new Heading());
+	private Tuples tuples = new Tuples(new Heading());	
+	private DataProvider dataProvider;
 	
 	private NatTable table;
-	
-	protected DataProvider dataProvider;
 
 	private HeadingProvider headingProvider;
 	private DefaultGridLayer gridLayer;
@@ -116,14 +115,30 @@ public class Grid extends Composite {
 	protected boolean askDeleteConfirm = true;	
 	protected Vector<HashSet<String>> keys = null;
 	
+	private Heading getHeading() {
+		return tuples.getHeading();
+	}
+	
+	private String getAttributeNameAt(int columnIndex) {
+		return getHeading().getAttributeNameAt(columnIndex);
+	}
+	
+	private Class<?> getAttributeTypeAt(int columnIndex) {
+		return getHeading().getAttributeTypeAt(columnIndex);
+	}
+	
+	private int getColumnCount() {
+		return getHeading().getCardinality();
+	}
+	
 	class HeadingProvider implements IDataProvider {
 		@Override
 		public Object getDataValue(int columnIndex, int rowIndex) {
 			switch (rowIndex) {
 			case 0:
-				return tuples.getHeading().getAttributeNameAt(columnIndex);
+				return getAttributeNameAt(columnIndex);
 			case 1:
-				return tuples.getHeading().getAttributeTypeAt(columnIndex).toString();
+				return getAttributeTypeAt(columnIndex).toString();
 			default:
 				return "";
 			}
@@ -136,7 +151,7 @@ public class Grid extends Composite {
 
 		@Override
 		public int getColumnCount() {
-			return tuples.getHeading().getCardinality();
+			return Grid.this.getColumnCount();
 		}
 
 		@Override
@@ -155,8 +170,8 @@ public class Grid extends Composite {
 		Row(Tuple tuple) {
 			originalData = new HashMap<Integer, Object>();
 			newData = new HashMap<Integer, Object>();
-			for (int column = 0; column < tuples.getHeading().getCardinality(); column++)
-				originalData.put(column, tuple.getAttributeValue(tuples.getHeading().getAttributeNameAt(column)));
+			for (int column = 0; column < getColumnCount(); column++)
+				originalData.put(column, tuple.getAttributeValue(getAttributeNameAt(column)));
 			reset();
 			action = RowAction.UPDATE;
 		}
@@ -218,8 +233,8 @@ public class Grid extends Composite {
 		}
 
 		public boolean isFilled() {
-			for (int column = 0; column < tuples.getHeading().getCardinality(); column++) {
-				String type = tuples.getHeading().getAttributeTypeAt(column).toString();
+			for (int column = 0; column < getColumnCount(); column++) {
+				String type = getAttributeTypeAt(column).toString();
 				HashMap<Integer, Object> data = isChanged(column) ? newData : originalData;
 				if (!type.equals("CHARACTER")
 						&& (data.get(column) == null || data.get(column).toString().trim().length() == 0))
@@ -241,11 +256,8 @@ public class Grid extends Composite {
 		}
 
 		public void reload() {
-			System.out.println("Grid: reload 1");
 			rows.clear();
-			System.out.println("Grid: reload 2 - tuples = " + tuples);
 			Iterator<Tuple> iterator = tuples.iterator();
-			System.out.println("Grid: reload 3 - tuples = " + tuples);
 			while (iterator.hasNext())
 				rows.add(new Row(iterator.next()));
 			rows.add(new Row());
@@ -298,7 +310,7 @@ public class Grid extends Composite {
 
 		@Override
 		public int getColumnCount() {
-			return tuples.getHeading().getCardinality();
+			return Grid.this.getColumnCount();
 		}
 
 		@Override
@@ -462,7 +474,7 @@ public class Grid extends Composite {
 		}
 
 		public boolean isRVA(int columnIndex) {
-			String attributeType = tuples.getHeading().getAttributeTypeAt(columnIndex).toString();
+			String attributeType = getAttributeTypeAt(columnIndex).toString();
 			return attributeType.startsWith("RELATION ");
 		}
 
@@ -479,6 +491,10 @@ public class Grid extends Composite {
 		}
 	};
 
+	public String getLiteral() {
+		return dataProvider.getLiteral();
+	}
+	
 	class HeaderConfiguration extends AbstractRegistryConfiguration {
 		public void configureRegistry(IConfigRegistry configRegistry) {
 			ImagePainter keyPainter = new ImagePainter(IconLoader.loadIconNormal("bullet_key"));
@@ -538,9 +554,9 @@ public class Grid extends Composite {
 			configRegistry.registerConfigAttribute(EditConfigAttributes.OPEN_ADJACENT_EDITOR, Boolean.TRUE,
 					DisplayMode.EDIT);
 			// for each column...
-			for (int column = 0; column < tuples.getHeading().getCardinality(); column++) {
+			for (int column = 0; column < getColumnCount(); column++) {
 				String columnLabel = "column" + column;
-				String type = tuples.getHeading().getAttributeTypeAt(column).toString();
+				String type = getAttributeTypeAt(column).toString();
 				if (type.equalsIgnoreCase("INTEGER"))
 					registerIntegerColumn(configRegistry, columnLabel);
 				else if (type.equalsIgnoreCase("RATIONAL"))
@@ -753,7 +769,7 @@ public class Grid extends Composite {
 	}
 
 	protected void init() {
-		if (tuples.getHeading().getCardinality() == 0) {
+		if (getColumnCount() == 0) {
 			gridLayer = new DefaultGridLayer(new EmptyGridData(), new EmptyGridHeading());
 			table = new NatTable(this, gridLayer, true);
 			table.addListener(SWT.Paint, new Listener() {
@@ -806,10 +822,10 @@ public class Grid extends Composite {
 			@Override
 			public void accumulateConfigLabels(LabelStack configLabels, int columnPosition, int rowPosition) {
 				if (keys != null && keys.size() > 0) {
-					if (rowPosition == 0 && keys.get(0).contains(tuples.getHeading().getAttributeNameAt(columnPosition)))
+					if (rowPosition == 0 && keys.get(0).contains(getAttributeNameAt(columnPosition)))
 						configLabels.addLabel("keycolumnintegrated");
 					else if (rowPosition >= 2 && keys.size() > 1
-							&& keys.get(rowPosition - 1).contains(tuples.getHeading().getAttributeNameAt(columnPosition)))
+							&& keys.get(rowPosition - 1).contains(getAttributeNameAt(columnPosition)))
 						configLabels.addLabel("keycolumnalone");
 				}
 			}

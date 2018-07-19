@@ -17,7 +17,7 @@ public class RvaEditor extends Grid {
 	}
 
 	public String getRVAValue() {
-		rvaValue = dataProvider.getLiteral();
+		rvaValue = getLiteral();
 		return rvaValue;
 	}
 
