@@ -69,6 +69,7 @@ import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.PaintEvent;
 import org.eclipse.swt.events.PaintListener;
 import org.eclipse.swt.graphics.Point;
+import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Display;
@@ -82,10 +83,12 @@ public class Grid extends Composite {
 
 	public Grid(Shell shell) {
 		super(shell, SWT.NONE);
+		setLayout(new FillLayout());
 	}
 
 	public Grid(Composite composite) {
 		super(composite, SWT.NONE);
+		setLayout(new FillLayout());
 	}
 
 	protected Tuples tuples;
@@ -787,7 +790,7 @@ public class Grid extends Composite {
 		HeadingLabelAccumulator columnLabelAccumulator = new HeadingLabelAccumulator();
 		headingDataLayer.setConfigLabelAccumulator(columnLabelAccumulator);
 
-		table = new NatTable(getParent(), gridLayer, false);
+		table = new NatTable(this, gridLayer, false);
 
 		// Put cursor in table when it's initialised.
 		table.addPaintListener(new PaintListener() {

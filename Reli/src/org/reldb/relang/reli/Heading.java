@@ -43,7 +43,7 @@ public class Heading {
 		return attributeNames.get(columnIndex);
 	}
 
-	public Object getAttributeTypeAt(int columnIndex) {
+	public Class<?> getAttributeTypeAt(int columnIndex) {
 		return attributeTypes.get(columnIndex);
 	}
 

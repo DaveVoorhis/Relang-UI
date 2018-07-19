@@ -48,5 +48,6 @@
 	<classpathentry kind="lib" path="/_Deploy/lib/nattable/org.eclipse.osgi-3.7.1.jar"/>
 	<classpathentry kind="lib" path="/_Deploy/lib/nattable/commands-3.3.0-I20070605-0010.jar"/>
 	<classpathentry kind="lib" path="/_Deploy/lib/nattable/common-3.6.200-v20130402-1505.jar"/>
+	<classpathentry kind="lib" path="swing2swt.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>

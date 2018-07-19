@@ -13,6 +13,8 @@ import java.util.concurrent.Semaphore;
 import org.eclipse.swt.*;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.layout.FillLayout;
+import org.eclipse.swt.layout.GridData;
+import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.*;
 import org.eclipse.wb.swt.ResourceManager;
 import org.reldb.relang.reli.version.Version;
@@ -127,11 +129,13 @@ public class RelI {
 			Shell newGridShell = createShell();
 			newGridShell.setText("New Grid");
 			newGridShell.setLayout(new FillLayout());
-			Grid grid = new Grid(newGridShell);
-			newGridShell.open();
+			
+			Grid grid = new Grid(newGridShell);			
 			grid.tuples = grid.obtainTuples();
 			grid.init();
 			grid.refresh();
+			
+			newGridShell.open();
 		});
 		
 		new DecoratedMenuItem(menu, "Link...\tCtrl-L", SWT.MOD1 | 'L', IconLoader.loadIcon("link"), event -> {
