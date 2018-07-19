@@ -13,8 +13,6 @@ import java.util.concurrent.Semaphore;
 import org.eclipse.swt.*;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.layout.FillLayout;
-import org.eclipse.swt.layout.GridData;
-import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.*;
 import org.eclipse.wb.swt.ResourceManager;
 import org.reldb.relang.reli.version.Version;
@@ -129,11 +127,24 @@ public class RelI {
 			Shell newGridShell = createShell();
 			newGridShell.setText("New Grid");
 			newGridShell.setLayout(new FillLayout());
+
+			Heading heading = new Heading();
+			heading.add("A", String.class);
+			heading.add("B", String.class);
+			heading.add("C", String.class);
+
+			Tuples tuples = new Tuples(heading);
 			
+			for (int i=0; i<3; i++) {
+				Tuple tuple = new Tuple(heading);
+				tuple.setAttributeValue("A", "");
+				tuple.setAttributeValue("B", "");
+				tuple.setAttributeValue("C", "");
+				tuples.add(tuple);
+			}
+		
 			Grid grid = new Grid(newGridShell);			
-			grid.tuples = grid.obtainTuples();
-			grid.init();
-			grid.refresh();
+			grid.setTuples(tuples);
 			
 			newGridShell.open();
 		});

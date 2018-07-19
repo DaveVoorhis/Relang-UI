@@ -48,6 +48,8 @@ import org.eclipse.nebula.widgets.nattable.painter.cell.TextPainter;
 import org.eclipse.nebula.widgets.nattable.painter.cell.decorator.BeveledBorderDecorator;
 import org.eclipse.nebula.widgets.nattable.painter.cell.decorator.CellPainterDecorator;
 import org.eclipse.nebula.widgets.nattable.painter.cell.decorator.LineBorderDecorator;
+import org.eclipse.nebula.widgets.nattable.resize.command.InitializeAutoResizeColumnsCommand;
+import org.eclipse.nebula.widgets.nattable.resize.command.InitializeAutoResizeRowsCommand;
 import org.eclipse.nebula.widgets.nattable.selection.ITraversalStrategy;
 import org.eclipse.nebula.widgets.nattable.selection.MoveCellSelectionCommandHandler;
 import org.eclipse.nebula.widgets.nattable.selection.command.ClearAllSelectionsCommand;
@@ -63,6 +65,7 @@ import org.eclipse.nebula.widgets.nattable.tickupdate.TickUpdateConfigAttributes
 import org.eclipse.nebula.widgets.nattable.tooltip.NatTableContentTooltip;
 import org.eclipse.nebula.widgets.nattable.ui.menu.PopupMenuBuilder;
 import org.eclipse.nebula.widgets.nattable.ui.util.CellEdgeEnum;
+import org.eclipse.nebula.widgets.nattable.util.GCFactory;
 import org.eclipse.nebula.widgets.nattable.util.GUIHelper;
 import org.eclipse.nebula.widgets.nattable.viewport.command.ShowRowInViewportCommand;
 import org.eclipse.swt.SWT;
@@ -84,14 +87,16 @@ public class Grid extends Composite {
 	public Grid(Shell shell) {
 		super(shell, SWT.NONE);
 		setLayout(new FillLayout());
+		init();
 	}
 
 	public Grid(Composite composite) {
 		super(composite, SWT.NONE);
 		setLayout(new FillLayout());
+		init();
 	}
 
-	protected Tuples tuples;
+	protected Tuples tuples = new Tuples(new Heading());
 	
 	private NatTable table;
 	
@@ -708,7 +713,7 @@ public class Grid extends Composite {
 	private static class EmptyGridData implements IDataProvider {
 		@Override
 		public Object getDataValue(int columnIndex, int rowIndex) {
-			return "Variable is not editable because it has no attributes. Select Design from the toolbar to add attributes.";
+			return "There are no columns.";
 		}
 
 		@Override
@@ -748,6 +753,30 @@ public class Grid extends Composite {
 	}
 
 	protected void init() {
+		if (tuples.getHeading().getCardinality() == 0) {
+			gridLayer = new DefaultGridLayer(new EmptyGridData(), new EmptyGridHeading());
+			table = new NatTable(this, gridLayer, true);
+			table.addListener(SWT.Paint, new Listener() {
+				@Override
+				public void handleEvent(Event arg0) {
+					for (int i = 0; i < table.getColumnCount(); i++) {
+						InitializeAutoResizeColumnsCommand columnCommand = new InitializeAutoResizeColumnsCommand(table,
+								i, table.getConfigRegistry(), new GCFactory(table));
+						table.doCommand(columnCommand);
+					}
+					for (int i = 0; i < table.getRowCount(); i++) {
+						InitializeAutoResizeRowsCommand rowCommand = new InitializeAutoResizeRowsCommand(table, i,
+								table.getConfigRegistry(), new GCFactory(table));
+						table.doCommand(rowCommand);
+					}
+					table.removeListener(SWT.Paint, this);
+			        goToInsertRow();
+				}
+			});
+			table.configure();
+			return;
+		}		
+		
 		dataProvider = new DataProvider();
 		headingProvider = new HeadingProvider();
 
@@ -918,6 +947,13 @@ public class Grid extends Composite {
 		};
 	}
 
+	public void setTuples(Tuples tuples) {
+		if (table != null)
+			table.dispose();
+		this.tuples = tuples;
+		init();
+	}
+	
 	public void export() {
 		ExportCommand cmd = new ExportCommand(table.getConfigRegistry(), table.getShell());
 		table.doCommand(cmd);
@@ -970,27 +1006,6 @@ public class Grid extends Composite {
 		return false;
 	}
 
-	protected Tuples obtainTuples() {
-//		return connection.getTuples(filterSorterSource.getFilterSorter().getQuery());
-		Heading heading = new Heading();
-		heading.add("blah", String.class);
-		heading.add("blat", Integer.class);
-
-		Tuples tuples = new Tuples(heading);
-		
-		Tuple t1 = new Tuple(heading);
-		t1.setAttributeValue("blah", "blah");
-		t1.setAttributeValue("blat", 3);
-		tuples.add(t1);
-
-		Tuple t2 = new Tuple(heading);
-		t1.setAttributeValue("blah", "zot");
-		t1.setAttributeValue("blat", 4);
-		tuples.add(t2);
-		
-		return tuples;
-	}
-
 	public void goToInsertRow() {
 		if (table.commitAndCloseActiveCellEditor()) {
 			table.setFocus();
@@ -1026,6 +1041,5 @@ public class Grid extends Composite {
 		} else
 			doDeleteSelected();
 	}
-	
 	
 }

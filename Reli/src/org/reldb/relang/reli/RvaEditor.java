@@ -23,8 +23,8 @@ public class RvaEditor extends Grid {
 
 	public void setRVAValue(String rvaValue) {
 		this.rvaValue = rvaValue;
-		tuples = obtainTuples();
-		init();
+	//	tuples = obtainTuples();
+	//	init();
 	}
 
 }
