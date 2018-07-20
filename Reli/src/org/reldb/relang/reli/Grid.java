@@ -97,10 +97,10 @@ public class Grid extends Composite {
 	}
 
 	private Tuples tuples = new Tuples(new Heading());	
-	private DataProvider dataProvider;
 	
 	private NatTable table;
 
+	private DataProvider dataProvider;
 	private HeadingProvider headingProvider;
 	private DefaultGridLayer gridLayer;
 
@@ -325,6 +325,34 @@ public class Grid extends Composite {
 			});
 		}
 
+		private String getTupleDefinitionFor(Row row) {
+			/*
+			String insertAttributes = "";
+			for (int column = 0; column < heading.length; column++) {
+				if (insertAttributes.length() > 0)
+					insertAttributes += ", ";
+				String attributeType = heading[column].getType().toString();
+				Object attributeValueRaw = row.getColumnValue(column);
+				String attributeValue = "";
+				if (attributeValueRaw != null)
+					attributeValue = attributeValueRaw.toString();
+				else if (attributeType.equals("BOOLEAN"))
+					attributeValue = "False";
+				else if (attributeType.equals("RATIONAL"))
+					attributeValue = "0.0";
+				else if (attributeType.equals("INTEGER"))
+					attributeValue = "0";
+				row.setColumnValue(column, attributeValue);
+				if (attributeType.equals("CHARACTER"))
+					attributeValue = "'" + StringUtils.quote(attributeValue) + "'";
+				String attributeName = heading[column].getName();
+				insertAttributes += attributeName + " " + attributeValue;
+			}
+			return "TUPLE {" + insertAttributes + "}";
+			*/
+			return null;
+		}
+
 		private synchronized void updateRow(Row row, int rownum) {
 			/*
 			if (relvarName == null) {
@@ -364,34 +392,6 @@ public class Grid extends Composite {
 				*/
 
 			refreshAfterUpdate();
-		}
-
-		private String getTupleDefinitionFor(Row row) {
-			/*
-			String insertAttributes = "";
-			for (int column = 0; column < heading.length; column++) {
-				if (insertAttributes.length() > 0)
-					insertAttributes += ", ";
-				String attributeType = heading[column].getType().toString();
-				Object attributeValueRaw = row.getColumnValue(column);
-				String attributeValue = "";
-				if (attributeValueRaw != null)
-					attributeValue = attributeValueRaw.toString();
-				else if (attributeType.equals("BOOLEAN"))
-					attributeValue = "False";
-				else if (attributeType.equals("RATIONAL"))
-					attributeValue = "0.0";
-				else if (attributeType.equals("INTEGER"))
-					attributeValue = "0";
-				row.setColumnValue(column, attributeValue);
-				if (attributeType.equals("CHARACTER"))
-					attributeValue = "'" + StringUtils.quote(attributeValue) + "'";
-				String attributeName = heading[column].getName();
-				insertAttributes += attributeName + " " + attributeValue;
-			}
-			return "TUPLE {" + insertAttributes + "}";
-			*/
-			return null;
 		}
 
 		private synchronized void insertRow(Row row, int rownum) {
