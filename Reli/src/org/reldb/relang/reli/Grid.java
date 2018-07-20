@@ -134,14 +134,17 @@ public class Grid extends Composite {
 	class HeadingProvider implements IDataProvider {
 		@Override
 		public Object getDataValue(int columnIndex, int rowIndex) {
-			switch (rowIndex) {
-			case 0:
-				return getAttributeNameAt(columnIndex);
-			case 1:
-				return getAttributeTypeAt(columnIndex).toString();
-			default:
-				return "";
-			}
+			if (columnIndex == Grid.this.getColumnCount())
+				return (rowIndex == 0) ? "+" : "";
+			else
+				switch (rowIndex) {
+				case 0:
+					return getAttributeNameAt(columnIndex);
+				case 1:
+					return getAttributeTypeAt(columnIndex).toString();
+				default:
+					return "";
+				}
 		}
 
 		@Override
@@ -151,7 +154,7 @@ public class Grid extends Composite {
 
 		@Override
 		public int getColumnCount() {
-			return Grid.this.getColumnCount();
+			return Grid.this.getColumnCount() + 1;
 		}
 
 		@Override
@@ -182,7 +185,7 @@ public class Grid extends Composite {
 			reset();
 			action = RowAction.INSERT;
 		}
-
+		
 		Object getOriginalColumnValue(int column) {
 			return originalData.get(column);
 		}
@@ -291,6 +294,14 @@ public class Grid extends Composite {
 		public void setDataValue(int columnIndex, int rowIndex, Object newValue) {
 			if (newValue != null && newValue.toString().length() == 0)
 				newValue = null;
+			if (columnIndex >= getColumnCount()) {
+				tuples.extend("New Name", newValue);
+				if (rowIndex == rows.size() - 1)
+					rows.add(new Row());
+				table.redraw();
+				processRows.add(rowIndex);
+				return;
+			}
 			if (getDataValue(columnIndex, rowIndex) == null && newValue == null)
 				return;
 			if (getDataValue(columnIndex, rowIndex) != null && newValue != null)
@@ -310,7 +321,7 @@ public class Grid extends Composite {
 
 		@Override
 		public int getColumnCount() {
-			return Grid.this.getColumnCount();
+			return Grid.this.getColumnCount() + 1;
 		}
 
 		@Override
@@ -803,12 +814,16 @@ public class Grid extends Composite {
 			@Override
 			public void accumulateConfigLabels(LabelStack configLabels, int columnPosition, int rowPosition) {
 				configLabels.addLabel("column" + columnPosition);
+				// add column?
+				if (columnPosition >= getColumnCount())
+					configLabels.addLabel("addColumn");
 				// error?
-				if (dataProvider.getError(rowPosition) != null)
+				else if (dataProvider.getError(rowPosition) != null)
 					configLabels.addLabel("error");
 				// changed?
 				else if (dataProvider.isChanged(columnPosition, rowPosition))
 					configLabels.addLabel("changed");
+				// RVA?
 				else if (dataProvider.isRVA(columnPosition))
 					configLabels.addLabel("RVAeditor");
 			}

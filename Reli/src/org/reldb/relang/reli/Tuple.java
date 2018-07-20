@@ -34,5 +34,9 @@ public class Tuple {
 				.collect(Collectors.joining(", "));
 		return "TUPLE {" + tuples + "}";
 	}
+
+	void extend(Object newValue) {
+		if ()
+	}
 	
 }

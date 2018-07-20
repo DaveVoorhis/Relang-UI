@@ -13,7 +13,7 @@ public class Tuples implements Iterable<Tuple>{
 
 	void add(Tuple tuple) {
 		if (tuple.getHeading() != heading)
-			throw new InvalidValueException("ERROR: Tuples: Attempt to add a tuple with heading " + tuple.getHeading() + " which doesn't match Tuples heading " + heading);
+			throw new InvalidValueException("ERROR: Tuples: Attempt to add a Tuple with Heading " + tuple.getHeading() + " which isn't the Tuples Heading " + heading);
 		tuples.add(tuple);
 	}
 	
@@ -30,6 +30,13 @@ public class Tuples implements Iterable<Tuple>{
 
 	public Iterator<Tuple> iterator() {
 		return tuples.iterator();
+	}
+
+	// Grow every tuple by one attribute.
+	public void extend(String attributeName, Object newValue) {
+		heading.add(attributeName, newValue.getClass());
+		for (Tuple tuple: tuples)
+			tuple.extend(newValue);
 	}
 	
 }
