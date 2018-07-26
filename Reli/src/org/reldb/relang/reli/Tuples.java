@@ -34,9 +34,16 @@ public class Tuples implements Iterable<Tuple>{
 
 	// Grow every tuple by one attribute.
 	public void extend(String attributeName, Object newValue) {
-		heading.add(attributeName, newValue.getClass());
-		for (Tuple tuple: tuples)
+		if (newValue != null)
+			heading.add(attributeName, newValue.getClass());
+		else
+			heading.add(attributeName,  String.class);
+		/*
+		for (Tuple tuple: tuples) {
+			tuples.
 			tuple.extend(newValue);
+		}
+		*/
 	}
 	
 }

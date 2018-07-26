@@ -35,6 +35,7 @@ import org.eclipse.nebula.widgets.nattable.extension.poi.HSSFExcelExporter;
 import org.eclipse.nebula.widgets.nattable.grid.GridRegion;
 import org.eclipse.nebula.widgets.nattable.grid.layer.DefaultGridLayer;
 import org.eclipse.nebula.widgets.nattable.layer.DataLayer;
+import org.eclipse.nebula.widgets.nattable.command.StructuralRefreshCommand;
 import org.eclipse.nebula.widgets.nattable.layer.ILayerListener;
 import org.eclipse.nebula.widgets.nattable.layer.LabelStack;
 import org.eclipse.nebula.widgets.nattable.layer.LayerUtil;
@@ -67,6 +68,7 @@ import org.eclipse.nebula.widgets.nattable.ui.menu.PopupMenuBuilder;
 import org.eclipse.nebula.widgets.nattable.ui.util.CellEdgeEnum;
 import org.eclipse.nebula.widgets.nattable.util.GCFactory;
 import org.eclipse.nebula.widgets.nattable.util.GUIHelper;
+import org.eclipse.nebula.widgets.nattable.viewport.command.ShowColumnInViewportCommand;
 import org.eclipse.nebula.widgets.nattable.viewport.command.ShowRowInViewportCommand;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.PaintEvent;
@@ -292,13 +294,36 @@ public class Grid extends Composite {
 
 		@Override
 		public void setDataValue(int columnIndex, int rowIndex, Object newValue) {
+			System.out.println("Grid: setDataValue at " + columnIndex + ", " + rowIndex + " with " + ((newValue == null) ? "null" : newValue.toString()));
 			if (newValue != null && newValue.toString().length() == 0)
 				newValue = null;
-			if (columnIndex >= getColumnCount()) {
-				tuples.extend("New Name", newValue);
-				if (rowIndex == rows.size() - 1)
-					rows.add(new Row());
-				table.redraw();
+			if (columnIndex >= getColumnCount() - 1) {
+				System.out.println("Grid: setDataValue in last column. getColumnCount() == " + getColumnCount() + " before extend()");
+				String newName = "A";
+				while (getHeading().hasAttribute(newName)) {
+					char newLastChar = (char) (newName.charAt(newName.length() - 1) + 1);
+					if (newLastChar > 'Z') {
+						newLastChar = 'A';
+						newName = newName + newLastChar;
+					}
+					newName = newName.substring(0, newName.length() - 1) + newLastChar;
+				}
+				if (newValue != null) {
+					tuples.extend(newName, newValue);
+					System.out.println("Grid: getColumnCount() == " + getColumnCount() + " after extend()");
+					if (rowIndex == rows.size() - 1)
+						rows.add(new Row());
+					
+					// add column command here?
+					table.doCommand(new StructuralRefreshCommand());
+					// reselect active cell
+					if (gridLayer != null && dataProvider != null) {
+						table.doCommand(new ShowRowInViewportCommand(gridLayer.getBodyLayer().getViewportLayer(), rowIndex));
+						table.doCommand(new ShowColumnInViewportCommand(gridLayer.getBodyLayer().getViewportLayer(), columnIndex));
+						table.doCommand(new SelectCellCommand(gridLayer.getBodyLayer().getSelectionLayer(), columnIndex, rowIndex, true, true));
+					}
+				}
+				
 				processRows.add(rowIndex);
 				return;
 			}
