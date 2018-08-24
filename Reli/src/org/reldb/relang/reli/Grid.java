@@ -98,7 +98,9 @@ public class Grid extends Composite {
 		init();
 	}
 
-	private Tuples tuples = new Tuples(new Heading());	
+//	private Tuples tuples = new Tuples(new Heading());	
+
+	private GridData data;
 	
 	private NatTable table;
 
@@ -117,20 +119,16 @@ public class Grid extends Composite {
 	protected boolean askDeleteConfirm = true;	
 	protected Vector<HashSet<String>> keys = null;
 	
-	private Heading getHeading() {
-		return tuples.getHeading();
-	}
-	
 	private String getAttributeNameAt(int columnIndex) {
-		return getHeading().getAttributeNameAt(columnIndex);
+		return data.getName(columnIndex);
 	}
 	
 	private Class<?> getAttributeTypeAt(int columnIndex) {
-		return getHeading().getAttributeTypeAt(columnIndex);
+		return data.getType(columnIndex);
 	}
 	
 	private int getColumnCount() {
-		return getHeading().getCardinality();
+		return data.getCardinality();
 	}
 	
 	class HeadingProvider implements IDataProvider {
@@ -166,7 +164,7 @@ public class Grid extends Composite {
 		}
 	};
 
-	class Row {
+	private class Row {
 		private HashMap<Integer, Object> originalData;
 		private HashMap<Integer, Object> newData;
 		private String error;
@@ -251,8 +249,8 @@ public class Grid extends Composite {
 
 	class DataProvider implements IDataProvider {
 
-		private HashSet<Integer> processRows = new HashSet<Integer>();
-		private Vector<Row> rows = new Vector<Row>();
+	//	private HashSet<Integer> processRows = new HashSet<Integer>();
+	//	private Vector<Row> rows = new Vector<Row>();
 		private String headingString;
 
 		public DataProvider() {
@@ -261,37 +259,35 @@ public class Grid extends Composite {
 		}
 
 		public void reload() {
-			rows.clear();
-			Iterator<Tuple> iterator = tuples.iterator();
-			while (iterator.hasNext())
-				rows.add(new Row(iterator.next()));
-			rows.add(new Row());
-			processRows.clear();
+//			rows.clear();
+//			Iterator<Tuple> iterator = tuples.iterator();
+//			while (iterator.hasNext())
+//				rows.add(new Row(iterator.next()));
+//			rows.add(new Row());
+//			processRows.clear();
 		}
 
 		public String getError(int row) {
-			if (row >= rows.size())
-				return null;
-			return rows.get(row).getError();
+			return data.getError(row);
 		}
 
 		public boolean isChanged(int columnIndex, int rowIndex) {
-			return rows.get(rowIndex).isChanged(columnIndex);
+			return data.isChanged(columnIndex, rowIndex);
 		}
 
 		@Override
 		public Object getDataValue(int columnIndex, int rowIndex) {
-			return rows.get(rowIndex).getColumnValue(columnIndex);
+			return data.getValue(columnIndex, rowIndex);
 		}
-
+/*
 		private int getCountOfInsertErrors() {
 			int count = 0;
 			for (int row : processRows)
-				if (rows.get(row).getError() != null && rows.get(row).getAction() == RowAction.INSERT)
+				if (getError(row) != null && data.getAction(row) == RowAction.INSERT)
 					count++;
 			return count;
 		}
-
+*/
 		@Override
 		public void setDataValue(int columnIndex, int rowIndex, Object newValue) {
 			System.out.println("Grid: setDataValue at " + columnIndex + ", " + rowIndex + " with " + ((newValue == null) ? "null" : newValue.toString()));
@@ -300,7 +296,7 @@ public class Grid extends Composite {
 			if (columnIndex >= getColumnCount() - 1) {
 				System.out.println("Grid: setDataValue in last column. getColumnCount() == " + getColumnCount() + " before extend()");
 				String newName = "A";
-				while (getHeading().hasAttribute(newName)) {
+				while (data.hasName(newName)) {
 					char newLastChar = (char) (newName.charAt(newName.length() - 1) + 1);
 					if (newLastChar > 'Z') {
 						newLastChar = 'A';
@@ -309,11 +305,6 @@ public class Grid extends Composite {
 					newName = newName.substring(0, newName.length() - 1) + newLastChar;
 				}
 				if (newValue != null) {
-					tuples.extend(newName, newValue);
-					System.out.println("Grid: getColumnCount() == " + getColumnCount() + " after extend()");
-					if (rowIndex == rows.size() - 1)
-						rows.add(new Row());
-					
 					// add column command here?
 					table.doCommand(new StructuralRefreshCommand());
 					// reselect active cell
@@ -324,24 +315,20 @@ public class Grid extends Composite {
 					}
 				}
 				
-				processRows.add(rowIndex);
-				return;
+	//			processRows.add(rowIndex);
+	//			return;
 			}
-			if (getDataValue(columnIndex, rowIndex) == null && newValue == null)
-				return;
-			if (getDataValue(columnIndex, rowIndex) != null && newValue != null)
-				if (newValue.toString().equals(getDataValue(columnIndex, rowIndex).toString()))
-					return;
-			if (newValue == null)
-				rows.get(rowIndex).setColumnValue(columnIndex, newValue);
+			data.setValue(columnIndex, rowIndex, newValue);
+			/*
 			else
 				rows.get(rowIndex).setColumnValue(columnIndex, newValue.toString());
-			processRows.add(rowIndex);
+			// processRows.add(rowIndex);
 			int lastRowIndex = rows.size() - 1;
 			if (rowIndex == lastRowIndex && getCountOfInsertErrors() == 0) {
 				rows.add(new Row());
 				table.redraw();
 			}
+			*/
 		}
 
 		@Override
@@ -351,7 +338,7 @@ public class Grid extends Composite {
 
 		@Override
 		public int getRowCount() {
-			return rows.size();
+			return data.getDegree();
 		}
 
 		private void refreshAfterUpdate() {
@@ -388,48 +375,21 @@ public class Grid extends Composite {
 			*/
 			return null;
 		}
-
+/*
 		private synchronized void updateRow(Row row, int rownum) {
-			/*
-			if (relvarName == null) {
-				row.committed();
-				processRows.remove(rownum);
-			} else {
-				String keyspec = getKeySelectionExpression(rownum);
-				String updateQuery = "UPDATE " + relvarName + ((keyspec.length() > 0) ? " WHERE " + keyspec : "")
-						+ ": {";
-				String updateAttributes = "";
-				for (int column = 0; column < heading.length; column++) {
-					if (row.isChanged(column)) {
-						if (updateAttributes.length() > 0)
-							updateAttributes += ", ";
-						String attributeType = heading[column].getType().toString();
-						String attributeValue = row.getColumnValue(column).toString();
-						if (attributeType.equals("CHARACTER"))
-							attributeValue = "'" + StringUtils.quote(attributeValue) + "'";
-						String attributeName = heading[column].getName();
-						updateAttributes += attributeName + " := " + attributeValue;
-					}
-				}
-				updateQuery += updateAttributes + "};";
-
-				System.out.println("RelvarEditor: query is " + updateQuery);
-
-				ExecuteResult result = connection.execute(updateQuery);
-
-				if (result.failed())
-					row.setError("Unable to update tuples.\n\nQuery: " + updateQuery + " failed:\n\n"
-							+ result.getErrorMessage());
-				else {
-					row.committed();
-					processRows.remove(rownum);
-				}
-			}
-				*/
-
+			Heading heading = tuples.getHeading();
+			Tuple newTuple = new Tuple(heading);
+			for (int column = 0; column < heading.getCardinality(); column++) {
+				String attributeName = heading.getAttributeNameAt(column);
+				Object attributeValue = row.getColumnValue(column);
+				newTuple.setAttributeValue(attributeName, attributeValue);
+			}		
+			tuples.replace(rownum, newTuple);
+			row.committed();
+			processRows.remove(rownum);
 			refreshAfterUpdate();
 		}
-
+*/
 		private synchronized void insertRow(Row row, int rownum) {
 			/*
 			if (relvarName == null) {
@@ -490,6 +450,7 @@ public class Grid extends Composite {
 		}
 
 		public void processDirtyRows() {
+			/*
 			for (Integer rownum : processRows.toArray(new Integer[0]))
 				if (rownum != lastRowSelected) {
 					Row row = rows.get(rownum);
@@ -503,10 +464,12 @@ public class Grid extends Composite {
 							break;
 						}
 				}
+				*/
 		}
 
 		public int countDirtyRows() {
-			return processRows.size();
+//			return processRows.size();
+			return 0;
 		}
 
 		public boolean isRVA(int columnIndex) {
@@ -520,10 +483,13 @@ public class Grid extends Composite {
 		}
 
 		public String getLiteral() {
+			/*
 			String body = "";
 			for (int rownum = 0; rownum < rows.size() - 1; rownum++)
 				body += ((body.length() > 0) ? "," : "") + "\n\t" + getTupleDefinitionFor(rows.get(rownum));
 			return headingString + " {" + body + "}";
+			*/
+			return "";
 		}
 	};
 
@@ -1003,10 +969,10 @@ public class Grid extends Composite {
 		};
 	}
 
-	public void setTuples(Tuples tuples) {
+	public void setData(GridData data) {
 		if (table != null)
 			table.dispose();
-		this.tuples = tuples;
+		this.data = data;
 		init();
 	}
 	

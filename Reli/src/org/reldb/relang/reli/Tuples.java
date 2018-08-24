@@ -16,6 +16,13 @@ public class Tuples implements Iterable<Tuple>{
 			throw new InvalidValueException("ERROR: Tuples: Attempt to add a Tuple with Heading " + tuple.getHeading() + " which isn't the Tuples Heading " + heading);
 		tuples.add(tuple);
 	}
+
+	void replace(int index, Tuple tuple) {
+		if (tuple.getHeading() != heading)
+			throw new InvalidValueException("ERROR: Tuples: Attempt to replace a Tuple with Heading " + tuple.getHeading() + " which isn't the Tuples Heading " + heading);
+		tuples.remove(index);
+		tuples.add(index, tuple);
+	}
 	
 	public Heading getHeading() {
 		return heading;

@@ -21,6 +21,7 @@ public class Tuple {
 	}
 
 	public void setAttributeValue(String name, Object value) {
+		System.out.println("Tuple: setAttributeValue for " + name + " to " + value);
 		if (!heading.hasAttribute(name))
 			throw new InvalidValueException("ERROR: Tuple: tuple with heading " + heading + " doesn't have an attribute named " + name);
 		if (heading.typeOf(name) != value.getClass())

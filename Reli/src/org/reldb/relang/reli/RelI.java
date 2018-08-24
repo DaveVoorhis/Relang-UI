@@ -144,7 +144,7 @@ public class RelI {
 			}
 		
 			Grid grid = new Grid(newGridShell);			
-			grid.setTuples(tuples);
+	//		grid.setTuples(tuples);
 			
 			newGridShell.open();
 		});
