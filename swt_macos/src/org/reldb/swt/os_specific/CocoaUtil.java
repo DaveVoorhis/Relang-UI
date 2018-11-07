@@ -98,9 +98,9 @@ public class CocoaUtil {
 
 	public static Object wrapPointer(long value) {
 		if (PTR_CLASS == long.class)
-			return new Long(value);
+			return Long.valueOf(value);
 		else
-			return new Integer((int) value);
+			return Integer.valueOf((int) value);
 	}
 
 	// The following methods reflectively call corresponding methods in the OS
@@ -129,13 +129,13 @@ public class CocoaUtil {
 			method = clazz.getMethod("object_getInstanceVariable", new Class[] { long.class,
 					byte[].class, long[].class });
 			long[] resultPtr = new long[1];
-			method.invoke(null, new Object[] { new Long(delegateId), name, resultPtr });
+			method.invoke(null, new Object[] { Long.valueOf(delegateId), name, resultPtr });
 			return resultPtr;
 		} else {
 			method = clazz.getMethod("object_getInstanceVariable", new Class[] { int.class,
 					byte[].class, int[].class });
 			int[] resultPtr = new int[1];
-			method.invoke(null, new Object[] { new Integer((int) delegateId), name, resultPtr });
+			method.invoke(null, new Object[] { Integer.valueOf((int) delegateId), name, resultPtr });
 			return new long[] { resultPtr[0] };
 		}
 	}

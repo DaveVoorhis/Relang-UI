@@ -79,7 +79,7 @@ public class CocoaUIEnhancer extends CocoaUtil {
 
 		long cls = convertToLong(object);
 
-		args = makeArgs(wrapPointer(cls), SWT_OBJECT, wrapPointer(size), new Byte((byte) align), types);
+		args = makeArgs(wrapPointer(cls), SWT_OBJECT, wrapPointer(size), Byte.valueOf((byte) align), types);
 		invokeMethod(OS.class, "class_addIvar", args);
 
 		// Add the action callback
