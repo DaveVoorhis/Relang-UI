@@ -21,6 +21,10 @@ public class OSSpecific {
 	}
 
 	public static void addFileMenuItems(Menu menu) {
+		new MenuItem(menu, SWT.SEPARATOR);
+		MenuItem preferences = new MenuItem(menu, SWT.PUSH);
+		preferences.setText("Preferences...");
+		preferences.addListener(SWT.Selection, preferencesListener);
 		MenuItem exit = new MenuItem(menu, SWT.PUSH);
 		exit.setText("Exit " + appName);
 		exit.addListener(SWT.Selection, exitListener);
@@ -30,8 +34,6 @@ public class OSSpecific {
 		MenuItem about = new MenuItem(menu, SWT.PUSH);
 		about.setText("About " + appName);
 		about.addListener(SWT.Selection, aboutListener);
-		MenuItem preferences = new MenuItem(menu, SWT.PUSH);
-		preferences.setText("Preferences...");
-		preferences.addListener(SWT.Selection, preferencesListener);
 	}
+	
 }
