@@ -1,1 +1,0 @@
-java -splash:lib/Splash.png -cp "lib/*:lib/linux_64/*" RelI

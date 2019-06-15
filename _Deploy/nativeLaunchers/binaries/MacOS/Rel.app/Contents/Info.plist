@@ -1,0 +1,64 @@
+<?xml version="1.0"?>
+<plist version="1.0">
+
+<dict>
+	<key>CFBundleExecutable</key>
+		<string>Rel</string>
+	<key>CFBundleGetInfoString</key>
+		<string>Rel for Mac OS X, Copyright reldb.org 2004 - 2018. All rights reserved.</string>
+	<key>CFBundleIconFile</key>
+		<string>RelAppIcon.icns</string>
+	<key>CFBundleIdentifier</key>
+		<string>Rel</string>
+	<key>CFBundleInfoDictionaryVersion</key>
+		<string>6.0</string>
+	<key>CFBundleName</key>
+		<string>Rel</string>
+	<key>CFBundlePackageType</key>
+		<string>APPL</string>
+	<key>CFBundleShortVersionString</key>
+		<string>3</string>
+	<key>CFBundleSignature</key>
+		<string>????</string>
+	<key>CFBundleVersion</key>
+		<string>3</string>
+	<key>NSHighResolutionCapable</key>
+		<true/>
+	<key>CFBundleDevelopmentRegion</key>
+		<string>English</string>		
+	<key>CFBundleDisplayName</key>
+	    <string>Rel</string>
+	<key>CFBundleDocumentTypes</key> 
+		<array>
+		    <dict>
+		        <key>CFBundleTypeName</key>
+		        	<string>Rel database</string>
+		        <key>CFBundleTypeExtensions</key>
+		        	<array>
+		        		<string>rdb</string>
+		        	</array>
+		        <key>CFBundleTypeIconFile</key>
+		        	<string>RelAppIcon.icns</string>
+		        <key>CFBundleTypeRole</key>
+		        	<string>Editor</string>
+		        <key>LSHandlerRank</key>
+		        	<string>Owner</string>
+		    </dict>
+		    <dict>
+		        <key>CFBundleTypeName</key>
+		        	<string>Rel script</string>
+		        <key>CFBundleTypeExtensions</key>
+		        	<array>
+		        		<string>rel</string>
+		        	</array>
+		        <key>CFBundleTypeIconFile</key>
+		        	<string>RelAppIcon.icns</string>
+		        <key>CFBundleTypeRole</key>
+		        	<string>Editor</string>
+		        <key>LSHandlerRank</key>
+		        	<string>Owner</string>
+		    </dict>
+	    </array>
+</dict>
+
+</plist>
