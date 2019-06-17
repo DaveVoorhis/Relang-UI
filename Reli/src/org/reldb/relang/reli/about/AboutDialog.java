@@ -1,4 +1,4 @@
-package org.reldb.relang.reli;
+package org.reldb.relang.reli.about;
 
 import org.eclipse.swt.graphics.Cursor;
 import org.eclipse.swt.graphics.GC;
@@ -12,6 +12,7 @@ import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.SWT;
 import org.eclipse.wb.swt.SWTResourceManager;
+import org.reldb.relang.reli.IconLoader;
 import org.reldb.relang.reli.version.Version;
 
 public class AboutDialog extends Dialog {

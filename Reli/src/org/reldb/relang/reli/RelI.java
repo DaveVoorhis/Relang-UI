@@ -23,6 +23,7 @@ import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.widgets.*;
 import org.eclipse.wb.swt.SWTResourceManager;
+import org.reldb.relang.reli.about.AboutDialog;
 import org.reldb.relang.reli.commands.AcceleratedMenuItem;
 import org.reldb.relang.reli.commands.Commands;
 import org.reldb.relang.reli.core.Datasheet;
@@ -30,7 +31,11 @@ import org.reldb.relang.reli.core.Grid;
 import org.reldb.relang.reli.core.Heading;
 import org.reldb.relang.reli.core.Tuple;
 import org.reldb.relang.reli.core.Tuples;
+import org.reldb.relang.reli.feedback.BugReportDialog;
+import org.reldb.relang.reli.feedback.SuggestionboxDialog;
+import org.reldb.relang.reli.log.LogWin;
 import org.reldb.relang.reli.preferences.Preferences;
+import org.reldb.relang.reli.updates.UpdatesCheckDialog;
 import org.reldb.relang.reli.version.Version;
 import org.reldb.swt.os_specific.OSSpecific;
 
@@ -309,7 +314,21 @@ public class RelI {
 		});
 	}
 	
-	static void createHelpMenu(Menu bar) {
+	private static void createToolMenu(Menu bar) {
+		MenuItem toolsItem = new MenuItem(bar, SWT.CASCADE);
+		toolsItem.setText("Tools");
+		
+		Menu menu = new Menu(toolsItem);
+		toolsItem.setMenu(menu);
+		
+		new AcceleratedMenuItem(menu, "View log", 0, e -> LogWin.open());
+		new MenuItem(menu, SWT.SEPARATOR);
+		new AcceleratedMenuItem(menu, "Submit Feedback", 0, "ButterflyIcon", e -> SuggestionboxDialog.launch(shell));
+		new AcceleratedMenuItem(menu, "Bug Report", 0, "BugIcon", e -> BugReportDialog.launch(shell));
+		new AcceleratedMenuItem(menu, "Check for Updates", 0, e -> UpdatesCheckDialog.launch(shell));
+	}
+	
+	private static void createHelpMenu(Menu bar) {
 		MenuItem helpItem = new MenuItem(bar, SWT.CASCADE);
 		helpItem.setText("Help");
 		
@@ -328,11 +347,11 @@ public class RelI {
 
 		// Populate the menu bar once if this is a screen menu bar.
 		// Otherwise, we need to make a new menu bar for each shell.
-		if (!createdScreenBar || !hasAppMenuBar) {
-			
+		if (!createdScreenBar || !hasAppMenuBar) {			
 			createFileMenu(bar);
 			createEditMenu(bar);
 			createDataMenu(bar);
+			createToolMenu(bar);
 			createHelpMenu(bar);
 			
 			if (!hasAppMenuBar) 
@@ -465,11 +484,14 @@ public class RelI {
 		shell.setImages(loadIcons(display));
 		shell.setText(Version.getAppID());
 		shell.addListener(SWT.Close, e -> {
+			LogWin.remove();
 			shell.dispose();
 		});
 		shell.addDisposeListener(e -> quit());
 		shell.layout();
 
+		LogWin.install(shell);
+		
 		Loading.start();
 		
 		Thread.setDefaultUncaughtExceptionHandler(new Thread.UncaughtExceptionHandler() {

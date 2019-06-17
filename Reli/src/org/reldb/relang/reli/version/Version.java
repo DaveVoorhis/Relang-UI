@@ -49,6 +49,14 @@ public class Version {
 	public static String getURL() {
 		return "https://reldb.org";
 	}
+	
+	public static String getReportLogURL() {
+	    return "http://reldb.org/feedback/";		
+	}
+	
+	public static String getUpdateURL() {
+		return "http://reldb.org/updates/";
+	}
 
 	public static String getSplashName() {
 		return "splash";
