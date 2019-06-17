@@ -8,8 +8,6 @@ import java.util.Set;
 import java.util.Vector;
 import java.util.Map.Entry;
 
-import org.reldb.relang.reli.MenuConfiguration;
-
 import org.eclipse.jface.action.ContributionItem;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.window.DefaultToolTip;

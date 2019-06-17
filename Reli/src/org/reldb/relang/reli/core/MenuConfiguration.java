@@ -1,4 +1,4 @@
-package org.reldb.relang.reli;
+package org.reldb.relang.reli.core;
 
 import org.eclipse.nebula.widgets.nattable.config.AbstractUiBindingConfiguration;
 import org.eclipse.nebula.widgets.nattable.ui.binding.UiBindingRegistry;
