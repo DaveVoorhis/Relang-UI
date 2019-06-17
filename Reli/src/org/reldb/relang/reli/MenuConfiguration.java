@@ -9,7 +9,7 @@ import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Menu;
 
 // IConfiguration for registering a UI binding to open a menu
-class MenuConfiguration extends AbstractUiBindingConfiguration {
+public class MenuConfiguration extends AbstractUiBindingConfiguration {
     private final Menu menu;
     private final String gridRegion;
  

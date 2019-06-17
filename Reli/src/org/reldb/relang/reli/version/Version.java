@@ -6,24 +6,52 @@ public class Version {
 		return "RelI";	
 	}
 	
-	public static int getVersionNumber() {
-		return 1;
+	public static float getVersionNumber() {
+		return 1.0F;
 	}
 
 	public static String getAppID() {
 		return getAppName() + " " + getVersionNumber();
 	}
 
+	public static String getResourcePath() {
+		return "org/reldb/relang/reli/resources/";	
+	}
+	
+	public static String getResourceDirectory() {
+		return "/" + getResourcePath();
+	}
+	
 	public static String[] getIconsPaths() {
 		return new String[] {
-			"org/reldb/relang/reli/resources/Candle16.png",
-			"org/reldb/relang/reli/resources/Candle32.png",
-			"org/reldb/relang/reli/resources/Candle64.png",
-			"org/reldb/relang/reli/resources/Candle128.png",
-			"org/reldb/relang/reli/resources/Candle256.png",
-			"org/reldb/relang/reli/resources/Candle512.png",
-			"org/reldb/relang/reli/resources/Candle1024.png",
+			getResourcePath() + "Candle16.png",
+			getResourcePath() + "Candle32.png",
+			getResourcePath() + "Candle64.png",
+			getResourcePath() + "Candle128.png",
+			getResourcePath() + "Candle256.png",
+			getResourcePath() + "Candle512.png",
+			getResourcePath() + "Candle1024.png",
 		};
+	}
+
+	public static String getPreferencesRepositoryName() {
+		return ".reli";
+	}
+
+	public static String getVersion() {
+		return String.format("Version %.3f", getVersionNumber());
+	}
+
+	public static String getCopyright() {
+		return "Copyright 2019 Dave Voorhis and RelDB.org";
+	}
+	
+	public static String getURL() {
+		return "https://reldb.org";
+	}
+
+	public static String getSplashName() {
+		return "splash";
 	}
 	
 }

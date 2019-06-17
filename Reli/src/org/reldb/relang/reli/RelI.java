@@ -1,5 +1,8 @@
 package org.reldb.relang.reli;
 
+import java.awt.Color;
+import java.awt.Graphics2D;
+import java.awt.Rectangle;
 import java.awt.SplashScreen;
 import java.io.IOException;
 import java.io.InputStream;
@@ -10,11 +13,19 @@ import java.util.Timer;
 import java.util.TimerTask;
 import java.util.concurrent.Semaphore;
 
-import org.eclipse.swt.*;
+import org.eclipse.jface.dialogs.MessageDialog;
+import org.eclipse.jface.util.Util;
+import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.widgets.*;
-import org.eclipse.wb.swt.ResourceManager;
+import org.eclipse.wb.swt.SWTResourceManager;
+import org.reldb.relang.reli.core.Datasheet;
+import org.reldb.relang.reli.core.Grid;
+import org.reldb.relang.reli.core.Heading;
+import org.reldb.relang.reli.core.Tuple;
+import org.reldb.relang.reli.core.Tuples;
+import org.reldb.relang.reli.preferences.Preferences;
 import org.reldb.relang.reli.version.Version;
 import org.reldb.swt.os_specific.OSSpecific;
 
@@ -22,23 +33,31 @@ public class RelI {
 
 	static boolean createdScreenBar = false;
 	
-	static boolean isMac() {
-		return SWT.getPlatform().equals("cocoa");
-	}
+	static Shell shell = null;
 	
-	static void quit() {
-		Display d = Display.getCurrent();
-		Shell[] shells = d.getShells();
+	private static synchronized void quit() {
+		Display display = Display.getCurrent();
+		Shell[] shells = display.getShells();
+		try {
 		for (Shell shell: shells)
-			shell.close();
-	}
-	
-	static void about() {
-		System.out.println("RelI: about");
-	}
-	
-	static void preferences() {
-		System.out.println("RelI: preferences");
+			if (!shell.isDisposed())
+				shell.close();
+		} catch (Throwable t) {
+			System.out.println("Error trying to close shells: " + t);
+			t.printStackTrace();
+		}
+		try {
+			if (!display.isDisposed()) 
+				display.dispose();
+		} catch (Throwable t) {
+			System.out.println("Error trying to close display: " + t);
+			t.printStackTrace();
+		}
+		try {
+			SWTResourceManager.dispose();
+		} catch (Throwable t) {
+			System.out.println("Error trying to free resources: " + t);
+		}
 	}
 	
 	static void createFileMenu(Menu bar) {	
@@ -104,7 +123,7 @@ public class RelI {
 		
 		createEditMenuItem("undo", new DecoratedMenuItem(menu, "Undo\tCtrl-Z", SWT.MOD1 | 'Z', IconLoader.loadIcon("undo")));
 		
-		int redoAccelerator = SWT.MOD1 | (isMac() ? SWT.SHIFT | 'Z' : 'Y');
+		int redoAccelerator = SWT.MOD1 | (Util.isMac() ? SWT.SHIFT | 'Z' : 'Y');
 		createEditMenuItem("redo", new DecoratedMenuItem(menu, "Redo\tCtrl-Y", redoAccelerator, IconLoader.loadIcon("redo")));
 		
 		new MenuItem(menu, SWT.SEPARATOR);
@@ -189,27 +208,15 @@ public class RelI {
 			createdScreenBar = true;
 		}
 	}
+
+	public static void openFile(String text) {
+		// TODO Auto-generated method stub
+		
+	}
 	
-	static Shell createShell() {
+	private static Shell createShell() {
 		final Shell shell = new Shell(SWT.SHELL_TRIM);
 		createMenuBar(shell);
-		
-		shell.addDisposeListener(e -> {
-			Display display = Display.getCurrent();
-			Menu bar = display.getMenuBar();
-			boolean hasAppMenuBar = (bar != null);
-			Shell[] shells = display.getShells();
-			if (!hasAppMenuBar && shell != null && shell.getMenuBar() != null) {
-				shell.getMenuBar().dispose();
-				if ((shells.length == 1) && (shells[0] == shell)) {
-					if (!display.isDisposed()) 
-						display.dispose();
-				}
-			}
-			if (shells.length <= 1)
-				System.exit(0);		
-		});
-		
 		return shell;
 	}
 
@@ -228,7 +235,7 @@ public class RelI {
 			return false;
 		
 		// Non-MacOS
-		if (!isMac()) {
+		if (!Util.isMac()) {
 			splashInteraction.run();
 			closeSplash();
 			return true;
@@ -272,33 +279,132 @@ public class RelI {
 		return iconImages.toArray(new Image[0]);		
 	}
 	
-	public static void main(String[] args) {
+	private static void launch(String[] args) {
 		Display.setAppName(Version.getAppName());
+		Display.setAppVersion(Version.getAppID());
 		final Display display = new Display();
+		
+		OpenDocumentEventProcessor openDocProcessor = new OpenDocumentEventProcessor();
+		display.addListener(SWT.OpenDocument, openDocProcessor);
+		
+		openDocProcessor.addFilesToOpen(args);		
 
+		if (Util.isMac())
+			executeSplashInteractor(() -> {
+				try {
+					Thread.sleep(300);
+				} catch (InterruptedException e1) {
+				}
+			});
+		
 		OSSpecific.launch(Version.getAppName(),
 			event -> quit(),
-			event -> about(),
-			event -> preferences()
+			event -> new AboutDialog(shell).open(),
+			event -> new Preferences(shell).show()
 		);
-		
-		executeSplashInteractor(() -> {
-			try {
-				Thread.sleep(3000);
-			} catch (InterruptedException e) {
-				e.printStackTrace();
+
+		if (!Util.isMac()) {
+			SplashScreen splash = SplashScreen.getSplashScreen();
+			if (splash != null) {
+				Graphics2D gc = splash.createGraphics();
+				Rectangle rect = splash.getBounds();
+				int barWidth = rect.width - 20;
+				int barHeight = 10;
+				Rectangle progressBarRect = new Rectangle(10, rect.height - 20, barWidth, barHeight);
+				gc.draw3DRect(progressBarRect.x, progressBarRect.y, progressBarRect.width, progressBarRect.height, false);
+				gc.setColor(Color.green);
+				(new Thread(() -> {
+					while (SplashScreen.getSplashScreen() != null) {
+						int percent = Loading.getPercentageOfExpectedMessages();
+						int drawExtent = Math.min(barWidth * percent / 100, barWidth);
+						gc.fillRect(progressBarRect.x, progressBarRect.y, drawExtent, barHeight);
+						splash.update();					
+						try {
+							Thread.sleep(250);
+						} catch (InterruptedException e) {
+						}
+					}							
+				})).start();
 			}
-		});
+		}
 		
-		Shell shell = createShell();
+		shell = createShell();
+		shell.setImage(IconLoader.loadIcon("RelIcon"));
 		shell.setImages(loadIcons(display));
 		shell.setText(Version.getAppID());
-		shell.open();
+		shell.addListener(SWT.Close, e -> {
+			shell.dispose();
+		});
+		shell.addDisposeListener(e -> quit());
+		shell.layout();
 
-		while (!display.isDisposed())
-			if (!display.readAndDispatch())
-				display.sleep();
+		Loading.start();
 		
-		ResourceManager.dispose();
+		Thread.setDefaultUncaughtExceptionHandler(new Thread.UncaughtExceptionHandler() {
+			private int failureCount = 0;
+
+			public void uncaughtException(Thread t, Throwable e) {
+				if (failureCount > 1) {
+					System.err
+							.println("SYSTEM ERROR!  It's gotten even worse.  This is a last-ditch attempt to escape.");
+					failureCount++;
+					Thread.setDefaultUncaughtExceptionHandler(null);
+					System.exit(1);
+					return;
+				}
+				if (failureCount > 0) {
+					System.err.println(
+							"SYSTEM ERROR!  Things have gone so horribly wrong that we can't recover or even pop up a message.  I hope someone sees this...\nShutting down now, if we can.");
+					failureCount++;
+					System.exit(1);
+					return;
+				}
+				failureCount++;
+				if (e instanceof OutOfMemoryError) {
+					System.err.println("Out of memory!");
+					e.printStackTrace();
+					MessageDialog.openError(shell, "OUT OF MEMORY", "Out of memory!  Shutting down NOW!");
+					shell.dispose();
+				} else {
+					System.err.println("Unknown error: " + t);
+					e.printStackTrace();
+					MessageDialog.openError(shell, "Unexpected Error", e.toString());
+					shell.dispose();
+				}
+				System.exit(1);
+			}
+		});
+
+		String[] filesToOpen = openDocProcessor.retrieveFilesToOpen();
+		for (String fname: filesToOpen)
+			openFile(fname);
+		
+		if (!Util.isMac())
+			closeSplash();
+		
+		shell.open();		
+		
+		while (display != null && !display.isDisposed()) {
+			try {
+				if (display != null && !display.readAndDispatch())
+					display.sleep();
+			} catch (Throwable t) {
+				System.out.println(Version.getAppName() + ": Exception: " + t);
+				t.printStackTrace();
+			}
+		}
 	}
+	
+	public static void main(String[] args) {
+		try {
+			launch(args);
+		} catch (Throwable t) {
+			t.printStackTrace();
+			MessageDialog.openError(null, "Launch Failure", "Check the system log for details about:\n\n" + t.toString());
+		} finally {
+			System.exit(0);
+		}
+	}
+	
+	
 }

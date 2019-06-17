@@ -1,46 +1,58 @@
 package org.reldb.relang.reli;
 
-import java.util.prefs.Preferences;
-
 import org.eclipse.swt.graphics.Image;
+import org.eclipse.swt.graphics.ImageData;
 import org.eclipse.swt.graphics.ImageDataProvider;
 import org.eclipse.swt.widgets.Display;
-import org.eclipse.wb.swt.ResourceManager;
+import org.eclipse.wb.swt.SWTResourceManager;
+import org.reldb.relang.reli.preferences.PreferencePageGeneral;
+import org.reldb.relang.reli.preferences.Preferences;
+import org.reldb.relang.reli.version.Version;
 
 public class IconLoader {
-		
-	private final static String IconPath = "org/reldb/relang/reli/resources/";
 	
 	public static Image loadIcon(String name) {
-		boolean largeIcons = Preferences.userRoot().getBoolean(PreferencePageGeneral.LARGE_ICONS, false);
+		boolean largeIcons = Preferences.getPreferenceBoolean(PreferencePageGeneral.LARGE_ICONS);
 		return (largeIcons) ? loadIconLarge(name) : loadIconNormal(name);
 	}
 	
+	static int scaleFactor;
+	
+	private static ImageData grabzoom(int zoom, Image image) {
+		scaleFactor = zoom;
+		return image.getImageData();
+	}
+	
+	public static int getDPIScaling() {
+		Image imgRaw = SWTResourceManager.getMissingImage();
+		new Image(Display.getCurrent(), (ImageDataProvider)zoom -> grabzoom(zoom, imgRaw));
+		return scaleFactor;
+	}
+	
 	public static Image loadIconNormal(String name) {
-		Image imgBigRaw = ResourceManager.getImage(IconPath + name + "@2x.png");
-		Image imgSmallRaw = ResourceManager.getImage(IconPath + name + ".png");
-		if (imgBigRaw == null && imgSmallRaw == null) {
-			imgBigRaw = ResourceManager.getImage(IconPath + "noimage@2x.png");
-			imgSmallRaw = ResourceManager.getImage(IconPath + "noimage.png");
-		}
-		Image imgLarge = (imgBigRaw == null) ? imgSmallRaw : imgBigRaw;
-		Image imgSmall = imgSmallRaw;
-		final ImageDataProvider imageDataProvider = zoom -> {
+		return new Image(Display.getCurrent(), (ImageDataProvider)zoom -> {
 			switch (zoom) {
 			case 200:
-				return imgLarge.getImageData();
+				Image imgRaw = SWTResourceManager.getImageOrNull(Version.getResourceDirectory() + name + "@2x.png");
+				if (imgRaw == null) {
+					imgRaw = SWTResourceManager.getImageOrNull(Version.getResourceDirectory() + name + ".png");
+					if (imgRaw == null)
+						imgRaw = SWTResourceManager.getImage(Version.getResourceDirectory() + "noimage@2x.png");
+				}
+				return imgRaw.getImageData();
 			default:
-				return imgSmall.getImageData();
+				imgRaw = SWTResourceManager.getImageOrNull(Version.getResourceDirectory() + name + ".png");
+				if (imgRaw == null)
+					imgRaw = SWTResourceManager.getImage(Version.getResourceDirectory() + "noimage.png");
+				return imgRaw.getImageData();
 			}
-		};
-		// TODO - should cache image in ResourceManager here!
-		return new Image(Display.getCurrent(), imageDataProvider);
+		});
 	}
 	
 	public static Image loadIconLarge(String name) {
-		Image imgBig = ResourceManager.getImage(IconPath + name + "@2x.png");
+		Image imgBig = SWTResourceManager.getImageOrNull(Version.getResourceDirectory() + name + "@2x.png");
 		if (imgBig == null)
-			return ResourceManager.getImage(IconPath + name + ".png");
+			return SWTResourceManager.getImage(Version.getResourceDirectory() + name + ".png");
 		return imgBig;
 	}
 }
