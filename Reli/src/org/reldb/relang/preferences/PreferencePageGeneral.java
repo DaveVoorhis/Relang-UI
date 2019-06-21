@@ -3,6 +3,7 @@ package org.reldb.relang.preferences;
 import org.eclipse.jface.preference.BooleanFieldEditor;
 import org.eclipse.jface.preference.FieldEditorPreferencePage;
 import org.eclipse.jface.util.Util;
+import org.reldb.relang.utilities.IconLoader;
 
 /**
  * This class creates a preference page
@@ -24,7 +25,7 @@ public class PreferencePageGeneral extends FieldEditorPreferencePage {
 		String reloadPrompt = "";
 		if (!Util.isMac()) {
 			reloadPrompt = "  Restart after changing to see the full effect. ";
-			if (org.reldb.relang.IconLoader.getDPIScaling() > 100)
+			if (IconLoader.getDPIScaling() > 100)
 				reloadPrompt += "\nNOTE: larger icons may not work correctly on some HiDPI displays.";
 		}
 		addField(new BooleanFieldEditor(LARGE_ICONS, "&Larger icons." + reloadPrompt, getFieldEditorParent()));

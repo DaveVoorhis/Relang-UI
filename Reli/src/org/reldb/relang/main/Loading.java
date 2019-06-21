@@ -1,4 +1,4 @@
-package org.reldb.relang;
+package org.reldb.relang.main;
 
 public class Loading {
 

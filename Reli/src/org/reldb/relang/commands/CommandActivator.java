@@ -10,8 +10,8 @@ import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.MenuItem;
 import org.eclipse.swt.widgets.ToolItem;
-import org.reldb.relang.IconLoader;
 import org.reldb.relang.commands.Commands.Do;
+import org.reldb.relang.utilities.IconLoader;
 
 /*
  * A combination of a ToolItem for display on a ToolBar, and an optional reference to a MenuItem.

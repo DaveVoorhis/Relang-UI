@@ -5,12 +5,12 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.ToolBar;
 import org.eclipse.swt.widgets.ToolItem;
-import org.reldb.relang.IconLoader;
 import org.reldb.relang.preferences.PreferenceChangeAdapter;
 import org.reldb.relang.preferences.PreferenceChangeEvent;
 import org.reldb.relang.preferences.PreferenceChangeListener;
 import org.reldb.relang.preferences.PreferencePageGeneral;
 import org.reldb.relang.preferences.Preferences;
+import org.reldb.relang.utilities.IconLoader;
 
 public class ManagedToolbar extends ToolBar {    
     private PreferenceChangeListener preferenceChangeListener;

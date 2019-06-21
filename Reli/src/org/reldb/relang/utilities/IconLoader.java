@@ -1,4 +1,4 @@
-package org.reldb.relang;
+package org.reldb.relang.utilities;
 
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.graphics.ImageData;

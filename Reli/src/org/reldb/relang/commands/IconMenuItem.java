@@ -4,12 +4,12 @@ import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.Menu;
 import org.eclipse.swt.widgets.MenuItem;
-import org.reldb.relang.IconLoader;
 import org.reldb.relang.preferences.PreferenceChangeAdapter;
 import org.reldb.relang.preferences.PreferenceChangeEvent;
 import org.reldb.relang.preferences.PreferenceChangeListener;
 import org.reldb.relang.preferences.PreferencePageGeneral;
 import org.reldb.relang.preferences.Preferences;
+import org.reldb.relang.utilities.IconLoader;
 
 // A MenuItem with an optional icon that can change size in response to change in Preferences.
 public class IconMenuItem extends MenuItem {

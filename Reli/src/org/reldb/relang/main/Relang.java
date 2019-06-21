@@ -1,4 +1,4 @@
-package org.reldb.relang;
+package org.reldb.relang.main;
 
 import java.awt.Color;
 import java.awt.Graphics2D;
@@ -36,6 +36,7 @@ import org.reldb.relang.feedback.SuggestionboxDialog;
 import org.reldb.relang.log.LogWin;
 import org.reldb.relang.preferences.Preferences;
 import org.reldb.relang.updates.UpdatesCheckDialog;
+import org.reldb.relang.utilities.IconLoader;
 import org.reldb.relang.version.Version;
 import org.reldb.swt.os_specific.OSSpecific;
 

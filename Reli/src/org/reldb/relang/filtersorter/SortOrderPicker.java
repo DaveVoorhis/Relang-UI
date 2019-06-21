@@ -4,7 +4,7 @@ import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
-import org.reldb.relang.IconLoader;
+import org.reldb.relang.utilities.IconLoader;
 
 public class SortOrderPicker extends Composite {
 	

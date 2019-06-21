@@ -12,7 +12,7 @@ import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.SWT;
 import org.eclipse.wb.swt.SWTResourceManager;
-import org.reldb.relang.IconLoader;
+import org.reldb.relang.utilities.IconLoader;
 import org.reldb.relang.version.Version;
 
 public class AboutDialog extends Dialog {

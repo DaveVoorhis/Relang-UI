@@ -83,7 +83,7 @@ import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.Menu;
 import org.eclipse.swt.widgets.MenuItem;
 import org.eclipse.swt.widgets.Shell;
-import org.reldb.relang.IconLoader;
+import org.reldb.relang.utilities.IconLoader;
 
 public class Grid extends Composite {
 
