@@ -1,3 +1,3 @@
-Rel: Rel.cpp
-	g++ -mmacosx-version-min=10.9 Rel.cpp -o Rel
-	strip Rel
+Relang: Relang.cpp
+	g++ -mmacosx-version-min=10.9 Relang.cpp -o Relang
+	strip Relang

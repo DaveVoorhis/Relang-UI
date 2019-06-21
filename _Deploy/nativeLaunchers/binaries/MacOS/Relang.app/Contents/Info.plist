@@ -3,56 +3,42 @@
 
 <dict>
 	<key>CFBundleExecutable</key>
-		<string>Rel</string>
+		<string>Relang</string>
 	<key>CFBundleGetInfoString</key>
-		<string>Rel for Mac OS X, Copyright reldb.org 2004 - 2018. All rights reserved.</string>
+		<string>Relang for Mac OS X, Copyright Dave Voorhis and reldb.org 2019. All rights reserved.</string>
 	<key>CFBundleIconFile</key>
-		<string>RelAppIcon.icns</string>
+		<string>RelangAppIcon.icns</string>
 	<key>CFBundleIdentifier</key>
-		<string>Rel</string>
+		<string>Relang</string>
 	<key>CFBundleInfoDictionaryVersion</key>
 		<string>6.0</string>
 	<key>CFBundleName</key>
-		<string>Rel</string>
+		<string>Relang</string>
 	<key>CFBundlePackageType</key>
 		<string>APPL</string>
 	<key>CFBundleShortVersionString</key>
-		<string>3</string>
+		<string>1</string>
 	<key>CFBundleSignature</key>
 		<string>????</string>
 	<key>CFBundleVersion</key>
-		<string>3</string>
+		<string>1</string>
 	<key>NSHighResolutionCapable</key>
 		<true/>
 	<key>CFBundleDevelopmentRegion</key>
 		<string>English</string>		
 	<key>CFBundleDisplayName</key>
-	    <string>Rel</string>
+	    <string>Relang</string>
 	<key>CFBundleDocumentTypes</key> 
 		<array>
 		    <dict>
 		        <key>CFBundleTypeName</key>
-		        	<string>Rel database</string>
+		        	<string>Relang document</string>
 		        <key>CFBundleTypeExtensions</key>
 		        	<array>
-		        		<string>rdb</string>
+		        		<string>rln</string>
 		        	</array>
 		        <key>CFBundleTypeIconFile</key>
-		        	<string>RelAppIcon.icns</string>
-		        <key>CFBundleTypeRole</key>
-		        	<string>Editor</string>
-		        <key>LSHandlerRank</key>
-		        	<string>Owner</string>
-		    </dict>
-		    <dict>
-		        <key>CFBundleTypeName</key>
-		        	<string>Rel script</string>
-		        <key>CFBundleTypeExtensions</key>
-		        	<array>
-		        		<string>rel</string>
-		        	</array>
-		        <key>CFBundleTypeIconFile</key>
-		        	<string>RelAppIcon.icns</string>
+		        	<string>RelangAppIcon.icns</string>
 		        <key>CFBundleTypeRole</key>
 		        	<string>Editor</string>
 		        <key>LSHandlerRank</key>

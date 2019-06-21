@@ -1,4 +1,4 @@
-Rel: Rel.cpp
-	g++ -Wall -Werror Rel.cpp -no-pie -o Rel
-	strip Rel
+Relang: Relang.cpp
+	g++ -Wall -Werror Rel.cpp -no-pie -o Relang
+	strip Relang
 

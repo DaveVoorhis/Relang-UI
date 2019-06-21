@@ -1,6 +1,6 @@
 //{{NO_DEPENDENCIES}}
 // Microsoft Visual C++ generated include file.
-// Used by Rel.rc
+// Used by Relang.rc
 //
 #define IDI_ICON1                       101
 

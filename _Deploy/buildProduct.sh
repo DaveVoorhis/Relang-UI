@@ -1,6 +1,6 @@
 #!/bin/bash
 
-# This script constructs distributable Rel products. It is intended to run on MacOS.
+# This script constructs distributable Relang products. It is intended to run on MacOS.
 #
 # It requires that ant be available on the command line. On MacOS, it is easiest
 # to install by installing Homebrew, then brew install ant.
@@ -25,18 +25,14 @@
 #         ...etc...
 #
 
-relversion=3.014
+relangversion=1.000
 javaversion=jdk-11.0.1
 jredir=~/Documents/OpenJDKs
-proddir=~/git/Rel/_Deployment/product
+proddir=~/git/Relang/_Deploy/product
 
 linuxtarget=linux
 mactarget=macos
 wintarget=windows
-
-linuxTargetDBMS=linuxDBMS
-macosTargetDBMS=macosDBMS
-windowsTargetDBMS=windowsDBMS
 
 # Clear
 mkdir $proddir &>/dev/null
@@ -46,16 +42,6 @@ rm `find ./ -name .DS_Store -print` &>/dev/null
 # Build libraries
 ./buildLibrary.sh
 
-# Grammar
-~/bin/jjdoc ../ServerV0000/src/org/reldb/rel/v0/languages/tutoriald/parser/TutorialD.jj
-mv TutorialD.html $proddir
-
-# Scripts
-cp -R Scripts $proddir/RelScripts
-pushd $proddir/
-zip -9r Rel_ExamplesAndUtilities_$relversion.zip RelScripts
-popd
-
 # Build JREs
 pushd MakeJRE
 ./build.sh
@@ -63,38 +49,38 @@ popd
 
 # Linux GTK 64bit
 echo "---------------------- Linux Build ----------------------"
-linuxtargetRel=$linuxtarget/Rel
-mkdir -p $proddir/$linuxtargetRel
-cp -R MakeJRE/Linux/jre $proddir/$linuxtargetRel/jre
-cp nativeLaunchers/binaries/Linux/Rel $proddir/$linuxtargetRel
-mkdir $proddir/$linuxtargetRel/doc
-cp doc/* $proddir/$linuxtargetRel/doc
-cp doc/LICENSE.txt $proddir/$linuxtargetRel
-cp -R lib $proddir/$linuxtargetRel
-rm -rf $proddir/$linuxtargetRel/lib/swt/win_64
-rm -rf $proddir/$linuxtargetRel/lib/swt/macos_64
-cp nativeLaunchers/Rel/Linux/Rel.ini $proddir/$linuxtargetRel/lib
-cp splash.png $proddir/$linuxtargetRel/lib
-chmod +x $proddir/$linuxtargetRel/jre/bin/*
+linuxtargetRelang=$linuxtarget/Relang
+mkdir -p $proddir/$linuxtargetRelang
+cp -R MakeJRE/Linux/jre $proddir/$linuxtargetRelang/jre
+cp nativeLaunchers/binaries/Linux/Relang $proddir/$linuxtargetRelang
+mkdir $proddir/$linuxtargetRelang/doc
+cp doc/* $proddir/$linuxtargetRelang/doc
+cp doc/LICENSE.txt $proddir/$linuxtargetRelang
+cp -R lib $proddir/$linuxtargetRelang
+rm -rf $proddir/$linuxtargetRelang/lib/swt/win_64
+rm -rf $proddir/$linuxtargetRelang/lib/swt/macos_64
+cp nativeLaunchers/Relang/Linux/Relang.ini $proddir/$linuxtargetRelang/lib
+cp splash.png $proddir/$linuxtargetRelang/lib
+chmod +x $proddir/$linuxtargetRelang/jre/bin/*
 pushd $proddir/$linuxtarget
-tar cfz ../Rel$relversion.$linuxtarget.tar.gz Rel
+tar cfz ../Relang$relversion.$linuxtarget.tar.gz Relang
 popd
 
 # MacOS (64bit)
 echo "---------------------- MacOS Build ----------------------"
 mkdir $proddir/$mactarget
-cp -R nativeLaunchers/binaries/MacOS/Rel.app $proddir/$mactarget
-cp nativeLaunchers/binaries/MacOS/launchBinSrc/Rel $proddir/$mactarget/Rel.app/Contents/MacOS
-mkdir $proddir/$mactarget/Rel.app/Contents/MacOS/doc
-cp doc/* $proddir/$mactarget/Rel.app/Contents/MacOS/doc
-rm $proddir/$mactarget/Rel.app/Contents/MacOS/README.txt
-cp doc/LICENSE.txt $proddir/$mactarget/Rel.app/Contents/MacOS
-cp -R MakeJRE/MacOS/jre $proddir/$mactarget/Rel.app/Contents/MacOS/jre
-cp -R lib $proddir/$mactarget/Rel.app/Contents/MacOS/
-rm -rf $proddir/$mactarget/Rel.app/Contents/MacOS/lib/swt/linux_64
-rm -rf $proddir/$mactarget/Rel.app/Contents/MacOS/lib/swt/win_64
-cp nativeLaunchers/Rel/MacOS/Rel.ini $proddir/$mactarget/Rel.app/Contents/MacOS/lib
-cp splash.png $proddir/$mactarget/Rel.app/Contents/MacOS/lib
+cp -R nativeLaunchers/binaries/MacOS/Relang.app $proddir/$mactarget
+cp nativeLaunchers/binaries/MacOS/launchBinSrc/Relang $proddir/$mactarget/Relang.app/Contents/MacOS
+mkdir $proddir/$mactarget/Relang.app/Contents/MacOS/doc
+cp doc/* $proddir/$mactarget/Relang.app/Contents/MacOS/doc
+rm $proddir/$mactarget/Relang.app/Contents/MacOS/README.txt
+cp doc/LICENSE.txt $proddir/$mactarget/Relang.app/Contents/MacOS
+cp -R MakeJRE/MacOS/jre $proddir/$mactarget/Relang.app/Contents/MacOS/jre
+cp -R lib $proddir/$mactarget/Relang.app/Contents/MacOS/
+rm -rf $proddir/$mactarget/Relang.app/Contents/MacOS/lib/swt/linux_64
+rm -rf $proddir/$mactarget/Relang.app/Contents/MacOS/lib/swt/win_64
+cp nativeLaunchers/Relang/MacOS/Relang.ini $proddir/$mactarget/Relang.app/Contents/MacOS/lib
+cp splash.png $proddir/$mactarget/Relang.app/Contents/MacOS/lib
 cp OSXPackager/Background.png $proddir/$mactarget
 cp OSXPackager/Package.command $proddir/$mactarget
 pushd $proddir/$mactarget
@@ -106,65 +92,20 @@ popd
 
 # Windows 64bit
 echo "---------------------- Windows Build ----------------------"
-wintargetRel=$wintarget/Rel
-mkdir -p $proddir/$wintargetRel
-cp -R MakeJRE/Windows/jre $proddir/$wintargetRel/jre
-cp nativeLaunchers/binaries/Windows/x64/Release/Rel.exe $proddir/$wintargetRel
-mkdir $proddir/$wintargetRel/doc
-cp doc/* $proddir/$wintargetRel/doc
-cp doc/LICENSE.txt $proddir/$wintargetRel
-cp -R lib $proddir/$wintargetRel
-rm -rf $proddir/$wintargetRel/lib/swt/linux_64
-rm -rf $proddir/$wintargetRel/lib/swt/macos_64
-cp nativeLaunchers/Rel/Windows/Rel.ini $proddir/$wintargetRel/lib
-cp splash.png $proddir/$wintargetRel/lib
+wintargetRelang=$wintarget/Relang
+mkdir -p $proddir/$wintargetRelang
+cp -R MakeJRE/Windows/jre $proddir/$wintargetRelang/jre
+cp nativeLaunchers/binaries/Windows/x64/Relangease/Relang.exe $proddir/$wintargetRelang
+mkdir $proddir/$wintargetRelang/doc
+cp doc/* $proddir/$wintargetRelang/doc
+cp doc/LICENSE.txt $proddir/$wintargetRelang
+cp -R lib $proddir/$wintargetRelang
+rm -rf $proddir/$wintargetRelang/lib/swt/linux_64
+rm -rf $proddir/$wintargetRelang/lib/swt/macos_64
+cp nativeLaunchers/Relang/Windows/Relang.ini $proddir/$wintargetRelang/lib
+cp splash.png $proddir/$wintargetRelang/lib
 pushd $proddir/$wintarget
-zip -9r ../Rel$relversion.$wintarget.zip Rel
-popd
-
-# Standalone Rel DBMS (Linux)
-echo "---------------------- Standalone DBMS Build (Linux) ----------------------"
-tar cf $proddir/Rel$relversion.$linuxTargetDBMS.tar doc/* lib/jdt/* lib/misc/* lib/rel/RelDBMS.jar lib/rel/RelTest.jar lib/rel/relshared.jar lib/rel/rel0000.jar lib/rel/relclient.jar
-pushd nativeLaunchers/RelDBMS/Linux
-tar rf $proddir/Rel$relversion.$linuxTargetDBMS.tar *
-popd
-pushd doc
-tar rf $proddir/Rel$relversion.$linuxTargetDBMS.tar LICENSE.txt
-popd
-pushd MakeJRE/Linux
-tar rf $proddir/Rel$relversion.$linuxTargetDBMS.tar *
-popd
-pushd $proddir
-gzip -9 Rel$relversion.$linuxTargetDBMS.tar
-popd
-
-# Standalone Rel DBMS (MacOS)
-echo "---------------------- Standalone DBMS Build (MacOS) ----------------------"
-tar cf $proddir/Rel$relversion.$macosTargetDBMS.tar doc/* lib/jdt/* lib/misc/* lib/rel/RelDBMS.jar lib/rel/RelTest.jar lib/rel/relshared.jar lib/rel/rel0000.jar lib/rel/relclient.jar
-pushd nativeLaunchers/RelDBMS/MacOS
-tar rf $proddir/Rel$relversion.$macosTargetDBMS.tar *
-popd
-pushd doc
-tar rf $proddir/Rel$relversion.$macosTargetDBMS.tar LICENSE.txt
-popd
-pushd MakeJRE/MacOS
-tar rf $proddir/Rel$relversion.$macosTargetDBMS.tar *
-popd
-pushd $proddir
-gzip -9 Rel$relversion.$macosTargetDBMS.tar
-popd
-
-# Standalone Rel DBMS (Windows)
-echo "---------------------- Standalone Windows DBMS Build (Windows) ----------------------"
-zip -9r $proddir/Rel$relversion.$windowsTargetDBMS.zip doc/* lib/jdt/* lib/misc/* lib/rel/RelDBMS.jar lib/rel/RelTest.jar lib/rel/relshared.jar lib/rel/rel0000.jar lib/rel/relclient.jar
-pushd nativeLaunchers/RelDBMS/Windows
-zip -9r $proddir/Rel$relversion.$windowsTargetDBMS.zip *
-popd
-pushd doc
-zip -9r $proddir/Rel$relversion.$windowsTargetDBMS.zip LICENSE.txt
-popd
-pushd MakeJRE/Windows
-zip -9r $proddir/Rel$relversion.$windowsTargetDBMS.zip *
+zip -9r ../Relang$relversion.$wintarget.zip Relang
 popd
 
 # Cleanup

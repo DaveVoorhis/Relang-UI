@@ -26,17 +26,17 @@
     <ClCompile Include="pch.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="Rel.cpp">
+    <ClCompile Include="Relang.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <ResourceCompile Include="Rel.rc">
+    <ResourceCompile Include="Relang.rc">
       <Filter>Resource Files</Filter>
     </ResourceCompile>
   </ItemGroup>
   <ItemGroup>
-    <Image Include="RelAppIcon.ico">
+    <Image Include="RelangAppIcon.ico">
       <Filter>Resource Files</Filter>
     </Image>
   </ItemGroup>
