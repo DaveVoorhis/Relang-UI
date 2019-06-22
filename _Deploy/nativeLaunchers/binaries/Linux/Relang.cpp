@@ -8,8 +8,7 @@
 #include <fstream>
 #include <streambuf>
 
-int main(int argc, char **argv)
-{
+int main(int argc, char **argv) {
   // Convert first argument of argv[0] (full pathspec to this executable) to path where executable is found
   char *dir = dirname(argv[0]);
   chdir(dir);
