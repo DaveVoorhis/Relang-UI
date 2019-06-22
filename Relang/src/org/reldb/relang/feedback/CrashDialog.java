@@ -13,6 +13,7 @@ import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.TreeItem;
 import org.reldb.relang.utilities.IconLoader;
+import org.reldb.relang.version.Version;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.layout.GridData;
 
@@ -26,21 +27,16 @@ public class CrashDialog extends FeedbackDialog {
 	 * @param parent
 	 * @param style
 	 */
-	public CrashDialog(Shell parent, Throwable t, String lastQuery, String serverInitialResponse,
-			String clientVersion) {
+	public CrashDialog(Shell parent, Throwable t) {
 		super(parent, SWT.NONE, "Crash Report");
-		putClientInfoInTree(clientVersion);
-		putQueryInfoInTree(lastQuery);
-		putServerInfoInTree(serverInitialResponse);
+		putClientInfoInTree(Version.getVersion());
 		putExceptionInTree(t);
 	}
 
 	/** Launch the dialog. */
-	public static void launch(Throwable t, String lastQuery, String serverInitialResponse, Shell shell,
-			String clientVersion) {
+	public static void launch(Throwable t, Shell shell) {
 		try {
-			shell.getDisplay().syncExec(
-					() -> (new CrashDialog(shell, t, lastQuery, serverInitialResponse, clientVersion)).open());
+			shell.getDisplay().syncExec(() -> (new CrashDialog(shell, t)).open());
 		} catch (Exception e) {
 			e.printStackTrace();
 		}

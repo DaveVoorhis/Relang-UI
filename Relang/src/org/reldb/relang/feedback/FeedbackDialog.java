@@ -89,23 +89,6 @@ public abstract class FeedbackDialog extends Dialog {
 		for (StackTraceElement element: trace)
 			newTreeItem(stackTraceTree, element.toString());
 	}
-
-	private static class RelServerInfo {
-		String prompt;
-		String lookFor;
-		public RelServerInfo(String prompt, String lookFor) {
-			this.prompt = prompt;
-			this.lookFor = lookFor;
-		}
-	};
-	
-	private static final RelServerInfo[] relServerInfo = {
-		new RelServerInfo("Version", "Relang version"),
-		new RelServerInfo("Host", "Relang is running on"),
-		new RelServerInfo("JavaType", "using"),
-		new RelServerInfo("JavaHome", "at"),
-		new RelServerInfo("ServerOS", "on"),
-	};
 	
 	protected void checkPath(TreeItem item, boolean checked, boolean grayed) {
 	    if (item == null) 
@@ -138,15 +121,6 @@ public abstract class FeedbackDialog extends Dialog {
 	    }
 	}
 	
-	protected void putServerInfoInTree(String serverInitialResponse) {
-		TreeItem serverInfo = newTreeItem(report, "RelServerInfo");
-		String[] lines = serverInitialResponse.split("\\r?\\n");
-		for (String line: lines)
-			for (RelServerInfo info: relServerInfo)
-				if (line.startsWith(info.lookFor))
-					newTreeItem(serverInfo, info.prompt + ": " + line.substring(info.lookFor.length() + 1));
-	}
-	
 	private void putExceptionInTree(TreeItem root, Throwable t) {
 		if (t != null) {
 			newTreeItem(root, "ErrorClass: " + t.getClass().toString());
@@ -164,10 +138,6 @@ public abstract class FeedbackDialog extends Dialog {
 	protected void putExceptionInTree(Throwable t) {
 		TreeItem root = newTreeItem(report, "JavaException");
 		putExceptionInTree(root, t);
-	}
-	
-	protected void putQueryInfoInTree(String lastQuery) {
-		newTreeItem(report, "Query: " + lastQuery.toString());		
 	}
 	
 	protected void putClientInfoInTree(String clientVersion) {

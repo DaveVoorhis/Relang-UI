@@ -32,6 +32,7 @@ import org.reldb.relang.core.Heading;
 import org.reldb.relang.core.Tuple;
 import org.reldb.relang.core.Tuples;
 import org.reldb.relang.feedback.BugReportDialog;
+import org.reldb.relang.feedback.CrashDialog;
 import org.reldb.relang.feedback.SuggestionboxDialog;
 import org.reldb.relang.log.LogWin;
 import org.reldb.relang.preferences.Preferences;
@@ -314,6 +315,12 @@ public class Relang {
 			
 		});
 	}
+
+	@SuppressWarnings("null")
+	private static void kaboom() {
+		Object object = null; 
+		object.toString();		
+	}
 	
 	private static void createToolMenu(Menu bar) {
 		MenuItem toolsItem = new MenuItem(bar, SWT.CASCADE);
@@ -327,6 +334,9 @@ public class Relang {
 		new AcceleratedMenuItem(menu, "Submit Feedback", 0, "ButterflyIcon", e -> SuggestionboxDialog.launch(shell));
 		new AcceleratedMenuItem(menu, "Bug Report", 0, "BugIcon", e -> BugReportDialog.launch(shell));
 		new AcceleratedMenuItem(menu, "Check for Updates", 0, e -> UpdatesCheckDialog.launch(shell));
+		
+		new MenuItem(menu, SWT.SEPARATOR);
+		new AcceleratedMenuItem(menu, "Force crash for testing purposes", 0, null, e -> kaboom());
 	}
 	
 	private static void createHelpMenu(Menu bar) {
@@ -546,6 +556,7 @@ public class Relang {
 			} catch (Throwable t) {
 				System.out.println(Version.getAppName() + ": Exception: " + t);
 				t.printStackTrace();
+				CrashDialog.launch(t, shell);
 			}
 		}
 	}
