@@ -3,7 +3,7 @@
 # by Andy Maloney
 # http://asmaloney.com/2013/07/howto/packaging-a-mac-os-x-application-using-a-dmg/
 
-# slightly modified for Rel packaging by Dave Voorhis
+# slightly modified for Relang packaging by Dave Voorhis
 
 # make sure we are in the correct dir when we double-click a .command file
 dir=${0%/*}
@@ -12,7 +12,7 @@ if [ -d "$dir" ]; then
 fi
 
 # set up your app name, version number, and background image file name
-APP_NAME="Rel"
+APP_NAME="Relang"
 VERSION=$1
 DMG_BACKGROUND_IMG="Background.png"
 

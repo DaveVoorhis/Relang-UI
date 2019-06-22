@@ -1,4 +1,4 @@
-// Rel native launcher for Linux.
+// Relang native launcher for Linux.
 
 #include <iostream>
 #include <cstdlib>
@@ -15,7 +15,7 @@ int main(int argc, char **argv)
   chdir(dir);
 
   // Read the ini file
-  std::string iniFileName("lib/Rel.ini");
+  std::string iniFileName("lib/Relang.ini");
   std::ifstream configfile(iniFileName);
   std::string cmd((std::istreambuf_iterator<char>(configfile)), std::istreambuf_iterator<char>());
 
