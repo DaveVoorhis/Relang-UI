@@ -100,13 +100,11 @@ public abstract class FeedbackDialog extends Dialog {
 	};
 	
 	private static final RelServerInfo[] relServerInfo = {
-		new RelServerInfo("Version", "Rel DBMS version"),
-		new RelServerInfo("Host", "Rel is running on"),
+		new RelServerInfo("Version", "Relang version"),
+		new RelServerInfo("Host", "Relang is running on"),
 		new RelServerInfo("JavaType", "using"),
 		new RelServerInfo("JavaHome", "at"),
 		new RelServerInfo("ServerOS", "on"),
-		new RelServerInfo("DBFormat", "with"),
-		new RelServerInfo("Storage", "Persistence is provided by")
 	};
 	
 	protected void checkPath(TreeItem item, boolean checked, boolean grayed) {
@@ -174,7 +172,7 @@ public abstract class FeedbackDialog extends Dialog {
 	
 	protected void putClientInfoInTree(String clientVersion) {
 		newTreeItem(report, "Timestamp: " + getCurrentTimeStamp().toString());
-		newTreeItem(report, "Client version: " + clientVersion);
+		newTreeItem(report, "Version: " + clientVersion);
 		newTreeItem(report, "Java version: " + System.getProperty("java.version"));
 		newTreeItem(report, "Java vendor: " + System.getProperty("java.vendor"));
 		newTreeItem(report, "Java URL: " + System.getProperty("java.vendor.url"));
