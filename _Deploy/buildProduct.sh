@@ -95,7 +95,7 @@ echo "---------------------- Windows Build ----------------------"
 wintargetRelang=$wintarget/Relang
 mkdir -p $proddir/$wintargetRelang
 cp -R MakeJRE/Windows/jre $proddir/$wintargetRelang/jre
-cp nativeLaunchers/binaries/Windows/x64/Relangease/Relang.exe $proddir/$wintargetRelang
+cp nativeLaunchers/binaries/Windows/x64/Release/Relang.exe $proddir/$wintargetRelang
 mkdir $proddir/$wintargetRelang/doc
 cp doc/* $proddir/$wintargetRelang/doc
 cp doc/LICENSE.txt $proddir/$wintargetRelang
