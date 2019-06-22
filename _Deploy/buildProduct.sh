@@ -59,7 +59,7 @@ cp doc/LICENSE.txt $proddir/$linuxtargetRelang
 cp -R lib $proddir/$linuxtargetRelang
 rm -rf $proddir/$linuxtargetRelang/lib/swt/win_64
 rm -rf $proddir/$linuxtargetRelang/lib/swt/macos_64
-cp nativeLaunchers/Relang/Linux/Relang.ini $proddir/$linuxtargetRelang/lib
+cp nativeLaunchers/config/Linux/Relang.ini $proddir/$linuxtargetRelang/lib
 cp splash.png $proddir/$linuxtargetRelang/lib
 chmod +x $proddir/$linuxtargetRelang/jre/bin/*
 pushd $proddir/$linuxtarget
@@ -79,7 +79,7 @@ cp -R MakeJRE/MacOS/jre $proddir/$mactarget/Relang.app/Contents/MacOS/jre
 cp -R lib $proddir/$mactarget/Relang.app/Contents/MacOS/
 rm -rf $proddir/$mactarget/Relang.app/Contents/MacOS/lib/swt/linux_64
 rm -rf $proddir/$mactarget/Relang.app/Contents/MacOS/lib/swt/win_64
-cp nativeLaunchers/Relang/MacOS/Relang.ini $proddir/$mactarget/Relang.app/Contents/MacOS/lib
+cp nativeLaunchers/config/MacOS/Relang.ini $proddir/$mactarget/Relang.app/Contents/MacOS/lib
 cp splash.png $proddir/$mactarget/Relang.app/Contents/MacOS/lib
 cp OSXPackager/Background.png $proddir/$mactarget
 cp OSXPackager/Package.command $proddir/$mactarget
@@ -102,7 +102,7 @@ cp doc/LICENSE.txt $proddir/$wintargetRelang
 cp -R lib $proddir/$wintargetRelang
 rm -rf $proddir/$wintargetRelang/lib/swt/linux_64
 rm -rf $proddir/$wintargetRelang/lib/swt/macos_64
-cp nativeLaunchers/Relang/Windows/Relang.ini $proddir/$wintargetRelang/lib
+cp nativeLaunchers/config/Windows/Relang.ini $proddir/$wintargetRelang/lib
 cp splash.png $proddir/$wintargetRelang/lib
 pushd $proddir/$wintarget
 zip -9r ../Relang$relversion.$wintarget.zip Relang
