@@ -24,3 +24,7 @@ hs_err_pid*
 /_Deploy/nativeLaunchers/binaries/Windows/.vs/Relang/v16/Browse.VC.opendb
 /_Deploy/nativeLaunchers/binaries/Windows/.vs/Relang/v16/Browse.VC.db
 /_Deploy/nativeLaunchers/binaries/Windows/.vs/Relang/v16/.suo
+/_Deploy/nativeLaunchers/binaries/Windows/Relang/x64/Release
+/_Deploy/nativeLaunchers/binaries/Windows/x64/Release/Relang.pdb
+/_Deploy/nativeLaunchers/binaries/Windows/x64/Release/Relang.ipdb
+/_Deploy/nativeLaunchers/binaries/Windows/x64/Release/Relang.iobj
