@@ -4,7 +4,7 @@ import org.eclipse.swt.widgets.Shell;
 import org.eclipse.wb.swt.SWTResourceManager;
 import org.reldb.relang.updates.UpdatesCheck.SendStatus;
 import org.reldb.relang.utilities.FontSize;
-import org.reldb.relang.version.Version;
+import org.reldb.relang.utilities.IconLoader;
 import org.eclipse.swt.graphics.Cursor;
 import org.eclipse.swt.layout.FormLayout;
 import org.eclipse.swt.widgets.Label;
@@ -152,8 +152,7 @@ public class UpdatesCheckDialog extends Dialog {
 
 		Label lblIcon = new Label(panelIntro, SWT.NONE);
 		lblIcon.setLayoutData(new GridData(SWT.LEFT, SWT.TOP, false, false, 1, 1));
-		lblIcon.setText(Version.getAppName());
-		lblIcon.setFont(SWTResourceManager.getFont("Arial", 14, SWT.BOLD));
+		lblIcon.setImage(IconLoader.loadIcon("upgrade"));
 
 		lblInstructions = new Label(panelIntro, SWT.WRAP);
 		lblInstructions.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, true, 1, 1));

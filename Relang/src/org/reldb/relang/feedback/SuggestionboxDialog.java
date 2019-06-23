@@ -71,7 +71,7 @@ public class SuggestionboxDialog extends FeedbackDialog {
 
 		Label lblIcon = new Label(panelIntro, SWT.NONE);
 		lblIcon.setLayoutData(new GridData(SWT.LEFT, SWT.TOP, false, false, 1, 1));
-		lblIcon.setImage(IconLoader.loadIcon("Butterfly"));
+		lblIcon.setImage(IconLoader.loadIcon("light-bulb"));
 
 		Label lblInstructions = new Label(panelIntro, SWT.WRAP);
 		lblInstructions.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true, 1, 1));

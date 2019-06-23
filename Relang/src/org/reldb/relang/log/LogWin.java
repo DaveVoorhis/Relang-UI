@@ -95,12 +95,12 @@ public class LogWin {
 
 		ToolItem tltmClear = new ToolItem(toolBar, SWT.NONE);
 		tltmClear.setToolTipText("Clear");
-		tltmClear.setImage(IconLoader.loadIcon("clearIcon"));
+		tltmClear.setImage(IconLoader.loadIcon("dustbin"));
 		tltmClear.addListener(SWT.Selection, e -> textLog.setText(""));
 
 		ToolItem tltmSave = new ToolItem(toolBar, SWT.NONE);
 		tltmSave.setToolTipText("Save");
-		tltmSave.setImage(IconLoader.loadIcon("saveIcon"));
+		tltmSave.setImage(IconLoader.loadIcon("save"));
 		tltmSave.addListener(SWT.Selection, e -> {
 			if (saveTextDialog == null) {
 				saveTextDialog = new FileDialog(shell, SWT.SAVE);

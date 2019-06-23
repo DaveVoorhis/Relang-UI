@@ -28,9 +28,6 @@ import org.reldb.relang.commands.AcceleratedMenuItem;
 import org.reldb.relang.commands.Commands;
 import org.reldb.relang.core.Datasheet;
 import org.reldb.relang.core.Grid;
-import org.reldb.relang.core.Heading;
-import org.reldb.relang.core.Tuple;
-import org.reldb.relang.core.Tuples;
 import org.reldb.relang.feedback.BugReportDialog;
 import org.reldb.relang.feedback.CrashDialog;
 import org.reldb.relang.feedback.SuggestionboxDialog;
@@ -79,19 +76,20 @@ public class Relang {
 		Menu menu = new Menu(fileItem);
 		fileItem.setMenu(menu);
 
-		new AcceleratedMenuItem(menu, "&New Datasheet\tCtrl-N", SWT.MOD1 | 'N', "add-new-document", event -> {
+		new AcceleratedMenuItem(menu, "&New datasheet\tCtrl-N", SWT.MOD1 | 'N', "add-new-document", event -> {
 			Shell newDatasheet = createShell();
 			newDatasheet.setText("New Datasheet");
 			new Datasheet(newDatasheet);
 			newDatasheet.open();
 		});
 		
-		new AcceleratedMenuItem(menu, "Open Datasheet...\tCtrl-O", SWT.MOD1 | 'O', "open-folder-outline", event -> {
+		new AcceleratedMenuItem(menu, "Open datasheet...\tCtrl-O", SWT.MOD1 | 'O', "open-folder-outline", event -> {
 			
 		});
 
 		MenuItem recentItem = new MenuItem(menu, SWT.CASCADE);
-		recentItem.setText("Recently-opened documents");
+		recentItem.setImage(IconLoader.loadIcon("list"));
+		recentItem.setText("Recently-opened datasheets");
 		
 		menu.addMenuListener(new MenuAdapter() {
 			@Override
@@ -274,6 +272,8 @@ public class Relang {
  		*/
 	}
 
+	static long gridNumber = 0;
+	
 	static void createDataMenu(Menu bar) {
 		MenuItem dataItem = new MenuItem(bar, SWT.CASCADE);
 		dataItem.setText("Data");
@@ -283,27 +283,9 @@ public class Relang {
 
 		new AcceleratedMenuItem(menu, "Add Grid...\tCtrl-G", SWT.MOD1 | 'G', "newgrid", event -> {
 			Shell newGridShell = createShell();
-			newGridShell.setText("New Grid");
-			newGridShell.setLayout(new FillLayout());
-
-			Heading heading = new Heading();
-			heading.add("A", String.class);
-			heading.add("B", String.class);
-			heading.add("C", String.class);
-
-			Tuples tuples = new Tuples(heading);
-			
-			for (int i=0; i<3; i++) {
-				Tuple tuple = new Tuple(heading);
-				tuple.setAttributeValue("A", "");
-				tuple.setAttributeValue("B", "");
-				tuple.setAttributeValue("C", "");
-				tuples.add(tuple);
-			}
-		
-			Grid grid = new Grid(newGridShell);			
-	//		grid.setTuples(tuples);
-			
+			newGridShell.setText("New Grid " + ++gridNumber);
+			newGridShell.setLayout(new FillLayout());	
+			new Grid(newGridShell);
 			newGridShell.open();
 		});
 		
@@ -329,11 +311,11 @@ public class Relang {
 		Menu menu = new Menu(toolsItem);
 		toolsItem.setMenu(menu);
 		
-		new AcceleratedMenuItem(menu, "View log", 0, e -> LogWin.open());
+		new AcceleratedMenuItem(menu, "View log", 0, "log", e -> LogWin.open());
 		new MenuItem(menu, SWT.SEPARATOR);
-		new AcceleratedMenuItem(menu, "Submit Feedback", 0, "ButterflyIcon", e -> SuggestionboxDialog.launch(shell));
-		new AcceleratedMenuItem(menu, "Bug Report", 0, "BugIcon", e -> BugReportDialog.launch(shell));
-		new AcceleratedMenuItem(menu, "Check for Updates", 0, e -> UpdatesCheckDialog.launch(shell));
+		new AcceleratedMenuItem(menu, "Submit Feedback", 0, "idea", e -> SuggestionboxDialog.launch(shell));
+		new AcceleratedMenuItem(menu, "Bug Report", 0, "bug_menu", e -> BugReportDialog.launch(shell));
+		new AcceleratedMenuItem(menu, "Check for Updates", 0, "upgrade_menu", e -> UpdatesCheckDialog.launch(shell));
 		
 		new MenuItem(menu, SWT.SEPARATOR);
 		new AcceleratedMenuItem(menu, "Force crash for testing purposes", 0, null, e -> kaboom());

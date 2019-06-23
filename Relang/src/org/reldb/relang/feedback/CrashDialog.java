@@ -68,7 +68,7 @@ public class CrashDialog extends FeedbackDialog {
 
 		Label lblIconBoom = new Label(panelIntro, SWT.NONE);
 		lblIconBoom.setLayoutData(new GridData(SWT.LEFT, SWT.TOP, false, false, 1, 1));
-		lblIconBoom.setImage(IconLoader.loadIcon("nuclear-explosion"));
+		lblIconBoom.setImage(IconLoader.loadIcon("explosion"));
 
 		Label lblInstructions = new Label(panelIntro, SWT.WRAP);
 		lblInstructions.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true, 1, 1));

@@ -87,16 +87,19 @@ import org.reldb.relang.utilities.IconLoader;
 
 public class Grid extends Composite {
 
+	private void setup() {
+		setLayout(new FillLayout());
+		setData(new GridDataTemporary());		
+	}
+	
 	public Grid(Shell shell) {
 		super(shell, SWT.NONE);
-		setLayout(new FillLayout());
-		init();
+		setup();
 	}
 
 	public Grid(Composite composite) {
 		super(composite, SWT.NONE);
-		setLayout(new FillLayout());
-		init();
+		setup();
 	}
 
 //	private Tuples tuples = new Tuples(new Heading());	
