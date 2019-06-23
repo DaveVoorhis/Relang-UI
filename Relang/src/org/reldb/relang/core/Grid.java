@@ -121,15 +121,15 @@ public class Grid extends Composite {
 	protected Vector<HashSet<String>> keys = null;
 	
 	private String getAttributeNameAt(int columnIndex) {
-		return data.getName(columnIndex);
+		return data.getColumnName(columnIndex);
 	}
 	
 	private Class<?> getAttributeTypeAt(int columnIndex) {
-		return data.getType(columnIndex);
+		return data.getColumnType(columnIndex);
 	}
 	
 	private int getColumnCount() {
-		return data.getCardinality();
+		return data.getColumnCount();
 	}
 	
 	class HeadingProvider implements IDataProvider {
@@ -297,7 +297,7 @@ public class Grid extends Composite {
 			if (columnIndex >= getColumnCount() - 1) {
 				System.out.println("Grid: setDataValue in last column. getColumnCount() == " + getColumnCount() + " before extend()");
 				String newName = "A";
-				while (data.hasName(newName)) {
+				while (data.isColumnNameUsed(newName)) {
 					char newLastChar = (char) (newName.charAt(newName.length() - 1) + 1);
 					if (newLastChar > 'Z') {
 						newLastChar = 'A';
@@ -339,7 +339,7 @@ public class Grid extends Composite {
 
 		@Override
 		public int getRowCount() {
-			return data.getDegree();
+			return data.getRowCount();
 		}
 
 		private void refreshAfterUpdate() {

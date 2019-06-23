@@ -10,41 +10,40 @@ public class GridDataTemporary implements GridData {
 	private Vector<Vector<Object>> data = new Vector<>();
 	
 	@Override
-	public int getCardinality() {
-		return heading.getCardinality();
+	public int getColumnCount() {
+		return heading.getColumnCount();
 	}
 
 	@Override
-	public int getDegree() {
+	public int getRowCount() {
 		return data.size();
 	}
 
 	@Override
-	public void setName(int column, String name) {
+	public void setColumnName(int column, String name) {
 		// TODO Auto-generated method stub
-
 	}
 
 	@Override
-	public String getName(int column) {
+	public String getColumnName(int column) {
 		// TODO Auto-generated method stub
 		return null;
 	}
 
 	@Override
-	public boolean hasName(String name) {
+	public boolean isColumnNameUsed(String name) {
 		// TODO Auto-generated method stub
 		return false;
 	}
 
 	@Override
-	public void setType(int column, Class<?> type) {
+	public void setColumnType(int column, Class<?> type) {
 		// TODO Auto-generated method stub
 
 	}
 
 	@Override
-	public Class<?> getType(int column) {
+	public Class<?> getColumnType(int column) {
 		// TODO Auto-generated method stub
 		return null;
 	}

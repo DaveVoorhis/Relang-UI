@@ -20,7 +20,7 @@ public class Heading {
 		attributeTypes.add(attributeType);
 	}
 	
-	public int getCardinality() {
+	public int getColumnCount() {
 		return attributes.size();
 	}
 	
