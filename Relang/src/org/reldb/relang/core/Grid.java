@@ -2,7 +2,6 @@ package org.reldb.relang.core;
 
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.Iterator;
 import java.util.Map;
 import java.util.Set;
 import java.util.Vector;
@@ -101,8 +100,6 @@ public class Grid extends Composite {
 		super(composite, SWT.NONE);
 		setup();
 	}
-
-//	private Tuples tuples = new Tuples(new Heading());	
 
 	private GridData data;
 	

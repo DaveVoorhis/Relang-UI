@@ -52,7 +52,7 @@ public class GridDataTemporary implements GridData {
 	@Override
 	public void setValue(int column, int row, Object value) {
 		// TODO Auto-generated method stub
-
+		System.out.println("GridDataTemporary: attempt to set " + column + ", " + row + " with " + value.toString());
 	}
 
 	@Override
