@@ -5,7 +5,7 @@ import org.eclipse.swt.graphics.GC;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.graphics.Rectangle;
-import org.eclipse.swt.widgets.Control;
+import org.eclipse.swt.program.Program;
 import org.eclipse.swt.widgets.Dialog;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Shell;
@@ -32,7 +32,7 @@ public class AboutDialog extends Dialog {
 	 * @param style
 	 */
 	public AboutDialog(Shell parent) {
-		super(parent, SWT.None);
+		super(parent, SWT.APPLICATION_MODAL);
 		setText("About " + Version.getAppName());
 	}
 
@@ -51,12 +51,20 @@ public class AboutDialog extends Dialog {
 		}
 	}
 
-	private boolean isPointInText(Control control, String s, int rightPosn, int topPosn, Point p) {
-		GC gc = new GC(control);
-		gc.setFont(shell.getFont());
+	private boolean isPointInText(GC gc, String s, int rightPosn, int topPosn, Point p) {
 		Point dimensions = gc.textExtent(s);
 		Rectangle controlRect = new Rectangle(rightPosn - dimensions.x, topPosn, dimensions.x, dimensions.y);
 		return controlRect.contains(p);
+	}
+	
+	private boolean isPointInURL(int urlFontSize, int x, int y) {
+		GC gc = new GC(shell);
+		gc.setFont(SWTResourceManager.getFont("Arial", urlFontSize, SWT.BOLD));
+		try {
+			return (isPointInText(gc, Version.getURL(), rightPos, urlTop, new Point(x, y)));
+		} finally {
+			gc.dispose();
+		}
 	}
 
 	/**
@@ -81,6 +89,8 @@ public class AboutDialog extends Dialog {
 
 		Image background = IconLoader.loadIconNormal(Version.getSplashName());
 
+		final int urlFontSize = 14;
+		
 		shell.addPaintListener(e -> {
 			if (background != null)
 				e.gc.drawImage(background, 0, 0, background.getImageData().width, background.getImageData().height, 0,
@@ -89,11 +99,12 @@ public class AboutDialog extends Dialog {
 			e.gc.setFont(SWTResourceManager.getFont("Arial", 18, SWT.BOLD));
 			int width = e.gc.textExtent(Version.getVersion()).x;
 			e.gc.drawText(Version.getVersion(), rightPos - width, urlTop - 62, true);
-			e.gc.setFont(SWTResourceManager.getFont("Arial", 12, SWT.BOLD));
+			e.gc.setFont(SWTResourceManager.getFont("Arial", 9, SWT.BOLD));
 			width = e.gc.textExtent(Version.getCopyright()).x;
 			e.gc.drawText(Version.getCopyright(), rightPos - width, urlTop - 28, true);
 			e.gc.setForeground(SWTResourceManager.getColor(150, 200, 255));
-			width = e.gc.textExtent(Version.getURL()).x;
+			e.gc.setFont(SWTResourceManager.getFont("Arial", urlFontSize, SWT.BOLD));
+			width = e.gc.textExtent(Version.getURL(), SWT.DRAW_TRANSPARENT).x;
 			e.gc.drawText(Version.getURL(), rightPos - width, urlTop, true);
 			e.gc.setFont(SWTResourceManager.getFont("Arial", 24, SWT.BOLD));
 			e.gc.setForeground(SWTResourceManager.getColor(SWT.COLOR_RED));
@@ -103,15 +114,15 @@ public class AboutDialog extends Dialog {
 		});
 
 		shell.addListener(SWT.MouseUp, e -> {
-			if (isPointInText(shell, Version.getURL(), rightPos, urlTop, new Point(e.x, e.y)))
-				org.eclipse.swt.program.Program.launch(Version.getURL());
+			if (isPointInURL(urlFontSize, e.x, e.y))
+				Program.launch(Version.getURL());
 		});
 
 		shell.addListener(SWT.MouseMove, e -> {
 			Cursor cursor = shell.getCursor();
 			if (cursor != null)
 				cursor.dispose();
-			boolean isPointerInURL = isPointInText(shell, Version.getURL(), rightPos, urlTop, new Point(e.x, e.y));
+			boolean isPointerInURL = isPointInURL(urlFontSize, e.x, e.y);
 			cursor = new Cursor(shell.getDisplay(), isPointerInURL ? SWT.CURSOR_HAND : SWT.CURSOR_ARROW);
 			shell.setCursor(cursor);
 		});
