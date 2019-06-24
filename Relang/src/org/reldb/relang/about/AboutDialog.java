@@ -87,7 +87,7 @@ public class AboutDialog extends Dialog {
 		btnClose.addListener(SWT.Selection, e -> shell.dispose());
 		shell.setDefaultButton(btnClose);
 
-		Image background = IconLoader.loadIconNormal(Version.getSplashName());
+		Image background = IconLoader.loadIcon(Version.getSplashName());
 
 		final int urlFontSize = 14;
 		
