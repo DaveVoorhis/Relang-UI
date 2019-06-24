@@ -92,9 +92,11 @@ public class AboutDialog extends Dialog {
 		final int urlFontSize = 14;
 		
 		shell.addPaintListener(e -> {
-			if (background != null)
-				e.gc.drawImage(background, 0, 0, background.getImageData().width, background.getImageData().height, 0,
-						0, backgroundWidth, backgroundHeight);
+			if (background != null) {
+				int imageWidth = background.getImageData().width;
+				int imageHeight = background.getImageData().height;
+				e.gc.drawImage(background, 0, 0, imageWidth, imageHeight, 0, 0, backgroundWidth, backgroundHeight);
+			}
 			e.gc.setForeground(SWTResourceManager.getColor(SWT.COLOR_WHITE));
 			e.gc.setFont(SWTResourceManager.getFont("Arial", 18, SWT.BOLD));
 			int width = e.gc.textExtent(Version.getVersion()).x;
