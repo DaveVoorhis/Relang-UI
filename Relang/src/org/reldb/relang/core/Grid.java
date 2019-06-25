@@ -121,11 +121,11 @@ public class Grid extends Composite {
 	protected Vector<HashSet<String>> keys = null;
 	
 	private String getAttributeNameAt(int columnIndex) {
-		return data.getColumnName(columnIndex);
+		return data.getColumnNameAt(columnIndex);
 	}
 	
 	private Class<?> getAttributeTypeAt(int columnIndex) {
-		return data.getColumnType(columnIndex);
+		return data.getColumnTypeAt(columnIndex);
 	}
 	
 	private int getColumnCount() {
@@ -297,7 +297,7 @@ public class Grid extends Composite {
 			if (columnIndex >= getColumnCount() - 1) {
 				System.out.println("Grid: setDataValue in last column. getColumnCount() == " + getColumnCount() + " before extend()");
 				String newName = "A";
-				while (data.isColumnNameUsed(newName)) {
+				while (data.hasColumnNamed(newName)) {
 					char newLastChar = (char) (newName.charAt(newName.length() - 1) + 1);
 					if (newLastChar > 'Z') {
 						newLastChar = 'A';

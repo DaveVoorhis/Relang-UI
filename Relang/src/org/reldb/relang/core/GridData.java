@@ -15,16 +15,19 @@ public interface GridData {
 	public void setColumnName(int column, String name);
 	
 	/** Return the specified column's name. */
-	public String getColumnName(int column);
+	public String getColumnNameAt(int column);
 	
 	/** Return true if there exists a column with the given name. */
-	public boolean isColumnNameUsed(String name);
+	public boolean hasColumnNamed(String name);
 	
 	/** Set the type of the specified column. */
 	public void setColumnType(int column, Class<?> type);
 	
 	/** Get the type of the specified column. */
-	public Class<?> getColumnType(int column);
+	public Class<?> getColumnTypeAt(int column);
+	
+	/** Delete a column. */
+	public void deleteColumnAt(int column);
 	
 	/** Set the value of the specified column/row intersection. */
 	public void setValue(int column, int row, Object value);

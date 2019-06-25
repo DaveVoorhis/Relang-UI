@@ -21,37 +21,40 @@ public class GridDataTemporary implements GridData {
 
 	@Override
 	public void setColumnName(int column, String name) {
-		// TODO Auto-generated method stub
+		heading.setColumnName(column, name);
 	}
 
 	@Override
-	public String getColumnName(int column) {
-		// TODO Auto-generated method stub
-		return null;
+	public String getColumnNameAt(int column) {
+		return heading.getColumnNameAt(column);
 	}
 
 	@Override
-	public boolean isColumnNameUsed(String name) {
-		// TODO Auto-generated method stub
-		return false;
+	public boolean hasColumnNamed(String name) {
+		return heading.hasColumnNamed(name);
 	}
 
 	@Override
 	public void setColumnType(int column, Class<?> type) {
-		// TODO Auto-generated method stub
-
+		heading.setColumnType(column, type);
 	}
 
 	@Override
-	public Class<?> getColumnType(int column) {
-		// TODO Auto-generated method stub
-		return null;
+	public Class<?> getColumnTypeAt(int column) {
+		return heading.getColumnTypeAt(column);
 	}
 
+	@Override
+	public void deleteColumnAt(int column) {
+		heading.deleteColumnAt(column);
+	}
+	
 	@Override
 	public void setValue(int column, int row, Object value) {
-		// TODO Auto-generated method stub
-		System.out.println("GridDataTemporary: attempt to set " + column + ", " + row + " with " + value.toString());
+		int columnCount = getColumnCount();
+		if (column > columnCount - 1)
+			throw new InvalidValueException("ERROR: GridDataTemporary: Attempt to reference non-existent column " + column + " in a GridDataTemporary with column count " + columnCount);
+		// TODO - complete this!
 	}
 
 	@Override

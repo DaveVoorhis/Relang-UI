@@ -65,7 +65,7 @@ public class SearchAdvancedQueryBuilder extends Composite {
 			int operationIndex = ((Combo)control[1]).getSelectionIndex();
 			if (operationIndex < 0)
 				continue;
-			String name = attributes.getAttributeNameAt(columnIndex);
+			String name = attributes.getColumnNameAt(columnIndex);
 			String value = ((Text)control[2]).getText();
 			// TODO - fix
 			/*

@@ -10,6 +10,7 @@ public class Tuple {
 	
 	public Tuple(Heading heading) {
 		this.heading = heading;
+		heading.freeze();
 	}
 
 	public Heading getHeading() {
@@ -22,7 +23,7 @@ public class Tuple {
 
 	public void setAttributeValue(String name, Object value) {
 		System.out.println("Tuple: setAttributeValue for " + name + " to " + value);
-		if (!heading.hasAttribute(name))
+		if (!heading.hasColumnNamed(name))
 			throw new InvalidValueException("ERROR: Tuple: tuple with heading " + heading + " doesn't have an attribute named " + name);
 		if (heading.typeOf(name) != value.getClass())
 			throw new InvalidValueException("ERROR: Tuple: tuple has heading " + heading + " where type of attribute " + name + " is " + heading.typeOf(name) + " but attempting to set the attribute value to " + value.getClass());
