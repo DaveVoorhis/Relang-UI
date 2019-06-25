@@ -26,7 +26,10 @@
 #
 
 relangversion=1.000
-javaversion=jdk-11.0.1
+
+# Change this in MakeJRE/build.sh too!
+javaversion=jdk-12.0.1
+
 jredir=~/Documents/OpenJDKs
 proddir=~/git/Relang/_Deploy/product
 

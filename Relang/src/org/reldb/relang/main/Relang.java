@@ -40,6 +40,9 @@ import org.reldb.swt.os_specific.OSSpecific;
 
 public class Relang {
 
+	// Set to true to enable a Tools menu item to deliberately cause a crash for testing exception handling.
+	static final boolean showKaboomMenuItem = false;
+	
 	static boolean createdScreenBar = false;
 	
 	static Shell shell = null;
@@ -317,8 +320,10 @@ public class Relang {
 		new AcceleratedMenuItem(menu, "Bug Report", 0, "bug_menu", e -> BugReportDialog.launch(shell));
 		new AcceleratedMenuItem(menu, "Check for Updates", 0, "upgrade_menu", e -> UpdatesCheckDialog.launch(shell));
 		
-		new MenuItem(menu, SWT.SEPARATOR);
-		new AcceleratedMenuItem(menu, "Force crash for testing purposes", 0, null, e -> kaboom());
+		if (showKaboomMenuItem) {
+			new MenuItem(menu, SWT.SEPARATOR);
+			new AcceleratedMenuItem(menu, "Force crash for testing purposes", 0, null, e -> kaboom());
+		}
 	}
 	
 	private static void createHelpMenu(Menu bar) {

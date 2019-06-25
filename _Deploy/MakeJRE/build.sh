@@ -1,12 +1,14 @@
 #!/bin/sh
 
+javaversion=jdk-12.0.1
+
 MODULES=makejre.reldb
 
-JLINK=/Library/Java/JavaVirtualMachines/jdk-11.0.1.jdk/Contents/Home/bin/jlink
+JLINK=/Library/Java/JavaVirtualMachines/$javaversion.jdk/Contents/Home/bin/jlink
 
-MODS_MACOS=~/Documents/OpenJDKs/osx/jdk-11.0.1.jdk/Contents/Home/jmods
-MODS_LINUX=~/Documents/OpenJDKs/linux/jdk-11.0.1/jmods
-MODS_WINDOWS=~/Documents/OpenJDKs/windows/jdk-11.0.1/jmods
+MODS_MACOS=~/Documents/OpenJDKs/osx/$javaversion.jdk/Contents/Home/jmods
+MODS_LINUX=~/Documents/OpenJDKs/linux/$javaversion/jmods
+MODS_WINDOWS=~/Documents/OpenJDKs/windows/$javaversion/jmods
 
 echo 'Obtaining JREs...'
 
