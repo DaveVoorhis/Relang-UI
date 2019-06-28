@@ -36,7 +36,7 @@ public class GridDataTemporary implements GridData {
 
 	@Override
 	public void setColumnType(int column, Class<?> type, Object defaultValue) {
-		// TODO - need to make sure new column type is compatible (whatever that shall mean) with data type
+		// TODO - need to make sure every value can be assigned to the data type
 		heading.setColumnType(column, type, defaultValue);
 		// TODO - need to append to data column, possibly
 	}

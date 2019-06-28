@@ -173,8 +173,8 @@ public class SearchAdvancedQueryBuilder extends Composite {
 		Combo newComboColumn;
 		newComboColumn = new Combo(this, SWT.READ_ONLY);
 		newComboColumn.setLayoutData(new GridData(SWT.LEFT, SWT.CENTER, false, false, 1, 1));
-		Vector<String> attributeNames = attributes.getAttributeNames();
-		newComboColumn.setItems(attributeNames.toArray(new String[0]));
+		String[] attributeNames = attributes.getAttributeNames().toArray(new String[0]);
+		newComboColumn.setItems(attributeNames);
 		rowControls[0] = newComboColumn;
 		if (rowNum == 0)
 			newComboColumn.setFocus();

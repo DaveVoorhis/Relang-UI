@@ -54,5 +54,6 @@
 	<classpathentry kind="lib" path="/_Deploy/lib/swt/macos_64/swt_reldb.jar"/>
 	<classpathentry kind="lib" path="/_Deploy/lib/swt/macos_64/swt.jar"/>
 	<classpathentry kind="lib" path="/_Deploy/lib/jdt/ecj-4.12.jar"/>
+	<classpathentry combineaccessrules="false" kind="src" path="/Relang"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>
