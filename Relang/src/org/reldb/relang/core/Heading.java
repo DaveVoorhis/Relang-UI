@@ -5,10 +5,16 @@ import java.util.Vector;
 import java.util.stream.Collectors;
 
 public class Heading {
+	
+	private static class ColumnType {
+		public ColumnType(Class<?> type, Object defaultValue) {this.type = type; this.defaultValue = defaultValue;}
+		public Class<?> type;
+		public Object defaultValue;
+	}
 
-	private HashMap<String, Class<?>> columns = new HashMap<>();
+	private HashMap<String, ColumnType> columns = new HashMap<>();
 	private Vector<String> columnNames = new Vector<>();
-	private Vector<Class<?>> columnTypes = new Vector<>();
+	private Vector<ColumnType> columnTypes = new Vector<>();
 	private boolean frozen = false;
 	
 	private void checkFrozen() {
@@ -25,54 +31,69 @@ public class Heading {
 		do {
 			name = Integer.toString(columnNumber++);
 		} while (hasColumnNamed(name));
-		columns.put(name, Object.class);
+		ColumnType columnType = new ColumnType(Object.class, new Object());
+		columns.put(name, columnType);
 		int index = columnNumber - 1;
 		columnNames.set(index, name);
-		columnTypes.set(index, Object.class);
+		columnTypes.set(index, columnType);
 	}
 
 	public void widenToIncludeColumnNumber(int columnNumber) {
+		if (columnNumber < 0)
+			throw new InvalidValueException("ERROR: Heading: Invalid column number " + columnNumber);
 		while (columnNames.size() < columnNumber)
-			appendDefaultColumn();		
+			appendDefaultColumn();
 	}
 	
-	public void defineColumn(int columnNumber, String attributeName, Class<?> attributeType) {
+	public void defineColumn(int columnNumber, String attributeName, Class<?> attributeType, Object defaultValue) {
+		if (columnNumber < 0)
+			throw new InvalidValueException("ERROR: Heading: Invalid column number " + columnNumber);
+		if (!(attributeType.isAssignableFrom(defaultValue.getClass())))
+				throw new InvalidValueException("ERROR: Heading: defaultValue of type " + defaultValue.getClass() + " cannot be assigned to an " + attributeType);
 		checkFrozen();
 		if (hasColumnNamed(attributeName))
 			throw new InvalidValueException("ERROR: Heading: heading " + this + " already contains an attribute named " + attributeName);
 		widenToIncludeColumnNumber(columnNumber);
-		columns.put(attributeName, attributeType);
+		ColumnType columnType = new ColumnType(attributeType, defaultValue);
+		columns.put(attributeName, columnType);
 		columnNames.set(columnNumber, attributeName);
-		columnTypes.set(columnNumber, attributeType);
+		columnTypes.set(columnNumber, columnType);
 	}
 	
-	public void appendColumn(String attributeName, Class<?> attributeType) {
+	public void appendColumn(String attributeName, Class<?> attributeType, Object defaultValue) {
 		int columnNumber = columnNames.size();
-		defineColumn(columnNumber, attributeName, attributeType);
+		defineColumn(columnNumber, attributeName, attributeType, defaultValue);
 	}
 
 	public void setColumnName(int columnNumber, String attributeName) {
+		if (columnNumber < 0)
+			throw new InvalidValueException("ERROR: Heading: Invalid column number " + columnNumber);
 		checkFrozen();
 		if (hasColumnNamed(attributeName))
 			throw new InvalidValueException("ERROR: Heading: heading " + this + " already contains an attribute named " + attributeName);
 		widenToIncludeColumnNumber(columnNumber);
-		Class<?> type = getColumnTypeAt(columnNumber);
-		columns.put(attributeName, type);
+		ColumnType columnType = getColumnType(columnNumber);
+		columns.put(attributeName, columnType);
 		columnNames.set(columnNumber, attributeName);
 	}
 	
-	public void setColumnType(int columnNumber, Class<?> attributeType) {
+	public void setColumnType(int columnNumber, Class<?> attributeType, Object defaultValue) {
+		if (columnNumber < 0)
+			throw new InvalidValueException("ERROR: Heading: Invalid column number " + columnNumber);
 		checkFrozen();
 		widenToIncludeColumnNumber(columnNumber);
 		String attributeName = getColumnNameAt(columnNumber);
-		columns.put(attributeName, attributeType);
-		columnTypes.set(columnNumber, attributeType);
+		if (!(attributeType.isAssignableFrom(defaultValue.getClass())))
+			throw new InvalidValueException("ERROR: Heading: defaultValue of type " + defaultValue.getClass() + " cannot be assigned to an " + attributeType);		
+		ColumnType columnType = new ColumnType(attributeType, defaultValue);
+		columns.put(attributeName, columnType);
+		columnTypes.set(columnNumber, columnType);
 	}
 	
 	public void deleteColumnAt(int columnNumber) {
 		checkFrozen();
 		int columnCount = getColumnCount();
-		if (columnNumber > columnCount - 1)
+		if (columnNumber >= columnCount || columnNumber < 0)
 			throw new InvalidValueException("ERROR: Heading: Attempt to delete column " + columnNumber + " in a heading with column count " + columnCount);
 		String name = getColumnNameAt(columnNumber);
 		columns.remove(name);
@@ -96,17 +117,36 @@ public class Heading {
 	}
 
 	public Class<?> typeOf(String name) {
-		return columns.get(name);
+		return columns.get(name).type;
 	}
 
-	public String getColumnNameAt(int columnIndex) {
-		return columnNames.get(columnIndex);
+	public Object defaultValueOf(String name) {
+		return columns.get(name).defaultValue;
 	}
 
-	public Class<?> getColumnTypeAt(int columnIndex) {
-		return columnTypes.get(columnIndex);
+	
+	public String getColumnNameAt(int columnNumber) {
+		int columnCount = getColumnCount();
+		if (columnNumber >= columnCount || columnNumber < 0)
+			throw new InvalidValueException("ERROR: Heading: invalid column number " + columnNumber + " in a heading with column count " + columnCount);		
+		return columnNames.get(columnNumber);
 	}
 
+	private ColumnType getColumnType(int columnNumber) {
+		int columnCount = getColumnCount();
+		if (columnNumber >= columnCount || columnNumber < 0)
+			throw new InvalidValueException("ERROR: Heading: invalid column number " + columnNumber + " in a heading with column count " + columnCount);		
+		return columnTypes.get(columnNumber);
+	}
+	
+	public Class<?> getColumnTypeAt(int columnNumber) {
+		return getColumnType(columnNumber).type;
+	}
+
+	public Object getDefaultValueAt(int columnNumber) {
+		return getColumnType(columnNumber).defaultValue;
+	}
+	
 	public Vector<String> getAttributeNames() {
 		return columnNames;
 	}

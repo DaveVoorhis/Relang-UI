@@ -35,8 +35,10 @@ public class GridDataTemporary implements GridData {
 	}
 
 	@Override
-	public void setColumnType(int column, Class<?> type) {
-		heading.setColumnType(column, type);
+	public void setColumnType(int column, Class<?> type, Object defaultValue) {
+		// TODO - need to make sure new column type is compatible (whatever that shall mean) with data type
+		heading.setColumnType(column, type, defaultValue);
+		// TODO - need to append to data column, possibly
 	}
 
 	@Override
@@ -47,20 +49,38 @@ public class GridDataTemporary implements GridData {
 	@Override
 	public void deleteColumnAt(int column) {
 		heading.deleteColumnAt(column);
+		// TODO - delete data columns here
+	}
+	
+	/** Delete a row. */
+	public void deleteRowAt(int row) {
+		
+	}
+	
+	/** Append a blank row. */
+	public void appendRow() {
+		
 	}
 	
 	@Override
 	public void setValue(int column, int row, Object value) {
 		int columnCount = getColumnCount();
-		if (column > columnCount - 1)
+		if (column >= columnCount || column < 0)
 			throw new InvalidValueException("ERROR: GridDataTemporary: Attempt to reference non-existent column " + column + " in a GridDataTemporary with column count " + columnCount);
-		// TODO - complete this!
+		if (row < 0)
+			throw new InvalidValueException("ERROR: GridDataTemporary: Attempt to reference non-existent row " + row);
+		while (row >= getRowCount())
+			appendRow();
+		
 	}
 
 	@Override
 	public Object getValue(int column, int row) {
-		// TODO Auto-generated method stub
-		return null;
+		if (column >= getColumnCount() || column < 0)
+			throw new InvalidValueException("ERROR: GridDataTemporary: Attempt to reference non-existent column " + column);
+		if (row > getRowCount() || row < 0)
+			throw new InvalidValueException("ERROR: GridDataTemporary: Attempt to reference non-existent row " + row);
+		return data.get(column).get(row);
 	}
 
 	@Override

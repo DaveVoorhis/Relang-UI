@@ -20,14 +20,20 @@ public interface GridData {
 	/** Return true if there exists a column with the given name. */
 	public boolean hasColumnNamed(String name);
 	
-	/** Set the type of the specified column. */
-	public void setColumnType(int column, Class<?> type);
+	/** Set the type and default value of the specified column. */
+	public void setColumnType(int column, Class<?> type, Object defaultValue);
 	
 	/** Get the type of the specified column. */
 	public Class<?> getColumnTypeAt(int column);
 	
 	/** Delete a column. */
 	public void deleteColumnAt(int column);
+	
+	/** Delete a row. */
+	public void deleteRowAt(int row);
+	
+	/** Append a blank row. */
+	public void appendRow();
 	
 	/** Set the value of the specified column/row intersection. */
 	public void setValue(int column, int row, Object value);
