@@ -53,6 +53,12 @@ public class Heading {
 	public void defineColumn(int columnNumber, String attributeName, Class<?> attributeType, Object defaultValue) {
 		if (columnNumber < 0)
 			throw new InvalidValueException("ERROR: Heading: Invalid column number " + columnNumber);
+		if (defaultValue == null)
+			throw new InvalidValueException("ERROR: Heading: Attempt to set null default value.");
+		if (attributeType == null)
+			throw new InvalidValueException("ERROR: Heading: Attempt to set null attribute type.");
+		if (attributeName == null)
+			throw new InvalidValueException("ERROR: Heading: attempt to set null attribute name.");
 		if (!(attributeType.isAssignableFrom(defaultValue.getClass())))
 				throw new InvalidValueException("ERROR: Heading: defaultValue of type " + defaultValue.getClass() + " cannot be assigned to an " + attributeType);
 		checkFrozen();
@@ -72,6 +78,8 @@ public class Heading {
 	public void setColumnName(int columnNumber, String attributeName) {
 		if (columnNumber < 0)
 			throw new InvalidValueException("ERROR: Heading: Invalid column number " + columnNumber);
+		if (attributeName == null)
+			throw new InvalidValueException("ERROR: Heading: attempt to set null attribute name.");
 		checkFrozen();
 		if (hasColumnNamed(attributeName))
 			throw new InvalidValueException("ERROR: Heading: heading " + this + " already contains an attribute named " + attributeName);
@@ -84,6 +92,10 @@ public class Heading {
 	public void setColumnType(int columnNumber, Class<?> attributeType, Object defaultValue) {
 		if (columnNumber < 0)
 			throw new InvalidValueException("ERROR: Heading: Invalid column number " + columnNumber);
+		if (defaultValue == null)
+			throw new InvalidValueException("ERROR: Heading: Attempt to set null default value.");
+		if (attributeType == null)
+			throw new InvalidValueException("ERROR: Heading: Attempt to set null attribute type.");
 		checkFrozen();
 		widenToIncludeColumnNumber(columnNumber);
 		String attributeName = getColumnNameAt(columnNumber);
