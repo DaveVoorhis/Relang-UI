@@ -36,7 +36,15 @@ public class GridDataTemporary implements GridData {
 
 	@Override
 	public void setColumnType(int column, Class<?> type, Object defaultValue) {
-		// TODO - need to make sure every value can be assigned to the data type
+		if (type == null)
+			throw new InvalidValueException("ERROR: GridDataTemporary: The type parameter must not be null.");
+		int columnCount = getColumnCount();
+		if (column >= columnCount || column < 0)
+			throw new InvalidValueException("ERROR: GridDataTemporary: Attempt to reference non-existent column " + column + " in a GridDataTemporary with column count " + columnCount);
+		data.forEach(row -> {
+			if (!row.get(column).getClass().isAssignableFrom(type))
+				throw new InvalidValueException("ERROR: GridDataTemporary: Data in column " + column + " cannot be assigned to a " + type.getName());
+		});
 		heading.setColumnType(column, type, defaultValue);
 		// TODO - need to append to data column, possibly
 	}
@@ -49,17 +57,22 @@ public class GridDataTemporary implements GridData {
 	@Override
 	public void deleteColumnAt(int column) {
 		heading.deleteColumnAt(column);
-		// TODO - delete data columns here
+		data.forEach(row -> row.remove(column));
 	}
 	
 	/** Delete a row. */
 	public void deleteRowAt(int row) {
-		
+		if (row < 0 || row >= data.size())
+			throw new InvalidValueException("ERROR: GridDataTemporary: Attempt to reference non-existent row " + row);
+		data.remove(row);
 	}
 	
 	/** Append a blank row. */
 	public void appendRow() {
-		
+		var row = new Vector<Object>();
+		for (int column = 0; column < heading.getColumnCount(); column++)
+			row.add(heading.getDefaultValueAt(column));
+		data.add(row);
 	}
 	
 	@Override

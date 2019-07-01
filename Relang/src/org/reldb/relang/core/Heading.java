@@ -1,6 +1,5 @@
 package org.reldb.relang.core;
 
-import java.util.HashMap;
 import java.util.List;
 import java.util.Vector;
 import java.util.stream.Collectors;
@@ -11,15 +10,20 @@ public class Heading {
 		public ColumnType(Class<?> type, Object defaultValue) {this.type = type; this.defaultValue = defaultValue;}
 		public Class<?> type;
 		public Object defaultValue;
+		public String toString() {
+			return type.getName().toString();
+		}
 	}
 
 	private static class ColumnAttribute {
 		public ColumnAttribute(String name, ColumnType typeAndDefault) {this.name = name; this.typeAndDefault = typeAndDefault;}
 		public String name;
 		public ColumnType typeAndDefault;
+		public String toString() {
+			return typeAndDefault + " " + name;
+		}
 	}
 	
-	private HashMap<String, ColumnType> columnLookup = new HashMap<>();
 	private Vector<ColumnAttribute> columnAttributes = new Vector<>();
 	private boolean frozen = false;
 	
@@ -38,7 +42,6 @@ public class Heading {
 			name = "Col" + Integer.toString(columnNumber++);
 		} while (hasColumnNamed(name));
 		ColumnType columnType = new ColumnType(Object.class, new Object());
-		columnLookup.put(name, columnType);
 		int index = columnNumber - 1;
 		columnAttributes.add(index, new ColumnAttribute(name, columnType));
 	}
@@ -66,7 +69,6 @@ public class Heading {
 			throw new InvalidValueException("ERROR: Heading: heading " + this + " already contains an attribute named " + attributeName);
 		widenToIncludeColumnNumber(columnNumber);
 		ColumnType columnType = new ColumnType(attributeType, defaultValue);
-		columnLookup.put(attributeName, columnType);
 		columnAttributes.set(columnNumber, new ColumnAttribute(attributeName, columnType));
 	}
 	
@@ -85,7 +87,6 @@ public class Heading {
 			throw new InvalidValueException("ERROR: Heading: heading " + this + " already contains an attribute named " + attributeName);
 		widenToIncludeColumnNumber(columnNumber);
 		ColumnType columnType = getColumnType(columnNumber).typeAndDefault;
-		columnLookup.put(attributeName, columnType);
 		columnAttributes.set(columnNumber, new ColumnAttribute(attributeName, columnType));
 	}
 	
@@ -102,7 +103,6 @@ public class Heading {
 		if (!(attributeType.isAssignableFrom(defaultValue.getClass())))
 			throw new InvalidValueException("ERROR: Heading: defaultValue of type " + defaultValue.getClass() + " cannot be assigned to an " + attributeType);		
 		ColumnType columnType = new ColumnType(attributeType, defaultValue);
-		columnLookup.put(attributeName, columnType);
 		columnAttributes.set(columnNumber, new ColumnAttribute(attributeName, columnType));
 	}
 	
@@ -111,13 +111,11 @@ public class Heading {
 		int columnCount = getColumnCount();
 		if (columnNumber >= columnCount || columnNumber < 0)
 			throw new InvalidValueException("ERROR: Heading: Attempt to delete column " + columnNumber + " in a heading with column count " + columnCount);
-		String name = getColumnNameAt(columnNumber);
-		columnLookup.remove(name);
 		columnAttributes.remove(columnNumber);
 	}
 	
 	public int getColumnCount() {
-		return columnLookup.size();
+		return columnAttributes.size();
 	}
 	
 	public String toString() {
@@ -127,22 +125,31 @@ public class Heading {
 		return "{" + attributeString + "}";
 	}
 
+	private ColumnAttribute findColumnAttribute(String name) {
+		for (var columnAttribute: columnAttributes)
+			if (columnAttribute.name.contentEquals(name))
+				return columnAttribute;
+		return null;
+	}
+	
 	public boolean hasColumnNamed(String name) {
-		return columnLookup.containsKey(name);
+		return findColumnAttribute(name) != null;
 	}
 
 	public Class<?> typeOf(String name) {
-		return columnLookup.get(name).type;
+		var columnAttribute = findColumnAttribute(name);
+		return (columnAttribute == null) ? null : columnAttribute.typeAndDefault.type;
 	}
 
 	public Object defaultValueOf(String name) {
-		return columnLookup.get(name).defaultValue;
+		var columnAttribute = findColumnAttribute(name);
+		return (columnAttribute == null) ? null : columnAttribute.typeAndDefault.defaultValue;
 	}
 
 	private ColumnAttribute getColumnType(int columnNumber) {
 		int columnCount = getColumnCount();
 		if (columnNumber >= columnCount || columnNumber < 0)
-			throw new InvalidValueException("ERROR: Heading: invalid column number " + columnNumber + " in a heading with column count " + columnCount);		
+			throw new InvalidValueException("ERROR: Heading: invalid column number " + columnNumber + " in a heading with column count " + columnCount);
 		return columnAttributes.get(columnNumber);
 	}
 	
