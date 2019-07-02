@@ -1,6 +1,4 @@
-package org.reldb.relang.core;
-
-import org.reldb.relang.core.Grid.RowAction;
+package org.reldb.relang.data;
 
 /* Abstract definition of a Grid's data */
 public interface GridData {
@@ -46,7 +44,4 @@ public interface GridData {
 	
 	/** Return an error message if unable to write changed rows to backing store. */
 	public String getError(int row);
-	
-	/** Return the intended action for a given row. */
-	public RowAction getAction(int row);
 }

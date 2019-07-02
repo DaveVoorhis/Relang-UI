@@ -1,8 +1,6 @@
-package org.reldb.relang.core;
+package org.reldb.relang.data;
 
 import java.util.Vector;
-
-import org.reldb.relang.core.Grid.RowAction;
 
 public class GridDataTemporary implements GridData {
 
@@ -39,14 +37,13 @@ public class GridDataTemporary implements GridData {
 		if (type == null)
 			throw new InvalidValueException("ERROR: GridDataTemporary: The type parameter must not be null.");
 		int columnCount = getColumnCount();
-		if (column >= columnCount || column < 0)
+		if (column < 0)
 			throw new InvalidValueException("ERROR: GridDataTemporary: Attempt to reference non-existent column " + column + " in a GridDataTemporary with column count " + columnCount);
-		data.forEach(row -> {
-			if (!row.get(column).getClass().isAssignableFrom(type))
+		else if (column < heading.getColumnCount()) {
+			if (!data.stream().allMatch(row -> type.isAssignableFrom(row.get(column).getClass())))
 				throw new InvalidValueException("ERROR: GridDataTemporary: Data in column " + column + " cannot be assigned to a " + type.getName());
-		});
+		}
 		heading.setColumnType(column, type, defaultValue);
-		// TODO - need to append to data column, possibly
 	}
 
 	@Override
@@ -82,9 +79,13 @@ public class GridDataTemporary implements GridData {
 			throw new InvalidValueException("ERROR: GridDataTemporary: Attempt to reference non-existent column " + column + " in a GridDataTemporary with column count " + columnCount);
 		if (row < 0)
 			throw new InvalidValueException("ERROR: GridDataTemporary: Attempt to reference non-existent row " + row);
+		Class<?> headingColumnType = heading.getColumnTypeAt(column);
+		Class<?> valueType = value.getClass();
+		if (!headingColumnType.isAssignableFrom(valueType))
+			throw new InvalidValueException("ERROR: Attempt to assign value of type " + valueType.getName() + " to cell with type " + headingColumnType.getName());
 		while (row >= getRowCount())
 			appendRow();
-		
+		data.get(row).set(column, value);
 	}
 
 	@Override
@@ -93,7 +94,7 @@ public class GridDataTemporary implements GridData {
 			throw new InvalidValueException("ERROR: GridDataTemporary: Attempt to reference non-existent column " + column);
 		if (row > getRowCount() || row < 0)
 			throw new InvalidValueException("ERROR: GridDataTemporary: Attempt to reference non-existent row " + row);
-		return data.get(column).get(row);
+		return data.get(row).get(column);
 	}
 
 	@Override
@@ -104,12 +105,6 @@ public class GridDataTemporary implements GridData {
 
 	@Override
 	public String getError(int row) {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	@Override
-	public RowAction getAction(int row) {
 		// TODO Auto-generated method stub
 		return null;
 	}

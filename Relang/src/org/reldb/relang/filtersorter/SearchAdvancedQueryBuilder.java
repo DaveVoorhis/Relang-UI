@@ -10,7 +10,7 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Text;
-import org.reldb.relang.core.Heading;
+import org.reldb.relang.data.Heading;
 
 public class SearchAdvancedQueryBuilder extends Composite {
 	

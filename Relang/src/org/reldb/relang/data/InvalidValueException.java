@@ -1,4 +1,4 @@
-package org.reldb.relang.core;
+package org.reldb.relang.data;
 
 public class InvalidValueException extends RuntimeException {
 

@@ -9,7 +9,7 @@ import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.ToolBar;
 import org.eclipse.swt.widgets.ToolItem;
-import org.reldb.relang.core.Heading;
+import org.reldb.relang.data.Heading;
 import org.reldb.relang.utilities.IconLoader;
 
 public class FilterSorter extends Composite {

@@ -3,7 +3,7 @@ package org.reldb.relang.tests.main;
 import static org.junit.Assert.assertEquals;
 
 import org.junit.Test;
-import org.reldb.relang.core.Heading;
+import org.reldb.relang.data.Heading;
 import org.reldb.relang.tests.BaseOfTest;
 
 public class TestHeading extends BaseOfTest {

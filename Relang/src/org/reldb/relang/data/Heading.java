@@ -1,4 +1,4 @@
-package org.reldb.relang.core;
+package org.reldb.relang.data;
 
 import java.util.List;
 import java.util.Vector;
@@ -36,14 +36,13 @@ public class Heading {
 	
 	public void appendDefaultColumn() {
 		checkFrozen();
-		int columnNumber = columnAttributes.size();
 		String name;
+		int columnNumber = columnAttributes.size();
 		do {
 			name = "Col" + Integer.toString(columnNumber++);
 		} while (hasColumnNamed(name));
 		ColumnType columnType = new ColumnType(Object.class, new Object());
-		int index = columnNumber - 1;
-		columnAttributes.add(index, new ColumnAttribute(name, columnType));
+		columnAttributes.add(new ColumnAttribute(name, columnType));
 	}
 
 	public void widenToIncludeColumnNumber(int columnNumber) {
