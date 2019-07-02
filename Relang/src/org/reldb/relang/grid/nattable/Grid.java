@@ -1,4 +1,4 @@
-package org.reldb.relang.core;
+package org.reldb.relang.grid.nattable;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -67,6 +67,7 @@ import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.Menu;
+import org.reldb.relang.core.MenuConfiguration;
 import org.reldb.relang.data.GridData;
 import org.reldb.relang.utilities.IconLoader;
 
