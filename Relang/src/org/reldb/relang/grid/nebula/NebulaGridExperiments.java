@@ -1,7 +1,5 @@
 package org.reldb.relang.grid.nebula;
 
-import org.eclipse.jface.resource.FontRegistry;
-import org.eclipse.nebula.widgets.grid.AdaptedDataVisualizer;
 import org.eclipse.nebula.widgets.grid.Grid;
 import org.eclipse.nebula.widgets.grid.GridColumn;
 import org.eclipse.nebula.widgets.grid.GridColumnGroup;
@@ -9,124 +7,142 @@ import org.eclipse.nebula.widgets.grid.GridEditor;
 import org.eclipse.nebula.widgets.grid.GridItem;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.CCombo;
-import org.eclipse.swt.graphics.Color;
-import org.eclipse.swt.graphics.Font;
-import org.eclipse.swt.graphics.Image;
+import org.eclipse.swt.events.KeyAdapter;
+import org.eclipse.swt.events.KeyEvent;
+import org.eclipse.swt.events.MouseAdapter;
+import org.eclipse.swt.events.MouseEvent;
+import org.eclipse.swt.events.TraverseEvent;
+import org.eclipse.swt.events.TraverseListener;
+import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.widgets.Button;
+import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Display;
+import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Text;
-import org.eclipse.wb.swt.SWTResourceManager;
 
 public class NebulaGridExperiments {
-	
-	static class MyOwnDataVisualizer extends AdaptedDataVisualizer {
-	    FontRegistry registry = new FontRegistry();
-	    
-	    public MyOwnDataVisualizer() {
-	    }
-	 
-	    @Override
-	    public Image getImage(GridItem item, int columnIndex) {
-	        return null;
-	    }
-	 
-	    @Override
-	    public String getText(GridItem item, int columnIndex) {
-	    	return item.getText();
-	    }
-	 
-	    @Override
-	    public Font getFont(GridItem item, int columnIndex) {
-	        return SWTResourceManager.getFont("Arial", 12, SWT.BOLD);
-	    }
-	 
-	    @Override
-	    public Color getBackground(GridItem item, int columnIndex) {
-	        return Display.getCurrent().getSystemColor(SWT.COLOR_WHITE);
-	    }
-	 
-	    @Override
-	    public Color getForeground(GridItem item, int columnIndex) {
-	        return Display.getCurrent().getSystemColor(SWT.COLOR_BLACK);
-	    }
+
+	private static void focusOnCell(Grid grid, int rowNumber, int columnNumber) {
+		grid.setFocusColumn(grid.getColumn(columnNumber));
+		grid.setFocusItem(grid.getItem(rowNumber));
+		grid.setCellSelection(new Point(columnNumber, rowNumber));		
 	}
 
+	private static void setupControl(Grid grid, Control control, int rowNumber, int columnNumber) {
+		control.addMouseListener(new MouseAdapter () {
+			@Override
+			public void mouseDown(MouseEvent arg0) {
+				focusOnCell(grid, rowNumber, columnNumber);
+			}
+		});
+		control.addKeyListener(new KeyAdapter() {
+			public void keyPressed(KeyEvent evt) {
+				focusOnCell(grid, rowNumber, columnNumber);
+				if (evt.keyCode == SWT.TAB) {
+					int columnIndex = columnNumber;
+					if ((evt.stateMask & SWT.SHIFT) == 0) {
+						System.out.println("NebulaGridExperiments: TAB");
+						columnIndex++;
+						if (columnIndex >= grid.getColumnCount())
+							columnIndex = 0;
+					} else {
+						System.out.println("NebulaGridExperiments: Shift-TAB");
+						columnIndex--;
+						if (columnIndex < 0)
+							columnIndex = 0;
+					}
+					focusOnCell(grid, rowNumber, columnIndex);
+				}
+			}
+		});
+		control.addTraverseListener(new TraverseListener() {
+			@Override
+			public void keyTraversed(TraverseEvent evt) {
+				// disable standard TAB key traversal
+				if (evt.detail == SWT.TRAVERSE_TAB_NEXT || evt.detail == SWT.TRAVERSE_TAB_PREVIOUS)
+					evt.doit = false;
+			}
+		});
+	}
+	
 	public static void main(String[] args) {
 		Display display = new Display();
 		Shell shell = new Shell(display);
 		shell.setLayout(new FillLayout());
 		
-		var visualiser = new MyOwnDataVisualizer();
-		var grid = new Grid(visualiser, shell, SWT.BORDER | SWT.VIRTUAL | SWT.V_SCROLL | SWT.H_SCROLL);
-			
+		var grid = new Grid(shell, SWT.BORDER | SWT.VIRTUAL | SWT.V_SCROLL | SWT.H_SCROLL);
+		
 		grid.setLinesVisible(true);
 		grid.setHeaderVisible(true);
-//		grid.setRowHeaderVisible(true);
+		grid.setCellSelectionEnabled(true);
 		
-
 		int columnCount = 5;
-		for (int i = 0; i < columnCount; i++) {
+		for (int columnIndex = 0; columnIndex < columnCount; columnIndex++) {
 			var group = new GridColumnGroup(grid, SWT.NONE);
-			group.setText("Group" + i);
+			group.setText("Group" + columnIndex);
 			var column = new GridColumn(group, SWT.NONE);
-			column.setFooterText("Column" + i);
+			column.setFooterText("Column" + columnIndex);
 			column.setWidth(150);
-			column.setText("Column" + i);
+			column.setText("Column" + columnIndex);
 		}
 		
-		var gridItem = new GridItem(grid, SWT.NONE);
-		gridItem.setText("Item1");
-		
-/*
- * 
-		GridItem item1 = new GridItem(grid, SWT.NONE);
-		item1.setText("Item 0");
-		GridItem item2 = new GridItem(grid, SWT.NONE);
-		item2.setText("Item 1");
-		GridItem item3 = new GridItem(grid, SWT.NONE);
-		item3.setText("Item 2");
-
-		for (int i = 0; i < 3; i++) {
-			var item = new GridItem(grid, SWT.NONE);
-			var editor = new GridEditor(grid);
-			var text = new Text(grid, SWT.NONE);
-			text.setText("This is text");
-			editor.grabHorizontal = true;
-			editor.setEditor(text, item, 1);
+		for (int rowIndex = 0; rowIndex < 20; rowIndex++) {
+			var row = new GridItem(grid, SWT.NONE);
 			
-			GridEditor editor = new GridEditor(grid);
-			CCombo combo = new CCombo(grid, SWT.NONE);
-			combo.setText("CCombo Widget " + i);
-			combo.add("item 1");
-			combo.add("item 2");
-			combo.add("item 3");
+			// column 0
+			int columnIndex = 0;
+			var editor = new GridEditor(grid);
+			editor.grabHorizontal = true;
+			editor.grabVertical = true;
+			var label = new Label(grid, SWT.NONE);
+			label.setText(Integer.toString(rowIndex));
+			setupControl(grid, label, rowIndex, columnIndex);
+			editor.setEditor(label, row, columnIndex);
+			
+			// column 1
+			columnIndex = 1;
+			editor = new GridEditor(grid);
+			editor.grabHorizontal = true;
+			editor.grabVertical = true;
+			var selector = new Button(grid, SWT.CHECK);
+			setupControl(grid, selector, rowIndex, columnIndex);
+			editor.setEditor(selector, row, columnIndex);
+			
+			// column 2
+			columnIndex = 2;
+			editor = new GridEditor(grid);
+			editor.grabHorizontal = true;
+			var text = new Text(grid, SWT.NONE);
+			text.setText("Cell_Row" + rowIndex + "_Col" + columnIndex);
+			setupControl(grid, text, rowIndex, columnIndex);
+			editor.setEditor(text, row, columnIndex);
+			
+			// column 3
+			columnIndex = 3;
+			editor = new GridEditor(grid);
 			editor.minimumWidth = 50;
 			editor.grabHorizontal = true;
-			editor.setEditor(combo, item, 0);
-
-			item = new GridItem(grid, SWT.NONE);
+			CCombo combo = new CCombo(grid, SWT.NONE);
+			combo.setText("CCombo Widget " + columnIndex);
+			for (int i = 0; i < 100; i++)
+				combo.add("item " + i);
+			setupControl(grid, combo, rowIndex, columnIndex);
+			editor.setEditor(combo, row, columnIndex);
+			
+			// column 4
+			columnIndex = 4;
 			editor = new GridEditor(grid);
-			Text text = new Text(grid, SWT.NONE);
-			text.setText("Text " + i);
 			editor.grabHorizontal = true;
-			editor.setEditor(text, item, 1);
-			
-			editor = new GridEditor(grid);
-			
-			item = new GridItem(grid, SWT.NONE);
-			Button button = new Button(grid, SWT.CHECK);
-			button.setText("Check me");
-			button.pack();
-			editor.minimumWidth = button.getSize().x;
-			editor.horizontalAlignment = SWT.LEFT;
-			editor.setEditor(button, item, 2);
+			text = new Text(grid, SWT.NONE);
+			text.setText("Row" + rowIndex + "_Col" + columnIndex);
+			setupControl(grid, text, rowIndex, columnIndex);
+			editor.setEditor(text, row, columnIndex);
 		}
-			*/
 
-		grid.refreshData();
-
+		focusOnCell(grid, 0, 0);
+		
 		shell.setSize(800, 600);
 		shell.open();
 		while (!shell.isDisposed()) {
@@ -135,4 +151,5 @@ public class NebulaGridExperiments {
 		}
 		display.dispose();
 	}
+
 }
