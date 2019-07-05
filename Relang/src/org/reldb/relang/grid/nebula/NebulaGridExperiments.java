@@ -4,6 +4,7 @@ import org.eclipse.jface.resource.FontRegistry;
 import org.eclipse.nebula.widgets.grid.AdaptedDataVisualizer;
 import org.eclipse.nebula.widgets.grid.Grid;
 import org.eclipse.nebula.widgets.grid.GridColumn;
+import org.eclipse.nebula.widgets.grid.GridColumnGroup;
 import org.eclipse.nebula.widgets.grid.GridEditor;
 import org.eclipse.nebula.widgets.grid.GridItem;
 import org.eclipse.swt.SWT;
@@ -16,28 +17,14 @@ import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Text;
+import org.eclipse.wb.swt.SWTResourceManager;
 
 public class NebulaGridExperiments {
-
-	static class MyModel {
-		public int counter;
-
-		public MyModel(int n) {
-			counter = n;
-		}
-		
-		public String toString() {
-			return "MODEL " + counter;
-		}
-		
-	};
 	
 	static class MyOwnDataVisualizer extends AdaptedDataVisualizer {
 	    FontRegistry registry = new FontRegistry();
-	    private final MyModel models[];
-	 
-	    public MyOwnDataVisualizer(MyModel models[]) {
-	        this.models = models;
+	    
+	    public MyOwnDataVisualizer() {
 	    }
 	 
 	    @Override
@@ -47,31 +34,21 @@ public class NebulaGridExperiments {
 	 
 	    @Override
 	    public String getText(GridItem item, int columnIndex) {
-	        return "Column " + columnIndex + " => " + models[item.getRowIndex()].toString();
+	    	return item.getText();
 	    }
 	 
 	    @Override
 	    public Font getFont(GridItem item, int columnIndex) {
-	        if ((models[item.getRowIndex()]).counter % 2 == 0) {
-	            return registry.getBold(Display.getCurrent().getSystemFont()
-	                    .getFontData()[0].getName());
-	        }
-	        return null;
+	        return SWTResourceManager.getFont("Arial", 12, SWT.BOLD);
 	    }
 	 
 	    @Override
 	    public Color getBackground(GridItem item, int columnIndex) {
-	        if ((models[item.getRowIndex()]).counter % 2 == 0) {
-	            return Display.getCurrent().getSystemColor(SWT.COLOR_RED);
-	        }
 	        return Display.getCurrent().getSystemColor(SWT.COLOR_WHITE);
 	    }
 	 
 	    @Override
 	    public Color getForeground(GridItem item, int columnIndex) {
-	        if ((models[item.getRowIndex()]).counter % 2 == 1) {
-	            return Display.getCurrent().getSystemColor(SWT.COLOR_RED);
-	        }
 	        return Display.getCurrent().getSystemColor(SWT.COLOR_BLACK);
 	    }
 	}
@@ -80,24 +57,30 @@ public class NebulaGridExperiments {
 		Display display = new Display();
 		Shell shell = new Shell(display);
 		shell.setLayout(new FillLayout());
-
-		var models = new MyModel[10000];
-		for (int i = 0; i < models.length; i++) {
-			models[i] = new MyModel(i);
-		}
 		
-		var visualiser = new MyOwnDataVisualizer(models);
+		var visualiser = new MyOwnDataVisualizer();
 		var grid = new Grid(visualiser, shell, SWT.BORDER | SWT.VIRTUAL | SWT.V_SCROLL | SWT.H_SCROLL);
 			
 		grid.setLinesVisible(true);
 		grid.setHeaderVisible(true);
-		grid.setRowHeaderVisible(true);
+//		grid.setRowHeaderVisible(true);
 		
-		for (int i = 0; i < 3; i++) {
-			GridColumn column = new GridColumn(grid, SWT.NONE);
-			column.setWidth(150);
-		}
 
+		int columnCount = 5;
+		for (int i = 0; i < columnCount; i++) {
+			var group = new GridColumnGroup(grid, SWT.NONE);
+			group.setText("Group" + i);
+			var column = new GridColumn(group, SWT.NONE);
+			column.setFooterText("Column" + i);
+			column.setWidth(150);
+			column.setText("Column" + i);
+		}
+		
+		var gridItem = new GridItem(grid, SWT.NONE);
+		gridItem.setText("Item1");
+		
+/*
+ * 
 		GridItem item1 = new GridItem(grid, SWT.NONE);
 		item1.setText("Item 0");
 		GridItem item2 = new GridItem(grid, SWT.NONE);
@@ -105,8 +88,14 @@ public class NebulaGridExperiments {
 		GridItem item3 = new GridItem(grid, SWT.NONE);
 		item3.setText("Item 2");
 
-		for (int i = 3; i < 500; i++) {
+		for (int i = 0; i < 3; i++) {
 			var item = new GridItem(grid, SWT.NONE);
+			var editor = new GridEditor(grid);
+			var text = new Text(grid, SWT.NONE);
+			text.setText("This is text");
+			editor.grabHorizontal = true;
+			editor.setEditor(text, item, 1);
+			
 			GridEditor editor = new GridEditor(grid);
 			CCombo combo = new CCombo(grid, SWT.NONE);
 			combo.setText("CCombo Widget " + i);
@@ -123,6 +112,7 @@ public class NebulaGridExperiments {
 			text.setText("Text " + i);
 			editor.grabHorizontal = true;
 			editor.setEditor(text, item, 1);
+			
 			editor = new GridEditor(grid);
 			
 			item = new GridItem(grid, SWT.NONE);
@@ -133,6 +123,7 @@ public class NebulaGridExperiments {
 			editor.horizontalAlignment = SWT.LEFT;
 			editor.setEditor(button, item, 2);
 		}
+			*/
 
 		grid.refreshData();
 
