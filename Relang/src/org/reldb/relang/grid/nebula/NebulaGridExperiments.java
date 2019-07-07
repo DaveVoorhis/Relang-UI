@@ -23,14 +23,16 @@ import org.eclipse.swt.widgets.Text;
 
 public class NebulaGridExperiments {
 
-	static int focusRow = 0;
-	static int focusColumn = 0;
+	int focusRow = 0;
+	int focusColumn = 0;
 	
-	private static void focusOnCell(Grid grid, int rowNumber, int columnNumber, Control control) {
+	private void focusOnCell(Grid grid, int rowNumber, int columnNumber, Control control) {
 		grid.setFocusColumn(grid.getColumn(columnNumber));
-		grid.setFocusItem(grid.getItem(rowNumber));
+		var gridItem = grid.getItem(rowNumber);
+		grid.setFocusItem(gridItem);
 		grid.setCellSelection(new Point(columnNumber, rowNumber));
 		if (control != null) {
+			System.out.println("focusOnCell force focus to " + control + " ");
 			if (!control.forceFocus())
 				System.out.print("focusOnCell can't force focus ");
 		} else
@@ -40,11 +42,13 @@ public class NebulaGridExperiments {
 		focusColumn = columnNumber;
 	}
 
-	private static void setupControl(Grid grid, Control control, int rowNumber, int columnNumber) {
+	private void setupControl(Grid grid, Control control, int rowNumber, int columnNumber) {
+		System.out.println("setupControl control=" + System.identityHashCode(control));
+		final Control ctl[] = new Control[] {control};
 		control.addMouseListener(new MouseAdapter () {
 			@Override
 			public void mouseDown(MouseEvent arg0) {
-				focusOnCell(grid, rowNumber, columnNumber, control);
+				focusOnCell(grid, rowNumber, columnNumber, ctl[0]);
 			}
 		});
 		control.addKeyListener(new KeyAdapter() {
@@ -62,7 +66,8 @@ public class NebulaGridExperiments {
 						if (focusColumn < 0)
 							focusColumn = 0;
 					}
-					focusOnCell(grid, focusRow, focusColumn, control);
+					System.out.println("setupControl keylistener focus on " + System.identityHashCode(ctl[0]) + " at " + columnNumber + ", " + rowNumber);
+					focusOnCell(grid, focusRow, focusColumn, ctl[0]);
 				}
 			}
 		});
@@ -76,7 +81,7 @@ public class NebulaGridExperiments {
 		});
 	}
 	
-	public static void main(String[] args) {
+	public void go() {
 		Display display = new Display();
 		Shell shell = new Shell(display);
 		shell.setLayout(new FillLayout());
@@ -110,10 +115,10 @@ public class NebulaGridExperiments {
 			setupControl(grid, label, rowIndex, columnIndex);
 			editor.setEditor(label, row, columnIndex);
 			
-			if (rowIndex == 0 && columnIndex == 0) {				
-				focusOnCell(grid, 0, 0, null);
-				label.forceFocus();
-			}
+	//		if (rowIndex == 0 && columnIndex == 0) {				
+	//			focusOnCell(grid, 0, 0, null);
+	//			label.forceFocus();
+	//		}
 			
 			// column 1
 			columnIndex = 1;
@@ -161,7 +166,11 @@ public class NebulaGridExperiments {
 			if (!display.readAndDispatch())
 				display.sleep();
 		}
-		display.dispose();
+		display.dispose();		
+	}
+	
+	public static void main(String[] args) {
+		(new NebulaGridExperiments()).go();
 	}
 
 }
