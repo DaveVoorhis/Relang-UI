@@ -1,5 +1,7 @@
 package org.reldb.relang.grid.nebula;
 
+import java.util.HashMap;
+
 import org.eclipse.nebula.widgets.grid.Grid;
 import org.eclipse.nebula.widgets.grid.GridColumn;
 import org.eclipse.nebula.widgets.grid.GridColumnGroup;
@@ -7,15 +9,8 @@ import org.eclipse.nebula.widgets.grid.GridEditor;
 import org.eclipse.nebula.widgets.grid.GridItem;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.CCombo;
-import org.eclipse.swt.events.KeyAdapter;
-import org.eclipse.swt.events.KeyEvent;
-import org.eclipse.swt.events.MouseAdapter;
-import org.eclipse.swt.events.MouseEvent;
-import org.eclipse.swt.events.TraverseEvent;
-import org.eclipse.swt.events.TraverseListener;
 import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.layout.FillLayout;
-import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Shell;
@@ -23,62 +18,80 @@ import org.eclipse.swt.widgets.Text;
 
 public class NebulaGridExperiments {
 
-	int focusRow = 0;
-	int focusColumn = 0;
+	private int focusRow = 0;
+	private int focusColumn = 0;
 	
-	private void focusOnCell(Grid grid, int rowNumber, int columnNumber, Control control) {
+	private HashMap<Integer, HashMap<Integer, Control>> controls = new HashMap<Integer, HashMap<Integer, Control>>();
+	
+	private Grid grid;
+	
+	private void focusOnCell(int rowNumber, int columnNumber) {
 		grid.setFocusColumn(grid.getColumn(columnNumber));
 		var gridItem = grid.getItem(rowNumber);
 		grid.setFocusItem(gridItem);
 		grid.setCellSelection(new Point(columnNumber, rowNumber));
-		if (control != null) {
-			System.out.println("focusOnCell force focus to " + control + " ");
-			if (!control.forceFocus())
-				System.out.print("focusOnCell can't force focus ");
-		} else
-			System.out.print("focusOnCell given a null control to focus on ");
-		System.out.println("focusOnCell column=" + columnNumber + " row=" + rowNumber);
+		var control = controls.get(rowNumber).get(columnNumber);
+		if (!control.setFocus() && !control.forceFocus()) {
+			grid.getParent().forceFocus();
+			System.out.println("focusOnCell: can't focus on unfocusable control " + control);
+		}
 		focusRow = rowNumber;
 		focusColumn = columnNumber;
 	}
 
-	private void setupControl(Grid grid, Control control, int rowNumber, int columnNumber) {
-		System.out.println("setupControl control=" + System.identityHashCode(control));
-		final Control ctl[] = new Control[] {control};
-		control.addMouseListener(new MouseAdapter () {
-			@Override
-			public void mouseDown(MouseEvent arg0) {
-				focusOnCell(grid, rowNumber, columnNumber, ctl[0]);
-			}
+	private void setupControl(Control control, int rowNumber, int columnNumber) {
+		var row = controls.get(rowNumber);
+		if (row == null) {
+			row = new HashMap<Integer, Control>();
+			controls.put(rowNumber, row);
+		}
+		row.put(columnNumber, control);
+		control.addListener(SWT.MouseDown, evt -> {
+			if (rowNumber == focusRow && columnNumber == focusColumn)
+				return;
+			System.out.println("Focus on cell.");
+			focusOnCell(rowNumber, columnNumber);
 		});
-		control.addKeyListener(new KeyAdapter() {
-			public void keyPressed(KeyEvent evt) {
-			//	focusOnCell(grid, rowNumber, columnNumber, control);
-				if (evt.keyCode == SWT.TAB) {
-					if ((evt.stateMask & SWT.SHIFT) == 0) {
-						System.out.println("NebulaGridExperiments: TAB");
-						focusColumn++;
-						if (focusColumn >= grid.getColumnCount())
-							focusColumn = 0;
-					} else {
-						System.out.println("NebulaGridExperiments: Shift-TAB");
-						focusColumn--;
-						if (focusColumn < 0)
-							focusColumn = 0;
-					}
-					System.out.println("setupControl keylistener focus on " + System.identityHashCode(ctl[0]) + " at " + columnNumber + ", " + rowNumber);
-					focusOnCell(grid, focusRow, focusColumn, ctl[0]);
-				}
+		control.addListener(SWT.KeyDown, evt -> {
+			if (evt.keyCode == SWT.TAB) {
+				if ((evt.stateMask & SWT.SHIFT) == 0)
+					traverseNext();
+				else
+					traversePrevious();
+			} else if (evt.keyCode == SWT.ARROW_DOWN) {
+				focusRow++;
+				if (focusRow >= grid.getItemCount())
+					focusRow = grid.getItemCount() - 1;
+				evt.doit = false;
+			} else if (evt.keyCode == SWT.ARROW_UP) {
+				focusRow--;
+				if (focusRow < 0)
+					focusRow = 0;
+				evt.doit = false;
 			}
+			focusOnCell(focusRow, focusColumn);
 		});
-		control.addTraverseListener(new TraverseListener() {
-			@Override
-			public void keyTraversed(TraverseEvent evt) {
-				// disable standard TAB key traversal
-				if (evt.detail == SWT.TRAVERSE_TAB_NEXT || evt.detail == SWT.TRAVERSE_TAB_PREVIOUS)
-					evt.doit = false;
-			}
+		control.addListener(SWT.Traverse, evt -> {
+			// disable standard TAB key traversal
+			if (evt.detail == SWT.TRAVERSE_TAB_NEXT || evt.detail == SWT.TRAVERSE_TAB_PREVIOUS)
+				evt.doit = false;
 		});
+	}
+	
+	public void traverseNext() {
+		System.out.println("TraverseNext invoked.");
+		focusColumn++;
+		if (focusColumn >= grid.getColumnCount())
+			focusColumn = 0;
+		focusOnCell(focusRow, focusColumn);		
+	}
+	
+	public void traversePrevious() {
+		System.out.println("TraversePrevious invoked.");
+		focusColumn--;
+		if (focusColumn < 0)
+			focusColumn = grid.getColumnCount() - 1;		
+		focusOnCell(focusRow, focusColumn);		
 	}
 	
 	public void go() {
@@ -86,7 +99,11 @@ public class NebulaGridExperiments {
 		Shell shell = new Shell(display);
 		shell.setLayout(new FillLayout());
 		
-		var grid = new Grid(shell, SWT.BORDER | SWT.VIRTUAL | SWT.V_SCROLL | SWT.H_SCROLL);
+		grid = new Grid(shell, SWT.BORDER | SWT.VIRTUAL | SWT.V_SCROLL | SWT.H_SCROLL);
+
+// to set up virtual retrieval
+//		grid.setItemCount(count);
+//		grid.addListener(SWT.SetData, evt -> { ... });
 		
 		grid.setLinesVisible(true);
 		grid.setHeaderVisible(true);
@@ -112,21 +129,15 @@ public class NebulaGridExperiments {
 			editor.grabVertical = true;
 			var label = new Text(grid, SWT.NONE);
 			label.setText(Integer.toString(rowIndex));
-			setupControl(grid, label, rowIndex, columnIndex);
+			setupControl(label, rowIndex, columnIndex);
 			editor.setEditor(label, row, columnIndex);
-			
-	//		if (rowIndex == 0 && columnIndex == 0) {				
-	//			focusOnCell(grid, 0, 0, null);
-	//			label.forceFocus();
-	//		}
 			
 			// column 1
 			columnIndex = 1;
 			editor = new GridEditor(grid);
 			editor.grabHorizontal = true;
-			editor.grabVertical = true;
-			var selector = new Button(grid, SWT.CHECK);
-			setupControl(grid, selector, rowIndex, columnIndex);
+			var selector = new GridCheckButton(grid, SWT.NONE);
+			setupControl(selector, rowIndex, columnIndex);
 			editor.setEditor(selector, row, columnIndex);
 			
 			// column 2
@@ -135,7 +146,7 @@ public class NebulaGridExperiments {
 			editor.grabHorizontal = true;
 			var text = new Text(grid, SWT.NONE);
 			text.setText("Cell_Row" + rowIndex + "_Col" + columnIndex);
-			setupControl(grid, text, rowIndex, columnIndex);
+			setupControl(text, rowIndex, columnIndex);
 			editor.setEditor(text, row, columnIndex);
 			
 			// column 3
@@ -147,7 +158,7 @@ public class NebulaGridExperiments {
 			combo.setText("CCombo Widget " + columnIndex);
 			for (int i = 0; i < 100; i++)
 				combo.add("item " + i);
-			setupControl(grid, combo, rowIndex, columnIndex);
+			setupControl(combo, rowIndex, columnIndex);
 			editor.setEditor(combo, row, columnIndex);
 			
 			// column 4
@@ -156,9 +167,11 @@ public class NebulaGridExperiments {
 			editor.grabHorizontal = true;
 			text = new Text(grid, SWT.NONE);
 			text.setText("Row" + rowIndex + "_Col" + columnIndex);
-			setupControl(grid, text, rowIndex, columnIndex);
+			setupControl(text, rowIndex, columnIndex);
 			editor.setEditor(text, row, columnIndex);
 		}
+		
+		focusOnCell(0, 0);
 
 		shell.setSize(800, 600);
 		shell.open();
