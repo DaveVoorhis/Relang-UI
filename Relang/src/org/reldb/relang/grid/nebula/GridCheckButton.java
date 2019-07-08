@@ -1,21 +1,20 @@
 package org.reldb.relang.grid.nebula;
 
-import org.eclipse.nebula.widgets.grid.Grid;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
-import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Text;
 
-public class GridCheckButton extends Composite {
+public class GridCheckButton extends CellComposite {
 
 	private Button button;
 	private Text text;
 	
 	public void checkSubclass() {}
 	
-	public GridCheckButton(Grid grid, int style) {
-		super(grid, style | SWT.TRANSPARENT);
+	public GridCheckButton(Datagrid grid, int style) {
+		super(grid, style);
 		
 		var layout = new GridLayout();
 		layout.numColumns = 2;
@@ -35,9 +34,29 @@ public class GridCheckButton extends Composite {
 				button.setSelection(!button.getSelection());
 		});
 		text.addListener(SWT.Traverse, evt -> {
-			System.out.println("GridCheckButton traverse invoked.");
-			grid.traverse(evt.detail);
-			evt.doit = false;
+			// redefine standard key traversal
+			switch (evt.detail) {
+			case SWT.TRAVERSE_TAB_NEXT:
+				grid.traverseNext();
+				evt.doit = false;
+				break;
+			case SWT.TRAVERSE_ARROW_NEXT:
+				grid.traverseDown();
+				evt.doit = false;
+				break;
+			case SWT.TRAVERSE_TAB_PREVIOUS:
+				grid.traversePrevious();
+				evt.doit = false;
+				break;
+			case SWT.TRAVERSE_ARROW_PREVIOUS:
+				grid.traverseUp();
+				evt.doit = false;
+				break;
+			case SWT.TRAVERSE_RETURN:
+				grid.traverseDown();
+				evt.doit = false;
+				break;
+			}
 		});
 	}
 
@@ -49,4 +68,8 @@ public class GridCheckButton extends Composite {
 		return text.setFocus();
 	}
 		
+	public Control[] getAllChildren() {
+		return new Control[] {text, button};
+	}
+	
 }
