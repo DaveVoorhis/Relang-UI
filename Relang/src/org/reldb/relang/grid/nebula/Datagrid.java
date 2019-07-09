@@ -14,8 +14,6 @@ public class Datagrid extends Grid {
 	private int focusColumn = 0;
 	
 	private HashMap<Integer, HashMap<Integer, Control>> controls = new HashMap<Integer, HashMap<Integer, Control>>();
-	
-	public void checkSubclass() {}
 
 	public Datagrid(Composite parent, int style) {
 		super(parent, style);
@@ -60,19 +58,19 @@ public class Datagrid extends Grid {
 				else
 					traversePrevious();
 				evt.doit = false;
-			} else if (evt.keyCode == SWT.ARROW_DOWN || evt.keyCode == 13) {
-				traverseDown();
-				evt.doit = false;
-			} else if (evt.keyCode == SWT.ARROW_UP) {
-				traverseUp();
-				evt.doit = false;
+			} else if (evt.stateMask == 0 && (evt.keyCode == SWT.ARROW_DOWN || evt.keyCode == 13)) {
+					traverseDown();
+					evt.doit = false;
+			} else if (evt.stateMask == 0 && (evt.keyCode == SWT.ARROW_UP)) {
+					traverseUp();
+					evt.doit = false;
 			}
 		});
 		control.addListener(SWT.Traverse, evt -> {
 			// disable standard TAB key traversal
 			if (evt.detail == SWT.TRAVERSE_TAB_NEXT || evt.detail == SWT.TRAVERSE_TAB_PREVIOUS)
 				evt.doit = false;
-		});	
+		});
 	}
 	
 	public void traverseNext() {

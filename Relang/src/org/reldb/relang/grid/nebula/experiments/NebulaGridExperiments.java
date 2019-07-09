@@ -11,7 +11,8 @@ import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Text;
 import org.reldb.relang.grid.nebula.Datagrid;
-import org.reldb.relang.grid.nebula.GridCheckButton;
+import org.reldb.relang.grid.nebula.GridCCombo;
+import org.reldb.relang.grid.nebula.GridCheckbutton;
 
 public class NebulaGridExperiments {
 	
@@ -57,7 +58,7 @@ public class NebulaGridExperiments {
 			columnIndex = 1;
 			editor = new GridEditor(grid);
 			editor.grabHorizontal = true;
-			var selector = new GridCheckButton(grid, SWT.NONE);
+			var selector = new GridCheckbutton(grid, SWT.NONE);
 			grid.setupControl(selector, rowIndex, columnIndex);
 			editor.setEditor(selector, row, columnIndex);
 			
@@ -75,8 +76,8 @@ public class NebulaGridExperiments {
 			editor = new GridEditor(grid);
 			editor.minimumWidth = 50;
 			editor.grabHorizontal = true;
-			CCombo combo = new CCombo(grid, SWT.NONE);
-			combo.setText("CCombo Widget " + columnIndex);
+			GridCCombo combo = new GridCCombo(grid, SWT.NONE);
+			combo.setText("GridCCombo Widget " + columnIndex);
 			for (int i = 0; i < 100; i++)
 				combo.add("item " + i);
 			grid.setupControl(combo, rowIndex, columnIndex);

@@ -1,20 +1,20 @@
 package org.reldb.relang.grid.nebula;
 
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.custom.CCombo;
 import org.eclipse.swt.layout.GridLayout;
-import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Text;
 
-public class GridCheckButton extends CellComposite {
+public class GridCCombo extends CellComposite {
 
-	private Button button;
+	private CCombo combo;
 	private Text text;
 	
 	public void checkSubclass() {}
 	
-	public GridCheckButton(Datagrid grid, int style) {
-		super(grid, style);
+	public GridCCombo(Datagrid grid, int style) {
+		super(grid, SWT.NONE);
 		
 		var layout = new GridLayout();
 		layout.numColumns = 2;
@@ -25,13 +25,25 @@ public class GridCheckButton extends CellComposite {
 
 		setBackground(grid.getBackground());
 		
-		button = new Button(this, SWT.CHECK);
+		combo = new CCombo(this, style);
 		text = new Text(this, SWT.NONE);
+
+		combo.setEnabled(false);
+		
+		combo.addListener(SWT.FocusOut, evt -> combo.setEnabled(false));
 		
 		text.addListener(SWT.KeyDown, evt -> {
+			if (evt.keyCode == 13 && !combo.isEnabled()) {
+				combo.setEnabled(true);
+				combo.setFocus();
+				combo.addListener(SWT.KeyDown, evtInner -> {
+					if (evtInner.keyCode == 27) {
+						text.setFocus();
+						combo.setEnabled(false);
+					}
+				});
+			}
 			evt.doit = false;
-			if (evt.character == ' ')
-				button.setSelection(!button.getSelection());
 		});
 		text.addListener(SWT.Traverse, evt -> {
 			// redefine standard key traversal
@@ -59,9 +71,17 @@ public class GridCheckButton extends CellComposite {
 			}
 		});
 	}
+	
+	public void setText(String text) {
+		combo.setText(text);
+	}
+	
+	public void add(String item) {
+		combo.add(item);
+	}
 
-	public void setChecked(boolean checked) {
-		button.setSelection(checked);
+	public void add(String item, int index) {
+		combo.add(item, index);
 	}
 	
 	public boolean setFocus() {
@@ -69,7 +89,10 @@ public class GridCheckButton extends CellComposite {
 	}
 		
 	public Control[] getAllChildren() {
-		return new Control[] {text, button};
+		return new Control[] {text, combo};
 	}
 	
+	public CCombo getCCombo() {
+		return combo;
+	}
 }
