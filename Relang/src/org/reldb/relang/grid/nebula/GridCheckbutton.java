@@ -11,10 +11,8 @@ public class GridCheckbutton extends CellComposite {
 	private Button button;
 	private Text text;
 	
-	public void checkSubclass() {}
-	
 	public GridCheckbutton(Datagrid grid, int style) {
-		super(grid, style);
+		super(grid.getGrid(), style);
 		
 		var layout = new GridLayout();
 		layout.numColumns = 2;
@@ -23,7 +21,7 @@ public class GridCheckbutton extends CellComposite {
 		
 		setLayout(layout);
 
-		setBackground(grid.getBackground());
+		setBackground(grid.getGrid().getBackground());
 		
 		button = new Button(this, SWT.CHECK);
 		text = new Text(this, SWT.NONE);
@@ -74,5 +72,15 @@ public class GridCheckbutton extends CellComposite {
 	
 	public Button getButton() {
 		return button;
+	}
+
+	@Override
+	public Control getControl() {
+		return this;
+	}
+
+	@Override
+	public boolean focus() {
+		return setFocus();
 	}
 }

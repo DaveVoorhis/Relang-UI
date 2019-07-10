@@ -7,28 +7,35 @@ import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Text;
 
 public class GridCCombo extends CellComposite {
-
+	
 	private CCombo combo;
 	private Text text;
 	private StackLayout layout;
 	
-	public void checkSubclass() {}
+	private static GridCCombo lastFocused = null;
+
+	private void updateLastFocused() {
+		if (lastFocused != null && lastFocused != this)
+			lastFocused.showText();
+		lastFocused = this;		
+	}
 	
 	private void showText() {
-		System.out.println("GridCCombo: showText");
+		updateLastFocused();
 		layout.topControl = text;
 		layout();
+		text.setFocus();
 	}
 	
 	private void showCombo() {
-		System.out.println("GridCCombo: showCombo");
+		updateLastFocused();
 		layout.topControl = combo;
 		layout();
 		combo.setFocus();
 	}
 	
 	public GridCCombo(Datagrid grid, int style) {
-		super(grid, SWT.NONE);
+		super(grid.getGrid(), SWT.NONE);
 		
 		layout = new StackLayout();
 		layout.marginHeight = 0;
@@ -36,24 +43,35 @@ public class GridCCombo extends CellComposite {
 		
 		setLayout(layout);
 
-		setBackground(grid.getBackground());
+		setBackground(grid.getGrid().getBackground());
 		
 		combo = new CCombo(this, style);
 		text = new Text(this, SWT.NONE);
 
 		showText();
 		
-		combo.addListener(SWT.FocusOut, evt -> showText());
+		combo.addListener(SWT.Selection, evt -> {
+			text.setText(combo.getText());
+			showText();
+		});
 		combo.addListener(SWT.KeyDown, evt -> {
 			if (evt.keyCode == 27) {
 				showText();
 				evt.doit = false;
 			}
 		});
-		combo.addListener(SWT.Traverse, evt -> showText());
+		combo.addListener(SWT.Traverse, evt -> {
+			text.setText(combo.getText());
+			showText();				
+		});
 		
+		text.addListener(SWT.MouseDown, evt -> {
+			System.out.println("text MouseDown");
+			showCombo();
+		});
 		text.addListener(SWT.KeyDown, evt -> {
-			if (evt.keyCode == 13 && !combo.isVisible())
+			System.out.println("text KeyDown " + evt.keyCode);
+			if (evt.keyCode == 13)
 				showCombo();
 			evt.doit = false;
 		});
@@ -77,7 +95,12 @@ public class GridCCombo extends CellComposite {
 				evt.doit = false;
 				break;
 			case SWT.TRAVERSE_RETURN:
-				grid.traverseDown();
+				System.out.print("text TRAVERSE_RETURN ");
+				if (layout.topControl != combo) {
+					System.out.println("text");
+				//	grid.traverseDown();
+				} else
+					System.out.println("combo");
 				evt.doit = false;
 				break;
 			}
@@ -107,5 +130,16 @@ public class GridCCombo extends CellComposite {
 	
 	public CCombo getCCombo() {
 		return combo;
+	}
+
+	@Override
+	public Control getControl() {
+		return this;
+	}
+
+	@Override
+	public boolean focus() {
+		showText();
+		return true;
 	}
 }
