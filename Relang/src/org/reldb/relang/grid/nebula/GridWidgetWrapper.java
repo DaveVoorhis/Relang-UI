@@ -3,13 +3,14 @@ package org.reldb.relang.grid.nebula;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Control;
 
-public class GridWidgetWrapper implements GridWidgetInterface {
+public class GridWidgetWrapper extends GridCell {
 
 	private Control control;
 	
 	public GridWidgetWrapper(Datagrid grid, Control control, int rowNumber, int columnNumber) {
+		super(rowNumber, columnNumber);
 		this.control = control;
-				
+		
 		control.addListener(SWT.MouseDown, evt -> {
 			if (rowNumber == grid.getFocusRow() && columnNumber == grid.getFocusColumn())
 				return;
@@ -21,7 +22,6 @@ public class GridWidgetWrapper implements GridWidgetInterface {
 			grid.focusOnCell(rowNumber, columnNumber);
 		});
 		control.addListener(SWT.KeyDown, evt -> {
-			System.out.println("Datagrid: KeyDown " + evt.keyCode + " evt.doit = " + evt.doit);
 			if (evt.keyCode == SWT.TAB) {
 				if ((evt.stateMask & SWT.SHIFT) == 0)
 					grid.traverseNext();

@@ -1,18 +1,15 @@
 package org.reldb.relang.grid.nebula;
 
-import org.eclipse.swt.widgets.Composite;
-
-public abstract class CellComposite extends Composite implements GridWidgetInterface {
+public abstract class GridCell implements GridWidgetInterface {
 
 	private int rowNumber;
 	private int columnNumber;
-	
-	public CellComposite(Composite parent, int style, int rowNumber, int columnNumber) {
-		super(parent, style);
+
+	public GridCell(int rowNumber, int columnNumber) {
 		this.rowNumber = rowNumber;
 		this.columnNumber = columnNumber;
 	}
-
+	
 	@Override
 	public int getRow() {
 		return rowNumber;
@@ -22,6 +19,5 @@ public abstract class CellComposite extends Composite implements GridWidgetInter
 	public int getColumn() {
 		return columnNumber;
 	}
-		
-	public void checkSubclass() {}
+
 }

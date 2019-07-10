@@ -11,8 +11,8 @@ public class GridCheckbutton extends CellComposite {
 	private Button button;
 	private Text text;
 	
-	public GridCheckbutton(Datagrid grid, int style) {
-		super(grid.getGrid(), style);
+	public GridCheckbutton(Datagrid grid, int style, int rowNumber, int columnNumber) {
+		super(grid.getGrid(), style, rowNumber, columnNumber);
 		
 		var layout = new GridLayout();
 		layout.numColumns = 2;
@@ -26,10 +26,12 @@ public class GridCheckbutton extends CellComposite {
 		button = new Button(this, SWT.CHECK);
 		text = new Text(this, SWT.NONE);
 		
+		addListener(SWT.MouseDown, evt -> focus());
+		
 		text.addListener(SWT.KeyDown, evt -> {
-			evt.doit = false;
 			if (evt.character == ' ')
 				button.setSelection(!button.getSelection());
+			evt.doit = false;
 		});
 		text.addListener(SWT.Traverse, evt -> {
 			// redefine standard key traversal
@@ -64,10 +66,6 @@ public class GridCheckbutton extends CellComposite {
 	
 	public boolean setFocus() {
 		return text.setFocus();
-	}
-		
-	public Control[] getAllChildren() {
-		return new Control[] {text, button};
 	}
 	
 	public Button getButton() {

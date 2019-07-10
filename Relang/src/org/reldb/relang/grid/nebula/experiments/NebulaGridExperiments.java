@@ -51,15 +51,15 @@ public class NebulaGridExperiments {
 			editor.grabVertical = true;
 			var label = new Text(grid.getGrid(), SWT.NONE);
 			label.setText(Integer.toString(rowIndex));
-			grid.setupControl(new GridWidgetWrapper(grid, label, rowIndex, columnIndex), rowIndex, columnIndex);
+			grid.setupControl(new GridWidgetWrapper(grid, label, rowIndex, columnIndex));
 			editor.setEditor(label, row, columnIndex);
 			
 			// column 1
 			columnIndex = 1;
 			editor = new GridEditor(grid.getGrid());
 			editor.grabHorizontal = true;
-			var selector = new GridCheckbutton(grid, SWT.NONE);
-			grid.setupControl(selector, rowIndex, columnIndex);
+			var selector = new GridCheckbutton(grid, SWT.NONE, rowIndex, columnIndex);
+			grid.setupControl(selector);
 			editor.setEditor(selector, row, columnIndex);
 			
 			// column 2
@@ -68,7 +68,7 @@ public class NebulaGridExperiments {
 			editor.grabHorizontal = true;
 			var text = new Text(grid.getGrid(), SWT.NONE);
 			text.setText("Cell_Row" + rowIndex + "_Col" + columnIndex);
-			grid.setupControl(new GridWidgetWrapper(grid, text, rowIndex, columnIndex), rowIndex, columnIndex);
+			grid.setupControl(new GridWidgetWrapper(grid, text, rowIndex, columnIndex));
 			editor.setEditor(text, row, columnIndex);
 			
 			// column 3
@@ -76,11 +76,11 @@ public class NebulaGridExperiments {
 			editor = new GridEditor(grid.getGrid());
 			editor.minimumWidth = 50;
 			editor.grabHorizontal = true;
-			GridCCombo combo = new GridCCombo(grid, SWT.NONE);
+			GridCCombo combo = new GridCCombo(grid, SWT.NONE, rowIndex, columnIndex);
 			combo.setText("GridCCombo Widget " + columnIndex);
 			for (int i = 0; i < 100; i++)
 				combo.add("item " + i);
-			grid.setupControl(combo, rowIndex, columnIndex);
+			grid.setupControl(combo);
 			editor.setEditor(combo, row, columnIndex);
 			
 			// column 4
@@ -89,7 +89,7 @@ public class NebulaGridExperiments {
 			editor.grabHorizontal = true;
 			text = new Text(grid.getGrid(), SWT.NONE);
 			text.setText("Row" + rowIndex + "_Col" + columnIndex);
-			grid.setupControl(new GridWidgetWrapper(grid, text, rowIndex, columnIndex), rowIndex, columnIndex);
+			grid.setupControl(new GridWidgetWrapper(grid, text, rowIndex, columnIndex));
 			editor.setEditor(text, row, columnIndex);
 		}
 		

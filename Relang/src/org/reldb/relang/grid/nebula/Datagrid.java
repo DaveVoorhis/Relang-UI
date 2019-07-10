@@ -33,13 +33,13 @@ public class Datagrid {
 		focusColumn = columnNumber;
 	}
 
-	public void setupControl(GridWidgetInterface control, int rowNumber, int columnNumber) {
-		var row = controls.get(rowNumber);
+	public void setupControl(GridWidgetInterface control) {
+		var row = controls.get(control.getRow());
 		if (row == null) {
 			row = new HashMap<Integer, GridWidgetInterface>();
-			controls.put(rowNumber, row);
+			controls.put(control.getRow(), row);
 		}
-		row.put(columnNumber, control);
+		row.put(control.getColumn(), control);
 	}
 	
 	public void traverseNext() {
