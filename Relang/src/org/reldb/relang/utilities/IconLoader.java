@@ -5,16 +5,9 @@ import org.eclipse.swt.graphics.ImageData;
 import org.eclipse.swt.graphics.ImageDataProvider;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.wb.swt.SWTResourceManager;
-import org.reldb.relang.preferences.PreferencePageGeneral;
-import org.reldb.relang.preferences.Preferences;
 import org.reldb.relang.version.Version;
 
 public class IconLoader {
-	
-	public static Image loadIcon(String name) {
-		boolean largeIcons = Preferences.getPreferenceBoolean(PreferencePageGeneral.LARGE_ICONS);
-		return (largeIcons) ? loadIconLarge(name) : loadIconNormal(name);
-	}
 	
 	static int scaleFactor;
 	
@@ -29,7 +22,7 @@ public class IconLoader {
 		return scaleFactor;
 	}
 	
-	public static Image loadIconNormal(String name) {
+	public static Image loadIcon(String name) {
 		return new Image(Display.getCurrent(), (ImageDataProvider)zoom -> {
 			switch (zoom) {
 			case 200:

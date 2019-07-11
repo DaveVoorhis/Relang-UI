@@ -11,8 +11,6 @@ import java.lang.reflect.Method;
 import java.util.LinkedList;
 import java.util.concurrent.Semaphore;
 
-import org.eclipse.jface.dialogs.MessageDialog;
-import org.eclipse.jface.util.Util;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.dnd.Clipboard;
 import org.eclipse.swt.dnd.HTMLTransfer;
@@ -31,11 +29,13 @@ import org.reldb.relang.data.GridDataTemporary;
 import org.reldb.relang.feedback.BugReportDialog;
 import org.reldb.relang.feedback.CrashDialog;
 import org.reldb.relang.feedback.SuggestionboxDialog;
-import org.reldb.relang.grid.nattable.Grid;
+import org.reldb.relang.grid.nebula.Datagrid;
 import org.reldb.relang.log.LogWin;
 import org.reldb.relang.preferences.Preferences;
 import org.reldb.relang.updates.UpdatesCheckDialog;
 import org.reldb.relang.utilities.IconLoader;
+import org.reldb.relang.utilities.MessageDialog;
+import org.reldb.relang.utilities.PlatformDetect;
 import org.reldb.relang.version.Version;
 import org.reldb.swt.os_specific.OSSpecific;
 
@@ -240,7 +240,7 @@ public class Main {
 				
 		createEditMenuItem("undo", new AcceleratedMenuItem(menu, "Undo\tCtrl-Z", SWT.MOD1 | 'Z', "undo"));
 		
-		int redoAccelerator = SWT.MOD1 | (Util.isMac() ? SWT.SHIFT | 'Z' : 'Y');
+		int redoAccelerator = SWT.MOD1 | (PlatformDetect.isMac() ? SWT.SHIFT | 'Z' : 'Y');
 		createEditMenuItem("redo", new AcceleratedMenuItem(menu, "Redo\tCtrl-Y", redoAccelerator, "redo"));
 		
 		new MenuItem(menu, SWT.SEPARATOR);
@@ -296,7 +296,8 @@ public class Main {
 			gridData.appendRow();
 			gridData.appendRow();
 			gridData.appendRow();
-			new Grid(newGridShell, gridData);
+		//	new Grid(newGridShell, gridData);
+			new Datagrid(newGridShell, SWT.NONE);
 			newGridShell.open();
 		});
 		
@@ -392,7 +393,7 @@ public class Main {
 			return false;
 		
 		// Non-MacOS
-		if (!Util.isMac()) {
+		if (!PlatformDetect.isMac()) {
 			splashInteraction.run();
 			closeSplash();
 			return true;
@@ -446,7 +447,7 @@ public class Main {
 		
 		openDocProcessor.addFilesToOpen(args);		
 
-		if (Util.isMac())
+		if (PlatformDetect.isMac())
 			executeSplashInteractor(() -> {
 				try {
 					Thread.sleep(300);
@@ -460,7 +461,7 @@ public class Main {
 			event -> new Preferences(shell).show()
 		);
 
-		if (!Util.isMac()) {
+		if (!PlatformDetect.isMac()) {
 			SplashScreen splash = SplashScreen.getSplashScreen();
 			if (splash != null) {
 				Graphics2D gc = splash.createGraphics();
@@ -539,7 +540,7 @@ public class Main {
 		for (String fname: filesToOpen)
 			openFile(fname);
 		
-		if (!Util.isMac())
+		if (!PlatformDetect.isMac())
 			closeSplash();
 		
 		shell.open();		
