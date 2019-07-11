@@ -4,6 +4,7 @@ import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Control;
+import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.Text;
 
 public class GridCheckbutton extends CellComposite {
@@ -25,9 +26,17 @@ public class GridCheckbutton extends CellComposite {
 		
 		button = new Button(this, SWT.CHECK);
 		text = new Text(this, SWT.NONE);
+
+		Listener focuser = evt -> {
+			grid.focusOnCell(getRow(), getColumn());
+			focus();
+		};
 		
-		addListener(SWT.MouseDown, evt -> focus());
+		addListener(SWT.MouseDown, focuser);
+
+		button.addListener(SWT.MouseDown,  focuser);
 		
+		text.addListener(SWT.MouseDown, focuser);
 		text.addListener(SWT.KeyDown, evt -> {
 			if (evt.character == ' ')
 				button.setSelection(!button.getSelection());

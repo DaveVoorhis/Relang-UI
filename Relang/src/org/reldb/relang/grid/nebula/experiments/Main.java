@@ -14,22 +14,20 @@ import org.reldb.relang.grid.nebula.GridCCombo;
 import org.reldb.relang.grid.nebula.GridCheckbutton;
 import org.reldb.relang.grid.nebula.GridWidgetWrapper;
 
-public class NebulaGridExperiments {
+public class Main {
 	
 	public void go() {
 		Display display = new Display();
 		Shell shell = new Shell(display);
 		shell.setLayout(new FillLayout());
 		
-		var grid = new Datagrid(shell, SWT.BORDER | SWT.VIRTUAL | SWT.V_SCROLL | SWT.H_SCROLL);
+		var grid = new Datagrid(shell, SWT.BORDER | SWT.VIRTUAL | SWT.V_SCROLL | SWT.H_SCROLL | SWT.CHECK);
 
 // to set up virtual retrieval
 //		grid.setItemCount(count);
 //		grid.addListener(SWT.SetData, evt -> { ... });
 		
-		grid.getGrid().setLinesVisible(true);
 		grid.getGrid().setHeaderVisible(true);
-		grid.getGrid().setCellSelectionEnabled(true);
 		
 		int columnCount = 5;
 		for (int columnIndex = 0; columnIndex < columnCount; columnIndex++) {
@@ -41,11 +39,20 @@ public class NebulaGridExperiments {
 			column.setText("Column" + columnIndex);
 		}
 		
+		grid.getGrid().setLinesVisible(true);
+		grid.getGrid().setCellSelectionEnabled(true);
+		grid.getGrid().setRowsResizeable(true);
+		grid.getGrid().setRowHeaderVisible(true);
+		grid.getGrid().setColumnScrolling(true);
+		grid.getGrid().setRowHeaderVisible(true);
+		
 		for (int rowIndex = 0; rowIndex < 20; rowIndex++) {
 			var row = new GridItem(grid.getGrid(), SWT.NONE);
 			
 			// column 0
 			int columnIndex = 0;
+			
+			/*
 			var editor = new GridEditor(grid.getGrid());
 			editor.grabHorizontal = true;
 			editor.grabVertical = true;
@@ -53,10 +60,11 @@ public class NebulaGridExperiments {
 			label.setText(Integer.toString(rowIndex));
 			grid.setupControl(new GridWidgetWrapper(grid, label, rowIndex, columnIndex));
 			editor.setEditor(label, row, columnIndex);
+			*/
 			
 			// column 1
 			columnIndex = 1;
-			editor = new GridEditor(grid.getGrid());
+			var editor = new GridEditor(grid.getGrid());
 			editor.grabHorizontal = true;
 			var selector = new GridCheckbutton(grid, SWT.NONE, rowIndex, columnIndex);
 			grid.setupControl(selector);
@@ -93,7 +101,7 @@ public class NebulaGridExperiments {
 			editor.setEditor(text, row, columnIndex);
 		}
 		
-		grid.focusOnCell(0, 0);
+		grid.focusOnCell(0, 1);
 
 		shell.setSize(800, 600);
 		shell.open();
@@ -105,7 +113,7 @@ public class NebulaGridExperiments {
 	}
 	
 	public static void main(String[] args) {
-		(new NebulaGridExperiments()).go();
+		(new Main()).go();
 	}
 
 }

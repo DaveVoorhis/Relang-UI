@@ -39,7 +39,7 @@ import org.reldb.relang.utilities.IconLoader;
 import org.reldb.relang.version.Version;
 import org.reldb.swt.os_specific.OSSpecific;
 
-public class Relang {
+public class Main {
 
 	// Set to true to enable a Tools menu item to deliberately cause a crash for testing exception handling.
 	static final boolean showKaboomMenuItem = false;
@@ -418,7 +418,7 @@ public class Relang {
 	}
 
 	private static Image[] loadIcons(Display display) {
-		ClassLoader loader = Relang.class.getClassLoader();
+		ClassLoader loader = Main.class.getClassLoader();
 		LinkedList<Image> iconImages = new LinkedList<>();
 		for (String resourceSpec: Version.getIconsPaths()) {
 			InputStream inputStream = loader.getResourceAsStream(resourceSpec);

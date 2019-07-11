@@ -12,7 +12,7 @@ public class OpenDocumentEventProcessor implements Listener {
 	public synchronized void handleEvent(Event event) {
 		if (event.text != null)
 			if (retrieved)
-				Relang.openFile(event.text);
+				Main.openFile(event.text);
 			else
 				filesToOpen.add(event.text);
 	}
