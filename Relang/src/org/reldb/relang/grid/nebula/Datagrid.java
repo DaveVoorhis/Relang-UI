@@ -26,8 +26,12 @@ public class Datagrid {
 		var gridItem = grid.getItem(rowNumber);
 		grid.setFocusItem(gridItem);
 		grid.setCellSelection(new Point(columnNumber, rowNumber));
-		var control = controls.get(rowNumber).get(columnNumber);
-		if (control == null || !control.focus())
+		var row = controls.get(rowNumber);
+		if (row != null) {
+			var control = row.get(columnNumber);
+			if (control == null || !control.focus())
+				parent.forceFocus();
+		} else
 			parent.forceFocus();
 		focusRow = rowNumber;
 		focusColumn = columnNumber;

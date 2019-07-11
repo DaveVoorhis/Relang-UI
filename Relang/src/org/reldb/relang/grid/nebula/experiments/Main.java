@@ -21,11 +21,7 @@ public class Main {
 		Shell shell = new Shell(display);
 		shell.setLayout(new FillLayout());
 		
-		var grid = new Datagrid(shell, SWT.BORDER | SWT.VIRTUAL | SWT.V_SCROLL | SWT.H_SCROLL | SWT.CHECK);
-
-// to set up virtual retrieval
-//		grid.setItemCount(count);
-//		grid.addListener(SWT.SetData, evt -> { ... });
+		var grid = new Datagrid(shell, SWT.BORDER | SWT.VIRTUAL | SWT.V_SCROLL | SWT.H_SCROLL);
 		
 		grid.getGrid().setHeaderVisible(true);
 		
@@ -45,14 +41,19 @@ public class Main {
 		grid.getGrid().setRowHeaderVisible(true);
 		grid.getGrid().setColumnScrolling(true);
 		grid.getGrid().setRowHeaderVisible(true);
+
+		grid.getGrid().setItemCount(500);
 		
-		for (int rowIndex = 0; rowIndex < 20; rowIndex++) {
-			var row = new GridItem(grid.getGrid(), SWT.NONE);
+		grid.getGrid().addListener(SWT.SetData, setDataEvt -> {
+			GridItem row = (GridItem)setDataEvt.item;
+			int rowIndex = row.getRowIndex();
+			
+			System.out.println("Fill in rowIndex = " + rowIndex);
+			
+			/*
 			
 			// column 0
 			int columnIndex = 0;
-			
-			/*
 			var editor = new GridEditor(grid.getGrid());
 			editor.grabHorizontal = true;
 			editor.grabVertical = true;
@@ -60,11 +61,10 @@ public class Main {
 			label.setText(Integer.toString(rowIndex));
 			grid.setupControl(new GridWidgetWrapper(grid, label, rowIndex, columnIndex));
 			editor.setEditor(label, row, columnIndex);
-			*/
 			
 			// column 1
 			columnIndex = 1;
-			var editor = new GridEditor(grid.getGrid());
+			editor = new GridEditor(grid.getGrid());
 			editor.grabHorizontal = true;
 			var selector = new GridCheckbutton(grid, SWT.NONE, rowIndex, columnIndex);
 			grid.setupControl(selector);
@@ -78,7 +78,7 @@ public class Main {
 			text.setText("Cell_Row" + rowIndex + "_Col" + columnIndex);
 			grid.setupControl(new GridWidgetWrapper(grid, text, rowIndex, columnIndex));
 			editor.setEditor(text, row, columnIndex);
-			
+	
 			// column 3
 			columnIndex = 3;
 			editor = new GridEditor(grid.getGrid());
@@ -98,10 +98,11 @@ public class Main {
 			text = new Text(grid.getGrid(), SWT.NONE);
 			text.setText("Row" + rowIndex + "_Col" + columnIndex);
 			grid.setupControl(new GridWidgetWrapper(grid, text, rowIndex, columnIndex));
-			editor.setEditor(text, row, columnIndex);
-		}
+			editor.setEditor(text, row, columnIndex);			
+			*/
+		});
 		
-		grid.focusOnCell(0, 1);
+		grid.focusOnCell(0, 0);
 
 		shell.setSize(800, 600);
 		shell.open();

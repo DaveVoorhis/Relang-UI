@@ -3,7 +3,6 @@ package org.reldb.relang.feedback;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
-import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.swt.widgets.Dialog;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Shell;
@@ -13,6 +12,7 @@ import org.eclipse.swt.widgets.Tree;
 import org.eclipse.swt.widgets.ProgressBar;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.TreeItem;
+import org.reldb.relang.utilities.MessageDialog;
 
 public abstract class FeedbackDialog extends Dialog {
 
