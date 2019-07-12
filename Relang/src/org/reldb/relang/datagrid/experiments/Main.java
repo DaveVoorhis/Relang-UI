@@ -1,4 +1,4 @@
-package org.reldb.relang.grid.experiments;
+package org.reldb.relang.datagrid.experiments;
 
 import org.eclipse.nebula.widgets.grid.GridColumn;
 import org.eclipse.nebula.widgets.grid.GridColumnGroup;
