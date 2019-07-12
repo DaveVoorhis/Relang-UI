@@ -25,7 +25,7 @@ import org.reldb.relang.about.AboutDialog;
 import org.reldb.relang.commands.AcceleratedMenuItem;
 import org.reldb.relang.commands.Commands;
 import org.reldb.relang.core.Datasheet;
-import org.reldb.relang.data.GridDataTemporary;
+import org.reldb.relang.data.DataTemporary;
 import org.reldb.relang.feedback.BugReportDialog;
 import org.reldb.relang.feedback.CrashDialog;
 import org.reldb.relang.feedback.SuggestionboxDialog;
@@ -289,7 +289,7 @@ public class Main {
 			Shell newGridShell = createShell();
 			newGridShell.setText("New Grid " + ++gridNumber);
 			newGridShell.setLayout(new FillLayout());
-			var gridData = new GridDataTemporary();
+			var gridData = new DataTemporary();
 			gridData.setColumnName(0, "Col1");
 			gridData.setColumnName(1, "Col2");
 			gridData.setColumnName(2, "Col3");

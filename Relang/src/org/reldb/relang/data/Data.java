@@ -1,7 +1,7 @@
 package org.reldb.relang.data;
 
 /* Abstract definition of a Grid's data */
-public interface GridData {
+public interface Data {
 	
 	/** Obtain the number of columns. */
 	public int getColumnCount();

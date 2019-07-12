@@ -3,14 +3,14 @@ package org.reldb.relang.tests.main;
 import static org.junit.Assert.assertEquals;
 
 import org.junit.Test;
-import org.reldb.relang.data.GridData;
-import org.reldb.relang.data.GridDataTemporary;
+import org.reldb.relang.data.Data;
+import org.reldb.relang.data.DataTemporary;
 
 public class TestGridDataTemporary {
 	
 	@Test 
 	public void testGridDataTemporary01() {
-		GridData data = new GridDataTemporary();
+		Data data = new DataTemporary();
 		data.setColumnName(0, "Column1");
 		data.setColumnName(1,  "Column2");
 		data.setColumnType(0, String.class, "");
@@ -28,7 +28,7 @@ public class TestGridDataTemporary {
 	
 	@Test
 	public void testGridDataTemporary02() {
-		var gridData = new GridDataTemporary();
+		var gridData = new DataTemporary();
 		gridData.setColumnName(0, "Col1");
 		gridData.setColumnName(1, "Col2");
 		gridData.setColumnName(2, "Col3");

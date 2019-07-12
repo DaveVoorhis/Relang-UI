@@ -2,7 +2,7 @@ package org.reldb.relang.data;
 
 import java.util.Vector;
 
-public class GridDataTemporary implements GridData {
+public class DataTemporary implements Data {
 
 	private Heading heading = new Heading();
 	private Vector<Vector<Object>> data = new Vector<>();
