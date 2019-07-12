@@ -1,6 +1,4 @@
 ** TO DO **
 
-- Rename create Sheet with GridData as constructor parameter.
 - Work on GridLabel widget.
-- Strip out unnecessary nebula widgets. Just want Grid.
  
