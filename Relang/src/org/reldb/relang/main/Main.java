@@ -286,9 +286,9 @@ public class Main {
 		Menu menu = new Menu(dataItem);
 		dataItem.setMenu(menu);
 
-		new AcceleratedMenuItem(menu, "Add Data...\tCtrl-D", SWT.MOD1 | 'D', "newgrid", event -> {
+		new AcceleratedMenuItem(menu, "New Grid...\tCtrl-G", SWT.MOD1 | 'G', "newgrid", event -> {
 			Shell newShell = createShell();
-			newShell.setText("New Data " + ++gridNumber);
+			newShell.setText("New Grid " + ++gridNumber);
 			newShell.setLayout(new FillLayout());
 			var gridData = new DataTemporary();
 			gridData.setColumnName(0, "Col1");
