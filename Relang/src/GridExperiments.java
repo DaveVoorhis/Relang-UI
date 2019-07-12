@@ -1,4 +1,4 @@
-package org.reldb.relang.datagrid.experiments;
+
 
 import org.eclipse.nebula.widgets.grid.GridColumn;
 import org.eclipse.nebula.widgets.grid.GridColumnGroup;
@@ -14,7 +14,7 @@ import org.reldb.relang.datagrid.GridCCombo;
 import org.reldb.relang.datagrid.GridCheckbutton;
 import org.reldb.relang.datagrid.GridWidgetWrapper;
 
-public class Main {
+public class GridExperiments {
 	
 	public void go() {
 		Display display = new Display();
@@ -114,7 +114,7 @@ public class Main {
 	}
 	
 	public static void main(String[] args) {
-		(new Main()).go();
+		(new GridExperiments()).go();
 	}
 
 }
