@@ -1,4 +1,4 @@
-package org.reldb.relang.grid;
+package org.reldb.relang.datagrid;
 
 public abstract class GridCell implements GridWidgetInterface {
 

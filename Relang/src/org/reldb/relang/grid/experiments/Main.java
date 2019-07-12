@@ -9,10 +9,10 @@ import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Text;
-import org.reldb.relang.grid.Datagrid;
-import org.reldb.relang.grid.GridCCombo;
-import org.reldb.relang.grid.GridCheckbutton;
-import org.reldb.relang.grid.GridWidgetWrapper;
+import org.reldb.relang.datagrid.Datagrid;
+import org.reldb.relang.datagrid.GridCCombo;
+import org.reldb.relang.datagrid.GridCheckbutton;
+import org.reldb.relang.datagrid.GridWidgetWrapper;
 
 public class Main {
 	

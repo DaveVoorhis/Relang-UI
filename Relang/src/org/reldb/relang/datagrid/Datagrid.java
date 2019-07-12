@@ -1,4 +1,4 @@
-package org.reldb.relang.grid;
+package org.reldb.relang.datagrid;
 
 import java.util.HashMap;
 

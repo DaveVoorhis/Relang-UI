@@ -23,15 +23,14 @@ import org.eclipse.swt.widgets.*;
 import org.eclipse.wb.swt.SWTResourceManager;
 import org.reldb.relang.about.AboutDialog;
 import org.reldb.relang.commands.AcceleratedMenuItem;
-import org.reldb.relang.commands.Commands;
 import org.reldb.relang.core.Datasheet;
 import org.reldb.relang.data.DataTemporary;
 import org.reldb.relang.feedback.BugReportDialog;
 import org.reldb.relang.feedback.CrashDialog;
 import org.reldb.relang.feedback.SuggestionboxDialog;
-import org.reldb.relang.grid.Datagrid;
 import org.reldb.relang.log.LogWin;
 import org.reldb.relang.preferences.Preferences;
+import org.reldb.relang.sheet.Sheet;
 import org.reldb.relang.updates.UpdatesCheckDialog;
 import org.reldb.relang.utilities.IconLoader;
 import org.reldb.relang.utilities.MessageDialog;
@@ -154,10 +153,12 @@ public class Main {
 		}
 	}
 	
+	/*
 	// Link a command (which implies a toolbar-accessible action) with a menu item.
 	private static void linkCommand(Commands.Do command, AcceleratedMenuItem menuItem) {
 		Commands.linkCommand(command, menuItem);
 	}
+	*/
 	
 	private static Method getEditMethod(String methodName, Control control) {
 		if (control == null)
@@ -285,10 +286,10 @@ public class Main {
 		Menu menu = new Menu(dataItem);
 		dataItem.setMenu(menu);
 
-		new AcceleratedMenuItem(menu, "Add Grid...\tCtrl-G", SWT.MOD1 | 'G', "newgrid", event -> {
-			Shell newGridShell = createShell();
-			newGridShell.setText("New Grid " + ++gridNumber);
-			newGridShell.setLayout(new FillLayout());
+		new AcceleratedMenuItem(menu, "Add Data...\tCtrl-D", SWT.MOD1 | 'D', "newgrid", event -> {
+			Shell newShell = createShell();
+			newShell.setText("New Data " + ++gridNumber);
+			newShell.setLayout(new FillLayout());
 			var gridData = new DataTemporary();
 			gridData.setColumnName(0, "Col1");
 			gridData.setColumnName(1, "Col2");
@@ -296,9 +297,8 @@ public class Main {
 			gridData.appendRow();
 			gridData.appendRow();
 			gridData.appendRow();
-		//	new Grid(newGridShell, gridData);
-			new Datagrid(newGridShell, SWT.NONE);
-			newGridShell.open();
+			new Sheet(newShell, gridData);
+			newShell.open();
 		});
 		
 		new AcceleratedMenuItem(menu, "Link...\tCtrl-L", SWT.MOD1 | 'L', "link", event -> {
