@@ -4,7 +4,7 @@ import static org.junit.Assert.assertEquals;
 
 import org.junit.Test;
 
-public class TestPartial extends BaseOfTest {
+public class TestPartial {
 
 	@Test
 	public void test() {

@@ -5,9 +5,8 @@ import static org.junit.Assert.assertEquals;
 import org.junit.Test;
 import org.reldb.relang.data.GridData;
 import org.reldb.relang.data.GridDataTemporary;
-import org.reldb.relang.tests.BaseOfTest;
 
-public class TestGridDataTemporary extends BaseOfTest {
+public class TestGridDataTemporary {
 	
 	@Test 
 	public void testGridDataTemporary01() {

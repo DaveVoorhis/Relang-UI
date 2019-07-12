@@ -11,7 +11,16 @@ import org.eclipse.swt.widgets.Shell;
  */
 public class MessageDialog {
 
-	private static MessageBox createMessageBox(Shell parent, String title, String message, int style) {
+	/**
+	 * Create a MessageBox.
+	 * 
+	 * @param parent  the parent shell of the dialog or <code>null</code> if none
+	 * @param title  the dialog's title, or <code>null</code> if none
+	 * @param message  the message
+	 * @param style  Style codes, e.g., SWT.ICON_QUESTION, SWT.ICON_WARNING, SWT.ICON_ERROR | SWT.YES, SWT.NO, SWT.OK, SWT.CANCEL, etc.
+	 * @return New MessageBox
+	 */
+	public static MessageBox createMessageBox(Shell parent, String title, String message, int style) {
 		var msgBox = new MessageBox(parent, style);
 		if (title != null)
 			msgBox.setText(title);
@@ -20,6 +29,19 @@ public class MessageDialog {
 		return msgBox;
 	}
 
+	/**
+	 * Create and open a MessageBox.
+	 * 
+	 * @param parent  the parent shell of the dialog or <code>null</code> if none
+	 * @param title  the dialog's title, or <code>null</code> if none
+	 * @param message  the message
+	 * @param style  Style codes, e.g., SWT.ICON_QUESTION, SWT.ICON_WARNING, SWT.ICON_ERROR | SWT.YES, SWT.NO, SWT.OK, SWT.CANCEL, etc.
+	 * @return integer return code indicating button press, e.g., SWT.OK, SWT.CANCEL, etc.
+	 */
+	public static int openMessageBox(Shell parent, String title, String message, int style) {
+		return createMessageBox(parent, title, message, style).open();
+	}
+	
 	/**
 	 * Convenience method to open a simple confirm (OK/Cancel) dialog.
 	 *
@@ -30,7 +52,7 @@ public class MessageDialog {
 	 *         <code>false</code> otherwise
 	 */
 	public static boolean openConfirm(Shell parent, String title, String message) {
-		return createMessageBox(parent, title, message, SWT.OK | SWT.CANCEL | SWT.ICON_QUESTION).open() == SWT.OK;
+		return openMessageBox(parent, title, message, SWT.OK | SWT.CANCEL | SWT.ICON_QUESTION) == SWT.OK;
 	}
 
 	/**
@@ -65,7 +87,7 @@ public class MessageDialog {
 	 *         <code>false</code> otherwise
 	 */
 	public static boolean openQuestion(Shell parent, String title, String message) {
-		return createMessageBox(parent, title, message, SWT.YES | SWT.NO | SWT.ICON_QUESTION).open() == SWT.YES;
+		return openMessageBox(parent, title, message, SWT.YES | SWT.NO | SWT.ICON_QUESTION) == SWT.YES;
 	}
 
 	/**
