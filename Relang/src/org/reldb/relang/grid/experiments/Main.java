@@ -1,4 +1,4 @@
-package org.reldb.relang.grid.nebula.experiments;
+package org.reldb.relang.grid.experiments;
 
 import org.eclipse.nebula.widgets.grid.GridColumn;
 import org.eclipse.nebula.widgets.grid.GridColumnGroup;
@@ -9,10 +9,10 @@ import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Text;
-import org.reldb.relang.grid.nebula.Datagrid;
-import org.reldb.relang.grid.nebula.GridCCombo;
-import org.reldb.relang.grid.nebula.GridCheckbutton;
-import org.reldb.relang.grid.nebula.GridWidgetWrapper;
+import org.reldb.relang.grid.Datagrid;
+import org.reldb.relang.grid.GridCCombo;
+import org.reldb.relang.grid.GridCheckbutton;
+import org.reldb.relang.grid.GridWidgetWrapper;
 
 public class Main {
 	

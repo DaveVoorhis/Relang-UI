@@ -1,4 +1,4 @@
-package org.reldb.relang.grid.nebula;
+package org.reldb.relang.grid;
 
 import java.util.HashMap;
 

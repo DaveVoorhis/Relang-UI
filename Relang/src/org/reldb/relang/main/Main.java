@@ -29,7 +29,7 @@ import org.reldb.relang.data.GridDataTemporary;
 import org.reldb.relang.feedback.BugReportDialog;
 import org.reldb.relang.feedback.CrashDialog;
 import org.reldb.relang.feedback.SuggestionboxDialog;
-import org.reldb.relang.grid.nebula.Datagrid;
+import org.reldb.relang.grid.Datagrid;
 import org.reldb.relang.log.LogWin;
 import org.reldb.relang.preferences.Preferences;
 import org.reldb.relang.updates.UpdatesCheckDialog;

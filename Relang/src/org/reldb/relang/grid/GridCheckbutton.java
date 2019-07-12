@@ -1,4 +1,4 @@
-package org.reldb.relang.grid.nebula;
+package org.reldb.relang.grid;
 
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.GridLayout;
