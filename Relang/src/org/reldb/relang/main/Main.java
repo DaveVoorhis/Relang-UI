@@ -287,18 +287,7 @@ public class Main {
 		dataItem.setMenu(menu);
 
 		new AcceleratedMenuItem(menu, "New Grid...\tCtrl-G", SWT.MOD1 | 'G', "newgrid", event -> {
-			Shell newShell = createShell();
-			newShell.setText("New Grid " + ++gridNumber);
-			newShell.setLayout(new FillLayout());
-			var gridData = new DataTemporary();
-			gridData.setColumnName(0, "Col1");
-			gridData.setColumnName(1, "Col2");
-			gridData.setColumnName(2, "Col3");
-			gridData.appendRow();
-			gridData.appendRow();
-			gridData.appendRow();
-			new Sheet(newShell, gridData);
-			newShell.open();
+			launchNewGrid();
 		});
 		
 		new AcceleratedMenuItem(menu, "Link...\tCtrl-L", SWT.MOD1 | 'L', "link", event -> {
@@ -308,6 +297,21 @@ public class Main {
 		new AcceleratedMenuItem(menu, "Import...\tCtrl-I", SWT.MOD1 | 'I', "import", event -> {
 			
 		});
+	}
+
+	private static void launchNewGrid() {
+		Shell newShell = createShell();
+		newShell.setText("New Grid " + ++gridNumber);
+		newShell.setLayout(new FillLayout());
+		var gridData = new DataTemporary();
+		gridData.setColumnName(0, "Col1");
+		gridData.setColumnName(1, "Col2");
+		gridData.setColumnName(2, "Col3");
+		gridData.appendRow();
+		gridData.appendRow();
+		gridData.appendRow();
+		new Sheet(newShell, gridData);
+		newShell.open();
 	}
 
 	@SuppressWarnings("null")
@@ -543,7 +547,9 @@ public class Main {
 		if (!PlatformDetect.isMac())
 			closeSplash();
 		
-		shell.open();		
+		// Thunderbirds are go.
+		shell.open();
+		launchNewGrid();
 		
 		while (display != null && !display.isDisposed()) {
 			try {

@@ -27,6 +27,8 @@ public class Sheet {
 			column.setSort(1);
 			column.setWidth(150);
 			column.setText(data.getColumnNameAt(columnIndex));
+			column.addListener(SWT.Selection, evt -> System.out.println("Sheet: Column selection listener triggered."));
+			column.addListener(SWT.MouseDown, evt -> System.out.println("Sheet: Column mousedown listener triggered."));
 		}
 		
 		grid.getGrid().setLinesVisible(true);
