@@ -35,6 +35,7 @@ public class Datagrid {
 			parent.forceFocus();
 		focusRow = rowNumber;
 		focusColumn = columnNumber;
+		grid.showSelection();
 	}
 
 	public void setupControl(GridWidgetInterface control) {

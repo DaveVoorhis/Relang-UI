@@ -4,6 +4,7 @@ import org.eclipse.nebula.widgets.grid.GridColumn;
 import org.eclipse.nebula.widgets.grid.GridEditor;
 import org.eclipse.nebula.widgets.grid.GridItem;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.custom.StackLayout;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Shell;
@@ -13,16 +14,15 @@ import org.reldb.relang.datagrid.Datagrid;
 import org.reldb.relang.datagrid.GridWidgetWrapper;
 import org.reldb.relang.utilities.DialogBase;
 
-public class Sheet {
+public class Sheet extends Composite {
 
+	private StackLayout layout;
 	private Datagrid grid;
 	private Data data;
 	
 	private void addColumn() {
 		data.appendDefaultColumn();
-		grid.getGrid().refreshData();
-		addColumnAdderColumn();
-		grid.getGrid().redraw();
+		reload();
 	}
 
 	private void addColumnAdderColumn() {
@@ -33,10 +33,8 @@ public class Sheet {
 		column.addListener(SWT.Selection, evt-> addColumn());		
 	}
 	
-	public Sheet(Composite parent, Data data) {
-		this.data = data;
-		
-		grid = new Datagrid(parent, SWT.BORDER | SWT.VIRTUAL | SWT.V_SCROLL | SWT.H_SCROLL);
+	private void load() {
+		grid = new Datagrid(this, SWT.BORDER | SWT.VIRTUAL | SWT.V_SCROLL | SWT.H_SCROLL);
 		
 		grid.getGrid().setHeaderVisible(true);
 		
@@ -75,6 +73,26 @@ public class Sheet {
 				editor.setEditor(text, row, columnIndex);				
 			}
 		});
+		
+		layout.topControl = grid.getGrid();
+	}
+	
+	private void reload() {
+		int focusRow = grid.getFocusRow();
+		int focusColumn = grid.getFocusColumn();
+		load();
+		grid.focusOnCell(focusRow, focusColumn);
+		grid.getGrid().getParent().layout();
+	}
+	
+	public Sheet(Composite parent, Data data) {
+		super(parent, SWT.NONE);
+		this.data = data;
+
+		layout = new StackLayout();
+		setLayout(layout);
+		
+		load();
 		
 		grid.focusOnCell(0, 0);		
 	}
