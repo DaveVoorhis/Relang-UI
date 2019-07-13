@@ -47,6 +47,11 @@ public class DataTemporary implements Data {
 	}
 
 	@Override
+	public String appendDefaultColumn() {
+		return heading.appendDefaultColumn();
+	}
+
+	@Override
 	public Class<?> getColumnTypeAt(int column) {
 		return heading.getColumnTypeAt(column);
 	}

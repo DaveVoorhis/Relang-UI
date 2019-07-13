@@ -15,12 +15,30 @@ import org.reldb.relang.utilities.DialogBase;
 
 public class Sheet {
 
+	private Datagrid grid;
+	private Data data;
+	
+	private void addColumn() {
+		data.appendDefaultColumn();
+		grid.getGrid().refreshData();
+		addColumnAdderColumn();
+		grid.getGrid().redraw();
+	}
+
+	private void addColumnAdderColumn() {
+		var column = new GridColumn(grid.getGrid(), SWT.NONE);
+		column.setHeaderTooltip("Add column.");
+		column.setWidth(75);
+		column.setText("+");
+		column.addListener(SWT.Selection, evt-> addColumn());		
+	}
+	
 	public Sheet(Composite parent, Data data) {
+		this.data = data;
 		
-		var grid = new Datagrid(parent, SWT.BORDER | SWT.VIRTUAL | SWT.V_SCROLL | SWT.H_SCROLL);
+		grid = new Datagrid(parent, SWT.BORDER | SWT.VIRTUAL | SWT.V_SCROLL | SWT.H_SCROLL);
 		
 		grid.getGrid().setHeaderVisible(true);
-//		grid.getGrid().get
 		
 		int columnCount = data.getColumnCount();
 		for (int columnIndex = 0; columnIndex < columnCount; columnIndex++) {
@@ -32,6 +50,7 @@ public class Sheet {
 			column.setWordWrap(true);
 			column.setMoveable(true);
 		}
+		addColumnAdderColumn();
 		
 		grid.getGrid().setLinesVisible(true);
 		grid.getGrid().setCellSelectionEnabled(true);

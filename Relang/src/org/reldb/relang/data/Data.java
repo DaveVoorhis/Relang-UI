@@ -21,6 +21,9 @@ public interface Data {
 	/** Set the type and default value of the specified column. */
 	public void setColumnType(int column, Class<?> type, Object defaultValue);
 	
+	/** Append a new column of default type. Return the column name. */
+	public String appendDefaultColumn();
+	
 	/** Get the type of the specified column. */
 	public Class<?> getColumnTypeAt(int column);
 	

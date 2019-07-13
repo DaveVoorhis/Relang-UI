@@ -34,7 +34,7 @@ public class Heading {
 	
 	public Heading() {}
 	
-	public void appendDefaultColumn() {
+	public String appendDefaultColumn() {
 		checkFrozen();
 		String name;
 		int columnNumber = columnAttributes.size();
@@ -43,6 +43,7 @@ public class Heading {
 		} while (hasColumnNamed(name));
 		ColumnType columnType = new ColumnType(Object.class, new Object());
 		columnAttributes.add(new ColumnAttribute(name, columnType));
+		return name;
 	}
 
 	public void widenToIncludeColumnNumber(int columnNumber) {
