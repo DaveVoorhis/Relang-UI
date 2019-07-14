@@ -1,5 +1,6 @@
 ** TO DO **
 
+- Work on getting user input in Grid into Data.
 - Work on GridLabel widget.
 - Work on general-purpose property set/get that allows manipulating and saving any properties of an instance, via reflection. Should display in a grid.
 
