@@ -48,7 +48,10 @@ public class DataTemporary implements Data {
 
 	@Override
 	public String appendDefaultColumn() {
-		return heading.appendDefaultColumn();
+		String newColumnName = heading.appendDefaultColumn();
+		Object defaultValueForNewColumn = heading.getDefaultValueAt(getColumnCount() - 1);
+		data.forEach(row -> row.add(defaultValueForNewColumn));
+		return newColumnName;
 	}
 
 	@Override
