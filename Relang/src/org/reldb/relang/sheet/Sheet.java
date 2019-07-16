@@ -5,8 +5,10 @@ import org.eclipse.nebula.widgets.grid.GridEditor;
 import org.eclipse.nebula.widgets.grid.GridItem;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.StackLayout;
+import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Event;
+import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Text;
 import org.reldb.relang.data.Data;
@@ -120,6 +122,9 @@ public class Sheet extends Composite {
 			@Override
 			public void create(Shell shell) {
 				shell.setText("Properties for " + column.getText());
+				shell.setLayout(new FillLayout());
+				var label = new Label(shell, SWT.NONE);
+				label.setText("Coming Soon..."); 
 			}
 		};
 		dialog.open();
