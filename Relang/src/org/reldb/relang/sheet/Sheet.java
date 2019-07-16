@@ -83,9 +83,10 @@ public class Sheet extends Composite {
 				cell.setNotifier(new Notifier() {
 					@Override
 					public void changed(GridWidgetInterface gridWidget, Object newContent) {
+						int getRowCount = data.getRowCount();
 						data.setValue(gridWidget.getColumn(), gridWidget.getRow(), newContent);
-						if (gridWidget.getRow() == data.getRowCount())
-							reload();
+				//		if (getRowCount != data.getRowCount())
+				//			reload();
 					}
 				});
 				editor.setEditor(text, row, columnIndex);

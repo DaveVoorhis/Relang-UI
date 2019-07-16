@@ -27,6 +27,9 @@ public class TestDataTemporary {
 		data.appendDefaultColumn();
 		data.setValue(2, 2, "zot");
 		assertEquals("zot", data.getValue(2,  2));
+		data.appendDefaultColumn();
+		data.setValue(3, 100, "glub");
+		assertEquals("glub", data.getValue(3,  100));
 	}
 	
 	@Test
