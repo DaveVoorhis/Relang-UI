@@ -6,10 +6,10 @@ import org.junit.Test;
 import org.reldb.relang.data.Data;
 import org.reldb.relang.data.DataTemporary;
 
-public class TestGridDataTemporary {
+public class TestDataTemporary {
 	
 	@Test 
-	public void testGridDataTemporary01() {
+	public void testDataTemporary01() {
 		Data data = new DataTemporary();
 		data.setColumnName(0, "Column1");
 		data.setColumnName(1,  "Column2");
@@ -24,10 +24,13 @@ public class TestGridDataTemporary {
 		assertEquals(22, data.getValue(1, 1));
 		assertEquals(33, data.getValue(1, 25));
 		assertEquals("fish", data.getValue(0,  44));
+		data.appendDefaultColumn();
+		data.setValue(2, 2, "zot");
+		assertEquals("zot", data.getValue(2,  2));
 	}
 	
 	@Test
-	public void testGridDataTemporary02() {
+	public void testDataTemporary02() {
 		var gridData = new DataTemporary();
 		gridData.setColumnName(0, "Col1");
 		gridData.setColumnName(1, "Col2");
