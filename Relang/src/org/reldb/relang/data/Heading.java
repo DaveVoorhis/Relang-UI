@@ -6,6 +6,9 @@ import java.util.stream.Collectors;
 
 public class Heading {
 	
+	private static final Class<?> defaultNewColumnClass = String.class;
+	private static final Object defaultNewColumnDefaultValue = new String();
+	
 	private static class ColumnType {
 		public ColumnType(Class<?> type, Object defaultValue) {this.type = type; this.defaultValue = defaultValue;}
 		public Class<?> type;
@@ -41,7 +44,7 @@ public class Heading {
 		do {
 			name = "Col" + Integer.toString(columnNumber++);
 		} while (hasColumnNamed(name));
-		ColumnType columnType = new ColumnType(Object.class, new Object());
+		ColumnType columnType = new ColumnType(defaultNewColumnClass, defaultNewColumnDefaultValue);
 		columnAttributes.add(new ColumnAttribute(name, columnType));
 		return name;
 	}
