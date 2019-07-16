@@ -68,6 +68,7 @@ public class GridCCombo extends CellComposite {
 			text.setText(combo.getText());
 			showText();				
 		});
+		combo.addListener(SWT.Modify, evt -> getNotifier().changed(this, combo.getText()));
 		
 		text.addListener(SWT.MouseDown, evt -> {
 			showCombo();

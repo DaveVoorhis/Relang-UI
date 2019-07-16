@@ -6,6 +6,7 @@ public abstract class CellComposite extends Composite implements GridWidgetInter
 
 	private int rowNumber;
 	private int columnNumber;
+	private Notifier notifier;
 	
 	public CellComposite(Composite parent, int style, int rowNumber, int columnNumber) {
 		super(parent, style);
@@ -23,5 +24,15 @@ public abstract class CellComposite extends Composite implements GridWidgetInter
 		return columnNumber;
 	}
 		
+	@Override
+	public void setNotifier(Notifier notifier) {
+		this.notifier = notifier;
+	}
+	
+	@Override
+	public Notifier getNotifier() {
+		return notifier;
+	}
+	
 	public void checkSubclass() {}
 }

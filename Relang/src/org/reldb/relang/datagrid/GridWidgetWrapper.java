@@ -54,5 +54,5 @@ public class GridWidgetWrapper extends GridCell {
 			return control.forceFocus();
 		return true;
 	}
-
+	
 }

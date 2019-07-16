@@ -11,9 +11,15 @@ import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Text;
 import org.reldb.relang.data.Data;
 import org.reldb.relang.datagrid.Datagrid;
-import org.reldb.relang.datagrid.GridWidgetWrapper;
+import org.reldb.relang.datagrid.GridText;
+import org.reldb.relang.datagrid.GridWidgetInterface;
+import org.reldb.relang.datagrid.GridWidgetInterface.Notifier;
 import org.reldb.relang.utilities.DialogBase;
 
+/** A Sheet (controller?) connects a Data (model) to a Datagrid (viewer).
+ * 
+ * @author dave
+ */
 public class Sheet extends Composite {
 
 	private StackLayout layout;
@@ -57,7 +63,7 @@ public class Sheet extends Composite {
 		grid.getGrid().setColumnScrolling(true);
 		grid.getGrid().setRowHeaderVisible(true);
 
-		grid.getGrid().setItemCount(data.getRowCount());
+		grid.getGrid().setItemCount(data.getRowCount() + 1);
 		
 		grid.getGrid().addListener(SWT.SetData, setDataEvt -> {
 			GridItem row = (GridItem)setDataEvt.item;
@@ -68,9 +74,19 @@ public class Sheet extends Composite {
 				editor.grabHorizontal = true;
 				editor.grabVertical = true;
 				var text = new Text(grid.getGrid(), SWT.NONE);
-				text.setText(Integer.toString(rowIndex));
-				grid.setupControl(new GridWidgetWrapper(grid, text, rowIndex, columnIndex));
-				editor.setEditor(text, row, columnIndex);				
+				if (rowIndex < data.getRowCount() - 1)
+					text.setText(data.getValue(columnIndex, rowIndex).toString());
+				var cell = new GridText(grid, text, rowIndex, columnIndex);
+				grid.setupControl(cell);
+				cell.setNotifier(new Notifier() {
+					@Override
+					public void changed(GridWidgetInterface gridWidget, Object newContent) {
+						data.setValue(gridWidget.getColumn(), gridWidget.getRow(), newContent);
+						if (gridWidget.getRow() == data.getRowCount())
+							reload();
+					}
+				});
+				editor.setEditor(text, row, columnIndex);
 			}
 		});
 		
