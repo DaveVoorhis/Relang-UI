@@ -307,9 +307,9 @@ public class Main {
 		newShell.setText("New Grid " + ++gridNumber);
 		newShell.setLayout(new FillLayout());
 		var gridData = new DataTemporary();
-		gridData.setColumnName(0, "Col1");
-		gridData.setColumnName(1, "Col2");
-		gridData.setColumnName(2, "Col3");
+		gridData.setColumnName(0, "A");
+		gridData.setColumnName(1, "B");
+		gridData.setColumnName(2, "C");
 		gridData.appendRow();
 		gridData.appendRow();
 		gridData.appendRow();
