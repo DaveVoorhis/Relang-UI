@@ -35,7 +35,7 @@ public class GridCheckbutton extends CellComposite {
 		addListener(SWT.MouseDown, focuser);
 
 		button.addListener(SWT.MouseDown,  focuser);
-		button.addListener(SWT.Modify, evt -> getNotifier().changed(this, button.getSelection()));
+		button.addListener(SWT.Modify, evt -> getNotifier().changed(this, button.getSelection(), GridWidgetInterface.SpecialInstructions.NONE));
 		
 		text.addListener(SWT.MouseDown, focuser);
 		text.addListener(SWT.KeyDown, evt -> {

@@ -4,8 +4,10 @@ import org.eclipse.swt.widgets.Control;
 
 public interface GridWidgetInterface {
 	
+	public enum SpecialInstructions {NONE, MOVE_DOWN};
+	
 	public static interface Notifier {
-		void changed(GridWidgetInterface gridWidget, Object newContent);
+		void changed(GridWidgetInterface gridWidget, Object newContent, SpecialInstructions instructions);
 	}
 	
 	/** Return the specific widget that will be displayed in the grid. */

@@ -4,7 +4,6 @@ import org.eclipse.nebula.widgets.grid.GridColumn;
 import org.eclipse.nebula.widgets.grid.GridEditor;
 import org.eclipse.nebula.widgets.grid.GridItem;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.custom.StackLayout;
 import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Event;
@@ -16,6 +15,7 @@ import org.reldb.relang.datagrid.Datagrid;
 import org.reldb.relang.datagrid.GridText;
 import org.reldb.relang.datagrid.GridWidgetInterface;
 import org.reldb.relang.datagrid.GridWidgetInterface.Notifier;
+import org.reldb.relang.main.Main;
 import org.reldb.relang.utilities.DialogBase;
 
 /** A Sheet (controller?) connects a Data (model) to a Datagrid (viewer).
@@ -24,13 +24,12 @@ import org.reldb.relang.utilities.DialogBase;
  */
 public class Sheet extends Composite {
 
-	private StackLayout layout;
 	private Datagrid grid;
 	private Data data;
 	
 	private void addColumn() {
 		data.appendDefaultColumn();
-		reload();
+		reload(grid.getFocusRow(), grid.getFocusColumn());
 	}
 
 	private void addColumnAdderColumn() {
@@ -38,10 +37,13 @@ public class Sheet extends Composite {
 		column.setHeaderTooltip("Add column.");
 		column.setWidth(75);
 		column.setText("+");
-		column.addListener(SWT.Selection, evt-> addColumn());		
+		column.addListener(SWT.Selection, evt -> Main.addTask(() -> addColumn()));		
 	}
 	
-	private void load() {
+	private void load(int focusRow, int focusColumn) {
+		if (grid != null)
+			grid.dispose();
+
 		grid = new Datagrid(this, SWT.BORDER | SWT.VIRTUAL | SWT.V_SCROLL | SWT.H_SCROLL);
 		
 		grid.getGrid().setHeaderVisible(true);
@@ -70,50 +72,49 @@ public class Sheet extends Composite {
 		grid.getGrid().addListener(SWT.SetData, setDataEvt -> {
 			GridItem row = (GridItem)setDataEvt.item;
 			int rowIndex = row.getRowIndex();
-
+			
 			for (int columnIndex = 0; columnIndex < columnCount; columnIndex++) {
 				var editor = new GridEditor(grid.getGrid());
 				editor.grabHorizontal = true;
 				editor.grabVertical = true;
 				var text = new Text(grid.getGrid(), SWT.NONE);
-				if (rowIndex < data.getRowCount() - 1)
+				if (rowIndex < data.getRowCount())
 					text.setText(data.getValue(columnIndex, rowIndex).toString());
 				var cell = new GridText(grid, text, rowIndex, columnIndex);
 				grid.setupControl(cell);
 				cell.setNotifier(new Notifier() {
 					@Override
-					public void changed(GridWidgetInterface gridWidget, Object newContent) {
+					public void changed(GridWidgetInterface gridWidget, Object newContent, GridWidgetInterface.SpecialInstructions specialInstruction) {
 						int getRowCount = data.getRowCount();
 						data.setValue(gridWidget.getColumn(), gridWidget.getRow(), newContent);
-				//		if (getRowCount != data.getRowCount())
-				//			reload();
+						if (getRowCount != data.getRowCount())
+							Main.addTask(() -> {
+								if (specialInstruction == GridWidgetInterface.SpecialInstructions.MOVE_DOWN)
+									reload(gridWidget.getRow() + 1, gridWidget.getColumn());
+								else
+									reload(gridWidget.getRow(), gridWidget.getColumn());
+							});
 					}
 				});
 				editor.setEditor(text, row, columnIndex);
+				if (columnIndex == focusColumn && rowIndex == focusRow)
+					grid.focusOnCell(focusRow, focusColumn);
 			}
 		});
-		
-		layout.topControl = grid.getGrid();
 	}
 	
-	private void reload() {
-		int focusRow = grid.getFocusRow();
-		int focusColumn = grid.getFocusColumn();
-		load();
-		grid.focusOnCell(focusRow, focusColumn);
+	private void reload(int focusRow, int focusColumn) {
+		load(focusRow, focusColumn);
 		grid.getGrid().getParent().layout();
 	}
 	
 	public Sheet(Composite parent, Data data) {
 		super(parent, SWT.NONE);
 		this.data = data;
-
-		layout = new StackLayout();
-		setLayout(layout);
 		
-		load();
+		setLayout(new FillLayout());
 		
-		grid.focusOnCell(0, 0);		
+		load(0, 0);
 	}
 
 	private void showColumnDialog(Event evt) {

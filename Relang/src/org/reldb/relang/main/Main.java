@@ -9,6 +9,7 @@ import java.io.InputStream;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.LinkedList;
+import java.util.Queue;
 import java.util.concurrent.Semaphore;
 
 import org.eclipse.swt.SWT;
@@ -46,6 +47,8 @@ public class Main {
 	static boolean createdScreenBar = false;
 	
 	static Shell shell = null;
+	
+	private static Queue<Runnable> tasks = new LinkedList<Runnable>();
 	
 	private static synchronized void quit() {
 		Display display = Display.getCurrent();
@@ -440,6 +443,15 @@ public class Main {
 		}
 		return iconImages.toArray(new Image[0]);		
 	}
+
+	public static void addTask(Runnable task) {
+		tasks.add(task);
+	}
+	
+	private static void doWaitingTasks() {
+		while (!tasks.isEmpty())
+			tasks.remove().run();
+	}
 	
 	private static void launch(String[] args) {
 		Display.setAppName(Version.getAppName());
@@ -553,8 +565,10 @@ public class Main {
 		
 		while (display != null && !display.isDisposed()) {
 			try {
-				if (display != null && !display.readAndDispatch())
+				if (display != null && !display.readAndDispatch()) {
+					doWaitingTasks();
 					display.sleep();
+				}
 			} catch (Throwable t) {
 				System.out.println(Version.getAppName() + ": Exception: " + t);
 				t.printStackTrace();

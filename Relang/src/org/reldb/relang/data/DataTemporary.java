@@ -101,9 +101,7 @@ public class DataTemporary implements Data {
 			throw new InvalidValueException("ERROR: Attempt to assign value of type " + valueType.getName() + " to cell with type " + headingColumnType.getName());
 		while (row >= getRowCount())
 			appendRow();
-		System.out.println("DataTemporary: size=" + getRowCount() + ": set " + row + ", " + column + ": " + value);
 		data.get(row).set(column, value);
-		dump();
 	}
 
 	@Override

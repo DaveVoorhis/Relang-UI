@@ -86,4 +86,8 @@ public class Datagrid {
 	public Grid getGrid() {
 		return grid;
 	}
+
+	public void dispose() {
+		grid.dispose();
+	}
 }
