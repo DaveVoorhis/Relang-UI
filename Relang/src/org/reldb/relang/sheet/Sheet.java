@@ -12,9 +12,9 @@ import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Text;
 import org.reldb.relang.data.Data;
 import org.reldb.relang.datagrid.Datagrid;
-import org.reldb.relang.datagrid.GridText;
 import org.reldb.relang.datagrid.GridWidgetInterface;
 import org.reldb.relang.datagrid.GridWidgetInterface.Notifier;
+import org.reldb.relang.datagrid.widgets.GridText;
 import org.reldb.relang.main.Main;
 import org.reldb.relang.utilities.DialogBase;
 

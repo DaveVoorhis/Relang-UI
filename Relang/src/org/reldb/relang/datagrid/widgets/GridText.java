@@ -1,7 +1,11 @@
-package org.reldb.relang.datagrid;
+package org.reldb.relang.datagrid.widgets;
 
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Text;
+import org.reldb.relang.datagrid.Datagrid;
+import org.reldb.relang.datagrid.GridWidgetInterface;
+import org.reldb.relang.datagrid.GridWidgetWrapper;
+import org.reldb.relang.datagrid.GridWidgetInterface.SpecialInstructions;
 
 public class GridText extends GridWidgetWrapper {
 	private boolean changed = false;

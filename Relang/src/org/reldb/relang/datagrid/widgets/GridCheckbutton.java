@@ -1,4 +1,4 @@
-package org.reldb.relang.datagrid;
+package org.reldb.relang.datagrid.widgets;
 
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.GridLayout;
@@ -6,6 +6,10 @@ import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.Text;
+import org.reldb.relang.datagrid.CellComposite;
+import org.reldb.relang.datagrid.Datagrid;
+import org.reldb.relang.datagrid.GridWidgetInterface;
+import org.reldb.relang.datagrid.GridWidgetInterface.SpecialInstructions;
 
 public class GridCheckbutton extends CellComposite {
 
