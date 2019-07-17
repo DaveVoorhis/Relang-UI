@@ -8,7 +8,6 @@ import org.eclipse.swt.widgets.Text;
 import org.reldb.relang.datagrid.CellComposite;
 import org.reldb.relang.datagrid.Datagrid;
 import org.reldb.relang.datagrid.GridWidgetInterface;
-import org.reldb.relang.datagrid.GridWidgetInterface.SpecialInstructions;
 
 public class GridCCombo extends CellComposite {
 	
