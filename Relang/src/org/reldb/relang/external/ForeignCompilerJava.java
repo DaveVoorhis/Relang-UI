@@ -55,11 +55,6 @@ public class ForeignCompilerJava {
         String classPath = System.getProperty("user.dir") + 
         	   java.io.File.pathSeparatorChar + database.getJavaUserSourcePath() +
         	   java.io.File.pathSeparatorChar + database.getHomeDir();
-        if (database.getAdditionalJarsForJavaCompilerClasspath() != null)
-        	for (String path: database.getAdditionalJarsForJavaCompilerClasspath()) {
-       			notify("ForeignCompilerJava: extra jar for classpath: " + path);
-	    		classPath += java.io.File.pathSeparator + path;
-        	}
         return classPath;
     }
    
