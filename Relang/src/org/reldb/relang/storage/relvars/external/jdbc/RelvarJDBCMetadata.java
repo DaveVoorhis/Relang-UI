@@ -16,7 +16,7 @@ import org.reldb.rel.v0.generator.SelectAttributes;
 import org.reldb.rel.v0.types.Heading;
 import org.reldb.rel.v0.types.builtin.TypeCharacter;
 import org.reldb.rel.v0.types.builtin.TypeInteger;
-import org.reldb.relang.storage.RelDatabase;
+import org.reldb.relang.storage.LocalDatabase;
 import org.reldb.relang.storage.relvars.RelvarCustomMetadata;
 import org.reldb.relang.storage.relvars.RelvarExternal;
 import org.reldb.relang.storage.relvars.RelvarGlobal;
@@ -56,7 +56,7 @@ public class RelvarJDBCMetadata extends RelvarCustomMetadata {
 		return isInOSGI;
 	}
 	
-	public static void loadDrivers(RelDatabase database) {
+	public static void loadDrivers(LocalDatabase database) {
 		if (driversLoaded)
 			return;
 		if (!isInOSGI()) {
@@ -86,7 +86,7 @@ public class RelvarJDBCMetadata extends RelvarCustomMetadata {
 		return (list.isEmpty()) ? "<none>" : list;
 	}
 	
-	public static RelvarHeading getHeading(RelDatabase database, String spec, DuplicateHandling duplicates) {
+	public static RelvarHeading getHeading(LocalDatabase database, String spec, DuplicateHandling duplicates) {
 		String[] values = CSVLineParse.parseTrimmed(spec);	
 		if (values.length != 4)
 			throw new ExceptionSemantic("EX0014: Invalid arguments. Expected: URL, USER, PASSWORD, DATABASE.TABLE but got " + spec);
@@ -123,7 +123,7 @@ public class RelvarJDBCMetadata extends RelvarCustomMetadata {
 		return "EXTERNAL JDBC \"" + address + "," + user + "," + password + "," + table + "\" " + duplicates;
 	}
 
-	public RelvarJDBCMetadata(RelDatabase database, String owner, String spec, DuplicateHandling duplicates) {
+	public RelvarJDBCMetadata(LocalDatabase database, String owner, String spec, DuplicateHandling duplicates) {
 		super(database, getHeading(database, spec, duplicates), owner);		
 		String[] values = CSVLineParse.parseTrimmed(spec);
 		address = values[0];
@@ -135,7 +135,7 @@ public class RelvarJDBCMetadata extends RelvarCustomMetadata {
 	}
 
 	@Override
-	public RelvarGlobal getRelvar(String name, RelDatabase database) {
+	public RelvarGlobal getRelvar(String name, LocalDatabase database) {
 		try {
 			loadDrivers(database);
 			Connection connect = DriverManager.getConnection(address, user, password);
@@ -148,7 +148,7 @@ public class RelvarJDBCMetadata extends RelvarCustomMetadata {
 	}
 
 	@Override
-	public void dropRelvar(RelDatabase database) {
+	public void dropRelvar(LocalDatabase database) {
 	}
 
 	public String getConnectionString() {

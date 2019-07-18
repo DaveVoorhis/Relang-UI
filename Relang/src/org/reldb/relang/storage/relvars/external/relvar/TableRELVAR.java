@@ -14,7 +14,7 @@ import org.reldb.rel.v0.values.TupleIterator;
 import org.reldb.rel.v0.values.ValueRelation;
 import org.reldb.rel.v0.values.ValueTuple;
 import org.reldb.rel.v0.vm.Context;
-import org.reldb.relang.storage.RelDatabase;
+import org.reldb.relang.storage.LocalDatabase;
 import org.reldb.relang.storage.relvars.RelvarExternal;
 import org.reldb.relang.storage.relvars.RelvarExternalMetadata;
 import org.reldb.relang.storage.relvars.RelvarHeading;
@@ -30,7 +30,7 @@ public class TableRELVAR extends TableCustom {
 	public TableRELVAR(String Name, RelvarExternalMetadata metadata, Generator generator, DuplicateHandling duplicates) {
 		meta = (RelvarRELVARMetadata) metadata;
 		this.generator = generator;
-		RelDatabase database = generator.getDatabase();
+		LocalDatabase database = generator.getDatabase();
 		RelvarHeading heading = meta.getHeadingDefinition(database);
 		Heading storedHeading = heading.getHeading();
 		fileHeading = RelvarRELVARMetadata.getHeading(database, meta.getConnectionString(), duplicates).getHeading();

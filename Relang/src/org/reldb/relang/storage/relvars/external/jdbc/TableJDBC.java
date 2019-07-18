@@ -23,7 +23,7 @@ import org.reldb.rel.v0.values.ValueCharacter;
 import org.reldb.rel.v0.values.ValueRelation;
 import org.reldb.rel.v0.values.ValueTuple;
 import org.reldb.rel.v0.vm.Context;
-import org.reldb.relang.storage.RelDatabase;
+import org.reldb.relang.storage.LocalDatabase;
 import org.reldb.relang.storage.relvars.RelvarExternal;
 import org.reldb.relang.storage.relvars.RelvarExternalMetadata;
 import org.reldb.relang.storage.relvars.RelvarHeading;
@@ -43,7 +43,7 @@ public class TableJDBC extends TableCustom {
 		meta = (RelvarJDBCMetadata) metadata;
 		this.generator = generator;
 		this.duplicates = duplicates;
-		RelDatabase database = generator.getDatabase();
+		LocalDatabase database = generator.getDatabase();
 		RelvarHeading heading = meta.getHeadingDefinition(database);
 		Heading storedHeading = heading.getHeading();
 		fileHeading = RelvarJDBCMetadata.getHeading(database, meta.getConnectionString(), duplicates).getHeading();

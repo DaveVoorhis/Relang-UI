@@ -9,7 +9,7 @@ import org.reldb.rel.v0.generator.SelectAttributes;
 import org.reldb.rel.v0.types.Heading;
 import org.reldb.rel.v0.types.builtin.TypeCharacter;
 import org.reldb.rel.v0.types.builtin.TypeInteger;
-import org.reldb.relang.storage.RelDatabase;
+import org.reldb.relang.storage.LocalDatabase;
 import org.reldb.relang.storage.relvars.RelvarCustomMetadata;
 import org.reldb.relang.storage.relvars.RelvarExternal;
 import org.reldb.relang.storage.relvars.RelvarGlobal;
@@ -34,7 +34,7 @@ public class RelvarACCDBMetadata extends RelvarCustomMetadata {
 	
 	private DuplicateHandling duplicates;
 	
-	public static RelvarHeading getHeading(RelDatabase database, String spec, DuplicateHandling duplicates) {
+	public static RelvarHeading getHeading(LocalDatabase database, String spec, DuplicateHandling duplicates) {
 		String[] values = CSVLineParse.parseTrimmed(spec);	
 		if (values.length != 2)
 			throw new ExceptionSemantic("RS0472: Invalid arguments. Expected: FILE, TABLE but got " + spec);
@@ -74,7 +74,7 @@ public class RelvarACCDBMetadata extends RelvarCustomMetadata {
 		return "EXTERNAL ACCDB \"" + fileSpec.replace('\\',  '/') + "," + table + "\" " + duplicates;
 	}
 
-	public RelvarACCDBMetadata(RelDatabase database, String owner, String spec, DuplicateHandling duplicates) {
+	public RelvarACCDBMetadata(LocalDatabase database, String owner, String spec, DuplicateHandling duplicates) {
 		super(database, getHeading(database, spec, duplicates), owner);		
 		String[] values = CSVLineParse.parseTrimmed(spec);
 		fileSpec = values[0];
@@ -100,13 +100,13 @@ public class RelvarACCDBMetadata extends RelvarCustomMetadata {
 	}
 	
 	@Override
-	public RelvarGlobal getRelvar(String name, RelDatabase database) {
+	public RelvarGlobal getRelvar(String name, LocalDatabase database) {
 		checkTableExistence();
 		return new RelvarExternal(name, database, new Generator(database, System.out), this, duplicates);
 	}
 
 	@Override
-	public void dropRelvar(RelDatabase database) {
+	public void dropRelvar(LocalDatabase database) {
 	}
 
 	public String getConnectionString() {

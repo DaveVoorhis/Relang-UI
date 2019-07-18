@@ -11,7 +11,7 @@ import org.reldb.rel.v0.interpreter.Interpreter;
 import org.reldb.rel.v0.types.Attribute;
 import org.reldb.rel.v0.types.Heading;
 import org.reldb.rel.v0.types.TypeRelation;
-import org.reldb.relang.storage.RelDatabase;
+import org.reldb.relang.storage.LocalDatabase;
 import org.reldb.relang.storage.relvars.RelvarCustomMetadata;
 import org.reldb.relang.storage.relvars.RelvarExternal;
 import org.reldb.relang.storage.relvars.RelvarGlobal;
@@ -30,7 +30,7 @@ public class RelvarRELVARMetadata extends RelvarCustomMetadata {
 	private String relvar;
 	private int port = Defaults.getDefaultPort();
 
-	public static RelvarHeading getHeading(RelDatabase database, String spec, DuplicateHandling duplicates) {
+	public static RelvarHeading getHeading(LocalDatabase database, String spec, DuplicateHandling duplicates) {
 		String[] values = CSVLineParse.parseTrimmed(spec);	
 		if (values.length != 4 && values.length != 5)
 			throw new ExceptionSemantic("RS0482: Invalid arguments. Expected: HOST, USER, PASSWORD, RELVAR, [PORT] but got " + spec);
@@ -82,7 +82,7 @@ public class RelvarRELVARMetadata extends RelvarCustomMetadata {
 		return "EXTERNAL RELVAR \"" + host + "," + user + "," + password + "," + relvar + "," + port + "\"";
 	}
 
-	public RelvarRELVARMetadata(RelDatabase database, String owner, String spec, DuplicateHandling duplicates) {
+	public RelvarRELVARMetadata(LocalDatabase database, String owner, String spec, DuplicateHandling duplicates) {
 		super(database, getHeading(database, spec, duplicates), owner);		
 		String[] values = CSVLineParse.parseTrimmed(spec);
 		host = values[0];
@@ -101,12 +101,12 @@ public class RelvarRELVARMetadata extends RelvarCustomMetadata {
 	}
 
 	@Override
-	public RelvarGlobal getRelvar(String name, RelDatabase database) {
+	public RelvarGlobal getRelvar(String name, LocalDatabase database) {
 		return new RelvarExternal(name, database, new Generator(database, System.out), this, DuplicateHandling.DUP_REMOVE);
 	}
 
 	@Override
-	public void dropRelvar(RelDatabase database) {
+	public void dropRelvar(LocalDatabase database) {
 	}
 
 	public String getConnectionString() {

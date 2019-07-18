@@ -15,10 +15,10 @@ public abstract class TransactionRunner {
 	
 	public abstract Object run(Transaction txn) throws Throwable;
 	
-	public Object execute(RelDatabase environment) throws Throwable {
+	public Object execute(LocalDatabase environment) throws Throwable {
 		boolean ran = false;
 		Object returnvalue = null;
-		RelTransaction txn = null;
+		LocalTransaction txn = null;
 		for (int attempt=0; attempt<retryLimit && !mustRollback; attempt++) {
 			txn = environment.beginTransaction();
 			try {

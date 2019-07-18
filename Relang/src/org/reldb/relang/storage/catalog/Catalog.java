@@ -89,9 +89,9 @@ public class Catalog {
 		}).go();
 	}
 	
-	private RelDatabase database;
+	private LocalDatabase database;
 	
-	public Catalog(RelDatabase database) {
+	public Catalog(LocalDatabase database) {
 		this.database = database;
 	}
 	

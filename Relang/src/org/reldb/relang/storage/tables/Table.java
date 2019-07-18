@@ -17,7 +17,7 @@ import org.reldb.rel.v0.values.*;
 import org.reldb.rel.v0.vm.Context;
 import org.reldb.rel.v0.vm.Instruction;
 import org.reldb.rel.v0.vm.VirtualMachine;
-import org.reldb.relang.storage.RelDatabase;
+import org.reldb.relang.storage.LocalDatabase;
 import org.reldb.relang.storage.TransactionRunner;
 import org.reldb.relang.storage.relvars.RelvarHeading;
 import org.reldb.relang.storage.temporary.TempTable;
@@ -29,11 +29,11 @@ import org.reldb.relang.storage.temporary.TempTableImplementation;
  */
 public abstract class Table {
 
-	private RelDatabase database;
+	private LocalDatabase database;
 	private RelvarHeading headingDefinition;
 	private AttributeMap[] keyMaps;
 
-	public Table(RelDatabase database, RelvarHeading headingDefinition) {
+	public Table(LocalDatabase database, RelvarHeading headingDefinition) {
 		this.database = database;
 		this.headingDefinition = headingDefinition;
 		keyMaps = new AttributeMap[headingDefinition.getKeyCount()];
@@ -51,7 +51,7 @@ public abstract class Table {
 
 	protected abstract Storage getStorage(Transaction txn) throws DatabaseException;
 
-	public RelDatabase getDatabase() {
+	public LocalDatabase getDatabase() {
 		return database;
 	}
 

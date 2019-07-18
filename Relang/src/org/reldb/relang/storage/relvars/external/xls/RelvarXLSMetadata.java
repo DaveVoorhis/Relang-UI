@@ -15,7 +15,7 @@ import org.reldb.rel.v0.generator.Generator;
 import org.reldb.rel.v0.types.Heading;
 import org.reldb.rel.v0.types.builtin.TypeCharacter;
 import org.reldb.rel.v0.types.builtin.TypeInteger;
-import org.reldb.relang.storage.RelDatabase;
+import org.reldb.relang.storage.LocalDatabase;
 import org.reldb.relang.storage.relvars.RelvarCustomMetadata;
 import org.reldb.relang.storage.relvars.RelvarExternal;
 import org.reldb.relang.storage.relvars.RelvarGlobal;
@@ -104,7 +104,7 @@ public class RelvarXLSMetadata extends RelvarCustomMetadata {
 		}
 	}
 
-	public RelvarXLSMetadata(RelDatabase database, String owner, String path, DuplicateHandling duplicates) {
+	public RelvarXLSMetadata(LocalDatabase database, String owner, String path, DuplicateHandling duplicates) {
 		super(database, getHeadingFromXLS(path, duplicates), owner);
 		this.path = path;
 		this.duplicates = duplicates;
@@ -116,7 +116,7 @@ public class RelvarXLSMetadata extends RelvarCustomMetadata {
 	}
 
 	@Override
-	public RelvarGlobal getRelvar(String name, RelDatabase database) {
+	public RelvarGlobal getRelvar(String name, LocalDatabase database) {
 		SheetSpec spec = obtainSheetSpec(path);
 		File file = new File(spec.filePath);
 		if (!file.exists())
@@ -125,7 +125,7 @@ public class RelvarXLSMetadata extends RelvarCustomMetadata {
 	}
 
 	@Override
-	public void dropRelvar(RelDatabase database) {
+	public void dropRelvar(LocalDatabase database) {
 	}
 
 	public String getPath() {

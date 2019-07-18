@@ -10,7 +10,7 @@ import org.reldb.rel.v0.generator.Generator;
 import org.reldb.rel.v0.types.Heading;
 import org.reldb.rel.v0.types.builtin.TypeCharacter;
 import org.reldb.rel.v0.types.builtin.TypeInteger;
-import org.reldb.relang.storage.RelDatabase;
+import org.reldb.relang.storage.LocalDatabase;
 import org.reldb.relang.storage.relvars.RelvarCustomMetadata;
 import org.reldb.relang.storage.relvars.RelvarExternal;
 import org.reldb.relang.storage.relvars.RelvarGlobal;
@@ -90,7 +90,7 @@ public class RelvarCSVMetadata extends RelvarCustomMetadata {
 		return new RelvarHeading(heading);
 	}
 
-	public RelvarCSVMetadata(RelDatabase database, String owner, String path, DuplicateHandling duplicates) {
+	public RelvarCSVMetadata(LocalDatabase database, String owner, String path, DuplicateHandling duplicates) {
 		super(database, getHeadingFromCSV(path, duplicates), owner);
 		this.path = path;
 		this.duplicates = duplicates;
@@ -102,7 +102,7 @@ public class RelvarCSVMetadata extends RelvarCustomMetadata {
 	}
 
 	@Override
-	public RelvarGlobal getRelvar(String name, RelDatabase database) {
+	public RelvarGlobal getRelvar(String name, LocalDatabase database) {
 		CSVSpec spec = obtainCSVSpec(path);
 		File file = new File(spec.filePath);
 		if (!file.exists())
@@ -111,7 +111,7 @@ public class RelvarCSVMetadata extends RelvarCustomMetadata {
 	}
 
 	@Override
-	public void dropRelvar(RelDatabase database) {
+	public void dropRelvar(LocalDatabase database) {
 	}
 
 	public String getPath() {

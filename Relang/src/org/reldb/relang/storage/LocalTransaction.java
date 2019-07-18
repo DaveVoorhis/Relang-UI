@@ -4,14 +4,14 @@ import org.reldb.relang.utilities.ExceptionFatal;
 
 import com.sleepycat.je.*;
 
-public class RelTransaction {
+public class LocalTransaction {
 	
 	private int referenceCount;
 	private Transaction transaction;
 	private boolean aborting;
 	private boolean aborted;
 	
-	public RelTransaction(Transaction txn) {
+	public LocalTransaction(Transaction txn) {
 		transaction = txn;
 		referenceCount = 1;
 		aborting = false;

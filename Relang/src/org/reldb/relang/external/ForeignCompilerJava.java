@@ -10,7 +10,7 @@ import java.io.InputStreamReader;
 import java.io.PrintStream;
 import java.io.PrintWriter;
 
-import org.reldb.relang.storage.RelDatabase;
+import org.reldb.relang.storage.LocalDatabase;
 import org.reldb.relang.utilities.ExceptionFatal;
 import org.reldb.relang.utilities.ExceptionSemantic;
 
@@ -21,9 +21,9 @@ import org.reldb.relang.utilities.ExceptionSemantic;
 public class ForeignCompilerJava {
 	
 	private boolean verbose;
-	private RelDatabase database;
+	private LocalDatabase database;
 	
-	public ForeignCompilerJava(RelDatabase database, boolean verbose) {
+	public ForeignCompilerJava(LocalDatabase database, boolean verbose) {
 		this.database = database;
 		this.verbose = verbose;
 	}

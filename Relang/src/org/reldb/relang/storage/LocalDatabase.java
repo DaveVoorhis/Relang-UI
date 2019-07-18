@@ -24,7 +24,7 @@ import com.sleepycat.bind.serial.StoredClassCatalog;
 import com.sleepycat.bind.tuple.StringBinding;
 import com.sleepycat.je.*;
 
-public class RelDatabase {
+public class LocalDatabase {
 
 	public final static String systemOwner = "Rel";
 
@@ -45,7 +45,7 @@ public class RelDatabase {
 	private Hashtable<String, Database> openStorage = new Hashtable<String, Database>();
 
 	// active transaction per thread
-	private Hashtable<Long, RelTransaction> transactions = new Hashtable<Long, RelTransaction>();
+	private Hashtable<Long, LocalTransaction> transactions = new Hashtable<Long, LocalTransaction>();
 
 	// Active registered tuple iterators
 	private HashSet<RegisteredTupleIterator> registeredTupleIterators = new HashSet<RegisteredTupleIterator>();
@@ -326,7 +326,7 @@ public class RelDatabase {
 		if (!quiet)
 			System.out.println("\tCommitting open transactions in " + homeDir);
 		int openTransactions = 0;
-		for (RelTransaction transaction : transactions.values())
+		for (LocalTransaction transaction : transactions.values())
 			while (transaction.getReferenceCount() > 0)
 				try {
 					commitTransaction(transaction);
@@ -520,15 +520,15 @@ public class RelDatabase {
 	}
 
 	/** Begin transaction. */
-	public synchronized RelTransaction beginTransaction() {
+	public synchronized LocalTransaction beginTransaction() {
 		Long threadID = getThreadID();
-		RelTransaction currentTransaction = transactions.get(threadID);
+		LocalTransaction currentTransaction = transactions.get(threadID);
 		if (currentTransaction == null) {
 			try {
 				Transaction txn = environment.beginTransaction(null, null);
 				// TODO - parameterise setLockTimeout value somewhere
 				txn.setLockTimeout(10, TimeUnit.SECONDS);
-				currentTransaction = new RelTransaction(txn);
+				currentTransaction = new LocalTransaction(txn);
 				transactions.put(threadID, currentTransaction);
 			} catch (DatabaseException dbe) {
 				dbe.printStackTrace();
@@ -540,40 +540,40 @@ public class RelDatabase {
 	}
 
 	// Get current transaction in this thread. Return null if there isn't one.
-	private RelTransaction getCurrentTransaction() {
+	private LocalTransaction getCurrentTransaction() {
 		Long threadID = getThreadID();
 		return transactions.get(threadID);
 	}
 
 	/** Commit specified transaction */
-	private void commitTransactionUnsynchronized(RelTransaction txn) {
+	private void commitTransactionUnsynchronized(LocalTransaction txn) {
 		txn.commit();
 		if (txn.getReferenceCount() == 0)
 			transactions.remove(getThreadID());
 	}
 
 	/** Commit specified transaction. */
-	public synchronized void commitTransaction(RelTransaction txn) {
+	public synchronized void commitTransaction(LocalTransaction txn) {
 		commitTransactionUnsynchronized(txn);
 	}
 
 	/** Commit current transaction. */
 	public synchronized void commitTransaction() {
-		RelTransaction currentTransaction = getCurrentTransaction();
+		LocalTransaction currentTransaction = getCurrentTransaction();
 		if (currentTransaction == null)
 			throw new ExceptionSemantic("RS0208: No transaction is active.");
 		commitTransactionUnsynchronized(currentTransaction);
 	}
 
 	/** Roll back specified transaction. */
-	private void rollbackTransactionUnsynchronized(RelTransaction txn) {
+	private void rollbackTransactionUnsynchronized(LocalTransaction txn) {
 		txn.abort();
 		if (txn.getReferenceCount() == 0)
 			transactions.remove(getThreadID());
 	}
 
 	/** Roll back specified transaction. */
-	synchronized void rollbackTransaction(RelTransaction txn) {
+	synchronized void rollbackTransaction(LocalTransaction txn) {
 		rollbackTransactionUnsynchronized(txn);
 	}
 
@@ -583,7 +583,7 @@ public class RelDatabase {
 	 */
 	public synchronized void rollbackTransactionIfThereIsOne() {
 		reset();
-		RelTransaction currentTransaction = getCurrentTransaction();
+		LocalTransaction currentTransaction = getCurrentTransaction();
 		if (currentTransaction == null)
 			return;
 		while (currentTransaction.getReferenceCount() > 0)
@@ -592,7 +592,7 @@ public class RelDatabase {
 
 	/** Roll back current transaction. Throw an exception if there isn't one. */
 	public synchronized void rollbackTransaction() {
-		RelTransaction currentTransaction = getCurrentTransaction();
+		LocalTransaction currentTransaction = getCurrentTransaction();
 		if (currentTransaction == null)
 			throw new ExceptionSemantic("RS0209: No transaction is active.");
 		rollbackTransactionUnsynchronized(currentTransaction);
@@ -603,6 +603,7 @@ public class RelDatabase {
 	}
 
 	/** Get the storage for a given real relvar name. */
+	/*
 	public synchronized Storage getStorage(Transaction txn, String name) throws DatabaseException {
 		RelvarMetadata metadata = getRelvarMetadata(txn, name);
 		if (metadata == null)
@@ -620,8 +621,10 @@ public class RelDatabase {
 		}
 		return storage;
 	}
+	*/
 
 	/** Create a real relvar with specified metadata. */
+	/*
 	public synchronized void createRealRelvar(final Generator generator, final RelvarDefinition relvarInfo) {
 		try {
 			(new TransactionRunner() {
@@ -687,8 +690,10 @@ public class RelDatabase {
 			throw new ExceptionFatal("RS0359: createExternalRelvar failed: " + t);
 		}
 	}
+	*/
 
 	/** Open a global relvar. Return null if it doesn't exist. */
+	/*
 	public synchronized RelvarGlobal openGlobalRelvar(final String name) {
 		try {
 			return ((RelvarGlobal) (new TransactionRunner() {
@@ -706,8 +711,10 @@ public class RelDatabase {
 			throw new ExceptionFatal("RS0361: openRelvar failed: " + t);
 		}
 	}
+	*/
 
 	/** Drop a relvar. Throw an exception if it doesn't exist. */
+	/*
 	public synchronized void dropRelvar(final String name) {
 		try {
 			(new TransactionRunner() {
@@ -750,5 +757,6 @@ public class RelDatabase {
 			throw new ExceptionFatal("RS0362: dropRelvar failed: " + t);
 		}
 	}
+	*/
 
 }

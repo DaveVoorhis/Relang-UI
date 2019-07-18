@@ -1,8 +1,8 @@
 package org.reldb.relang.storage.tables;
 
 import org.reldb.relang.data.TupleIterator;
-import org.reldb.relang.storage.RelDatabase;
-import org.reldb.relang.storage.RelTransaction;
+import org.reldb.relang.storage.LocalDatabase;
+import org.reldb.relang.storage.LocalTransaction;
 import org.reldb.relang.utilities.ExceptionFatal;
 
 import com.sleepycat.je.Cursor;
@@ -13,12 +13,12 @@ public abstract class RegisteredTupleIterator extends TupleIterator implements C
 	private static long iteratorIDGenerator = 0;
 	
 	private Long iteratorID;
-	private RelDatabase database;
+	private LocalDatabase database;
 	
 	protected Cursor cursor;
-	protected RelTransaction txn = null;
+	protected LocalTransaction txn = null;
 	
-	public RegisteredTupleIterator(RelDatabase database) {
+	public RegisteredTupleIterator(LocalDatabase database) {
 		iteratorID = iteratorIDGenerator++;
 		this.database = database;
 	    database.registerTupleIterator(this);
