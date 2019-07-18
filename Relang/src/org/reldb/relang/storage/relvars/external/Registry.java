@@ -98,7 +98,7 @@ public class Registry {
 				return iterator.hasNext();
 			}
 			@Override
-			public ValueTuple next() {
+			public Tuple next() {
 				Value rawTuple[];
 				Info info = iterator.next();
 				ValueCharacter identifier = ValueCharacter.select(generator, info.getIdentifier());
@@ -115,7 +115,7 @@ public class Registry {
 						if (component.getAppropriateFileExtension() != null)
 							for (String extension: component.getAppropriateFileExtension()) {
 								ValueCharacter extensionChar = ValueCharacter.select(generator, extension);
-								extensions.insert(new ValueTuple(generator, new Value[] {extensionChar}));
+								extensions.insert(new Tuple(generator, new Value[] {extensionChar}));
 							}
 						ValueCharacter componentDocumentation = ValueCharacter.select(generator, component.getDocumentation());
 						ValueRelationLiteral componentOptions = new ValueRelationLiteral(generator);
@@ -123,9 +123,9 @@ public class Registry {
 							for (InfoComponentOption option: component.getOptions()) {
 								ValueCharacter optionDocumentation = ValueCharacter.select(generator, option.getDocumentation());
 								ValueCharacter optionText = ValueCharacter.select(generator, option.getOptionText());
-								componentOptions.insert(new ValueTuple(generator, new Value[] {optionDocumentation, optionText}));
+								componentOptions.insert(new Tuple(generator, new Value[] {optionDocumentation, optionText}));
 							}
-						components.insert(new ValueTuple(generator, new Value[] {
+						components.insert(new Tuple(generator, new Value[] {
 								componentNumber,
 								isOptional,
 								isAFile,
@@ -142,7 +142,7 @@ public class Registry {
 					components,
 					guaranteedUnique
 				};
-				return new ValueTuple(generator, rawTuple);
+				return new Tuple(generator, rawTuple);
 			}
 			@Override
 			public void close() {}

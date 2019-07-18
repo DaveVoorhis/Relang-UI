@@ -1,14 +1,6 @@
 package org.reldb.relang.storage.tables;
 
-import org.reldb.rel.v0.generator.Generator;
-import org.reldb.rel.v0.values.RelTupleFilter;
-import org.reldb.rel.v0.values.RelTupleMap;
-import org.reldb.rel.v0.values.TupleFilter;
-import org.reldb.rel.v0.values.TupleIterator;
-import org.reldb.rel.v0.values.ValueRelation;
-import org.reldb.rel.v0.values.ValueTuple;
-import org.reldb.rel.v0.vm.Context;
-import org.reldb.relang.storage.relvars.RelvarExternal;
+import org.reldb.relang.data.TupleIterator;
 
 public interface TableExternal {
 	
@@ -19,22 +11,10 @@ public interface TableExternal {
 	}
 	
 	public TupleIterator iterator();
-
-	public TupleIterator iterator(Generator generator);
 	
 	public long getCardinality();
-	
-	public boolean contains(Generator generator, ValueTuple tuple);
-
-	public ValueTuple getTupleForKey(Generator generator, ValueTuple tuple);
-
-	public void setValue(RelvarExternal relvarCSV, ValueRelation relation);
 
 	public long insert(Generator generator, ValueRelation relation);
-
-	public long insert(Generator generator, ValueTuple tuple);
-	
-	public long insertNoDuplicates(Generator generator, ValueRelation relation);
 	
 	public void purge();
 

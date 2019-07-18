@@ -51,14 +51,14 @@ public class TableCSV extends TableCustom {
 			throw new ExceptionSemantic("RS0453: Stored CSV metadata is " + storedHeading + " but file metadata is " + fileHeading + ". Has the file structure changed?");
 	}
 
-	private ValueTuple toTuple(String line) {
+	private Tuple toTuple(String line) {
 		String[] rawValues = CSVLineParse.parse(line);
 		Value[] values = new Value[rawValues.length];
 		if (values.length != fileHeading.getDegree() - ((duplicates == DuplicateHandling.DUP_COUNT || duplicates == DuplicateHandling.AUTOKEY) ? 1 : 0))
 			throw new ExceptionSemantic("RS0457: CSV file " + file.getAbsolutePath() + " with heading " + fileHeading + " has malformed line: " + line);
 		for (int i = 0; i < rawValues.length; i++)
 			values[i] = ValueCharacter.select(generator, rawValues[i]);
-		return new ValueTuple(generator, values);
+		return new Tuple(generator, values);
 	}
 
 	@Override
@@ -96,7 +96,7 @@ public class TableCSV extends TableCustom {
 	}
 
 	@Override
-	public boolean contains(Generator generator, ValueTuple tuple) {
+	public boolean contains(Generator generator, Tuple tuple) {
 		TupleIterator iterator = iterator();
 		try {
 			while (iterator.hasNext())
@@ -109,7 +109,7 @@ public class TableCSV extends TableCustom {
 	}
 
 	@Override
-	public ValueTuple getTupleForKey(Generator generator, ValueTuple tuple) {
+	public Tuple getTupleForKey(Generator generator, Tuple tuple) {
 		return null;
 	}
 
@@ -128,7 +128,7 @@ public class TableCSV extends TableCustom {
 	}
 
 	@Override
-	public long insert(Generator generator, ValueTuple tuple) {
+	public long insert(Generator generator, Tuple tuple) {
 		try {
 			FileWriter fw = new FileWriter(file.getAbsolutePath(), true);
 			fw.write("\n" + tuple.toCSV());
@@ -144,7 +144,7 @@ public class TableCSV extends TableCustom {
 		long count = 0;
 		TupleIterator iterator = relation.iterator();
 		while (iterator.hasNext()) {
-			ValueTuple tuple = iterator.next();
+			Tuple tuple = iterator.next();
 			if (!contains(generator, tuple))
 				count += insert(generator, tuple);
 		}
@@ -167,7 +167,7 @@ public class TableCSV extends TableCustom {
 	}
 
 	@Override
-	public void delete(Generator generator, ValueTuple tuple) {
+	public void delete(Generator generator, Tuple tuple) {
 		notImplemented("DELETE");
 	}
 
@@ -175,14 +175,14 @@ public class TableCSV extends TableCustom {
 	public long delete(Generator generator, RelTupleFilter relTupleFilter) {
 		long count = 0;
 		TupleIterator iterator = this.iterator();
-		ValueTuple tuple;
-		List<ValueTuple> tuplesToDelete = new ArrayList<ValueTuple>();
+		Tuple tuple;
+		List<Tuple> tuplesToDelete = new ArrayList<Tuple>();
 		while (iterator.hasNext()) {
 			tuple = iterator.next();
 			if (relTupleFilter.filter(tuple))
 				tuplesToDelete.add(tuple);
 		}
-		for (ValueTuple tuples : tuplesToDelete) {
+		for (Tuple tuples : tuplesToDelete) {
 			delete(generator, tuples);
 			count++;
 		}
@@ -193,14 +193,14 @@ public class TableCSV extends TableCustom {
 	public long delete(Generator generator, TupleFilter filter) {
 		long count = 0;
 		TupleIterator iterator = this.iterator();
-		ValueTuple tuple;
-		List<ValueTuple> tuplesToDelete = new ArrayList<ValueTuple>();
+		Tuple tuple;
+		List<Tuple> tuplesToDelete = new ArrayList<Tuple>();
 		while (iterator.hasNext()) {
 			tuple = iterator.next();
 			if (filter.filter(tuple))
 				tuplesToDelete.add(tuple);
 		}
-		for (ValueTuple tuples : tuplesToDelete) {
+		for (Tuple tuples : tuplesToDelete) {
 			delete(generator, tuples);
 			count++;
 		}
@@ -258,7 +258,7 @@ public class TableCSV extends TableCustom {
 			}
 
 			@Override
-			public ValueTuple next() {
+			public Tuple next() {
 				if (hasNext())
 					try {
 						// replaceAll to filter out Byte Order Mark (BOM), if present

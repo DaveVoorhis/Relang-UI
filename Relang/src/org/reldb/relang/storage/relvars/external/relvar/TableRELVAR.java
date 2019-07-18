@@ -63,7 +63,7 @@ public class TableRELVAR extends TableCustom {
 	}
 
 	@Override
-	public boolean contains(Generator generator, ValueTuple tuple) {
+	public boolean contains(Generator generator, Tuple tuple) {
 		String tupleText = tuple.toString(new TypeTuple(fileHeading));
 		String query = tupleText + " IN " + meta.getRelvar();
 		String response = evaluate(query);
@@ -71,7 +71,7 @@ public class TableRELVAR extends TableCustom {
 	}
 
 	@Override
-	public ValueTuple getTupleForKey(Generator generator, ValueTuple tuple) {
+	public Tuple getTupleForKey(Generator generator, Tuple tuple) {
 		return null;
 	}
 
@@ -87,7 +87,7 @@ public class TableRELVAR extends TableCustom {
 	}
 
 	@Override
-	public long insert(Generator generator, ValueTuple tuple) {
+	public long insert(Generator generator, Tuple tuple) {
 		notImplemented("INSERT");
 		return 0;
 	}
@@ -104,7 +104,7 @@ public class TableRELVAR extends TableCustom {
 	}
 
 	@Override
-	public void delete(Generator generator, ValueTuple tuple) {
+	public void delete(Generator generator, Tuple tuple) {
 		notImplemented("DELETE");
 	}
 

@@ -114,7 +114,7 @@ public class TableJDBC extends TableCustom {
 	}
 
 	@Override
-	public boolean contains(Generator generator, ValueTuple tuple) {
+	public boolean contains(Generator generator, Tuple tuple) {
 		TupleIterator iterator = iterator();
 		try {
 			while (iterator.hasNext())
@@ -127,7 +127,7 @@ public class TableJDBC extends TableCustom {
 	}
 
 	@Override
-	public ValueTuple getTupleForKey(Generator generator, ValueTuple tuple) {
+	public Tuple getTupleForKey(Generator generator, Tuple tuple) {
 		return null;
 	}
 
@@ -146,7 +146,7 @@ public class TableJDBC extends TableCustom {
 	}
 
 	@Override
-	public long insert(Generator generator, ValueTuple tuple) {
+	public long insert(Generator generator, Tuple tuple) {
 		try {
 			Value[] values = tuple.getValues();
 			StringBuffer command = new StringBuffer("insert into " + meta.getTable() + " values (");
@@ -166,7 +166,7 @@ public class TableJDBC extends TableCustom {
 		long count = 0;
 		TupleIterator iterator = relation.iterator();
 		while (iterator.hasNext()) {
-			ValueTuple tuple = iterator.next();
+			Tuple tuple = iterator.next();
 			if (!contains(generator, tuple))
 				count += insert(generator, tuple);
 		}
@@ -185,7 +185,7 @@ public class TableJDBC extends TableCustom {
 	}
 
 	@Override
-	public void delete(Generator generator, ValueTuple tuple) {
+	public void delete(Generator generator, Tuple tuple) {
 		PreparedStatement preparedStatement;
 		String[] values = CSVLineParse.parseTrimmed(tuple.toCSV());
 		StringBuffer line = new StringBuffer("delete from " + meta.getTable() + " where ");
@@ -211,14 +211,14 @@ public class TableJDBC extends TableCustom {
 	public long delete(Generator generator, RelTupleFilter relTupleFilter) {
 		long count = 0;
 		TupleIterator iterator = this.iterator();
-		ValueTuple tuple;
-		List<ValueTuple> tuplesToDelete = new ArrayList<ValueTuple>();
+		Tuple tuple;
+		List<Tuple> tuplesToDelete = new ArrayList<Tuple>();
 		while (iterator.hasNext()) {
 			tuple = iterator.next();
 			if (relTupleFilter.filter(tuple))
 				tuplesToDelete.add(tuple);
 		}
-		for (ValueTuple tuples : tuplesToDelete) {
+		for (Tuple tuples : tuplesToDelete) {
 			delete(generator, tuples);
 			count++;
 		}
@@ -229,14 +229,14 @@ public class TableJDBC extends TableCustom {
 	public long delete(Generator generator, TupleFilter filter) {
 		long count = 0;
 		TupleIterator iterator = this.iterator();
-		ValueTuple tuple;
-		List<ValueTuple> tuplesToDelete = new ArrayList<ValueTuple>();
+		Tuple tuple;
+		List<Tuple> tuplesToDelete = new ArrayList<Tuple>();
 		while (iterator.hasNext()) {
 			tuple = iterator.next();
 			if (filter.filter(tuple))
 				tuplesToDelete.add(tuple);
 		}
-		for (ValueTuple tuples : tuplesToDelete) {
+		for (Tuple tuples : tuplesToDelete) {
 			delete(generator, tuples);
 			count++;
 		}
@@ -296,10 +296,10 @@ public class TableJDBC extends TableCustom {
 			}
 
 			@Override
-			public ValueTuple next() {
+			public Tuple next() {
 				if (hasNext())
 					try {
-						return new ValueTuple(generator, currentLine);
+						return new Tuple(generator, currentLine);
 					} finally {
 						currentLine = null;
 					}

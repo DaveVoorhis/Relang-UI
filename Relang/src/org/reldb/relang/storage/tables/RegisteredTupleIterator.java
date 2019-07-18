@@ -1,9 +1,9 @@
 package org.reldb.relang.storage.tables;
 
-import org.reldb.rel.exceptions.ExceptionFatal;
-import org.reldb.rel.v0.values.TupleIterator;
+import org.reldb.relang.data.TupleIterator;
 import org.reldb.relang.storage.RelDatabase;
 import org.reldb.relang.storage.RelTransaction;
+import org.reldb.relang.utilities.ExceptionFatal;
 
 import com.sleepycat.je.Cursor;
 import com.sleepycat.je.DatabaseException;

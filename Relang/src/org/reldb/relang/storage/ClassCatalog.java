@@ -2,9 +2,8 @@ package org.reldb.relang.storage;
 
 import java.io.File;
 
-import org.reldb.rel.v0.external.DirClassLoader;
-import org.reldb.rel.v0.values.ValueTuple;
-import org.reldb.relang.storage.relvars.RelvarMetadata;
+import org.reldb.relang.data.Tuple;
+import org.reldb.relang.external.DirClassLoader;
 
 import com.sleepycat.bind.EntryBinding;
 import com.sleepycat.bind.serial.SerialBinding;
@@ -19,8 +18,9 @@ public class ClassCatalog {
     private StoredClassCatalog classCatalog;
     private Database classCatalogDb;
     private Environment environment;
-    private EntryBinding<RelvarMetadata> relvarMetadataBinding;
-    private SerialBinding<ValueTuple> tupleBinding;
+    private EntryBinding<String> relvarMetadataBinding;
+    private SerialBinding<Tuple> tupleBinding;
+    
     // class loader for external Java-based operators and types
     private DirClassLoader dirClassLoader;
 
@@ -40,10 +40,10 @@ public class ClassCatalog {
         classCatalog = new StoredClassCatalog(classCatalogDb);
         
         // Need a serial binding for metadata
-        relvarMetadataBinding = new SerialBinding<RelvarMetadata>(classCatalog, RelvarMetadata.class);
+        relvarMetadataBinding = new SerialBinding<String>(classCatalog, String.class);
         
         // Need serial binding for data
-        tupleBinding = new SerialBinding<ValueTuple>(classCatalog, ValueTuple.class) {
+        tupleBinding = new SerialBinding<Tuple>(classCatalog, Tuple.class) {
         	public ClassLoader getClassLoader() {
         		return dirClassLoader;
         	}
@@ -55,11 +55,11 @@ public class ClassCatalog {
     	environment.close();
 	}
     
-    EntryBinding<RelvarMetadata> getRelvarMetadataBinding() {
+    EntryBinding<String> getRelvarMetadataBinding() {
     	return relvarMetadataBinding;
     }
     
-    SerialBinding<ValueTuple> getTupleBinding() {
+    SerialBinding<Tuple> getTupleBinding() {
     	return tupleBinding;
     }
 

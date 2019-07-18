@@ -1,6 +1,6 @@
 package org.reldb.relang.storage;
 
-import org.reldb.rel.exceptions.ExceptionFatal;
+import org.reldb.relang.utilities.ExceptionFatal;
 
 import com.sleepycat.je.*;
 
@@ -25,7 +25,7 @@ public abstract class TransactionRunner {
 				returnvalue = run(txn.getTransaction());
 				ran = true;
 				break;
-			} catch (com.sleepycat.je.LockTimeoutException lte) {
+			} catch (LockTimeoutException lte) {
 				environment.rollbackTransaction(txn);
 				Thread.sleep((long)(Math.random() * 5000.0));
 			} catch (Throwable t) {

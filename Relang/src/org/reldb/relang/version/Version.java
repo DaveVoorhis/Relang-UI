@@ -2,6 +2,12 @@ package org.reldb.relang.version;
 
 public class Version {
 
+	public static String expectedBerkeleyDBVersion = "7.5.11";
+
+	public static String getBerkeleyDbJarFilename() {
+		return "je-7.5.11.jar";
+	}
+
 	public static String getAppName() {
 		return "Relang";	
 	}
@@ -64,6 +70,10 @@ public class Version {
 
 	public static String getSplashName() {
 		return "splash";
+	}
+
+	public static int getDatabaseVersion() {
+		return 0;
 	}
 	
 }

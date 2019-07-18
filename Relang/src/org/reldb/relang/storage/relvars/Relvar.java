@@ -14,13 +14,13 @@ public interface Relvar {
 	abstract public long getCardinality(Generator generator);
 
 	/** Return true if tuple is found in this relvar's relation. */
-	abstract public boolean contains(Generator generator, ValueTuple tuple);
+	abstract public boolean contains(Generator generator, Tuple tuple);
 
 	/** Assign a new relation to this relvar. */
 	abstract public void setValue(ValueRelation relation);
 
 	/** Return quantity of tuples inserted, i.e., 1 if insert succeeded. */
-	abstract public long insert(Generator generator, ValueTuple tuple);
+	abstract public long insert(Generator generator, Tuple tuple);
 
 	/** Return quantity of tuples inserted.  Silently ignore duplicates. */
 	abstract public long insert(Generator generator, ValueRelation relation);

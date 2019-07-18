@@ -90,7 +90,7 @@ public class TableACCDB extends TableCustom {
 	}
 
 	@Override
-	public boolean contains(Generator generator, ValueTuple tuple) {
+	public boolean contains(Generator generator, Tuple tuple) {
 		TupleIterator iterator = iterator();
 		try {
 			while (iterator.hasNext())
@@ -103,7 +103,7 @@ public class TableACCDB extends TableCustom {
 	}
 
 	@Override
-	public ValueTuple getTupleForKey(Generator generator, ValueTuple tuple) {
+	public Tuple getTupleForKey(Generator generator, Tuple tuple) {
 		return null;
 	}
 
@@ -119,7 +119,7 @@ public class TableACCDB extends TableCustom {
 	}
 
 	@Override
-	public long insert(Generator generator, ValueTuple tuple) {
+	public long insert(Generator generator, Tuple tuple) {
 		notImplemented("INSERT");
 		return 0;
 	}
@@ -136,7 +136,7 @@ public class TableACCDB extends TableCustom {
 	}
 
 	@Override
-	public void delete(Generator generator, ValueTuple tuple) {
+	public void delete(Generator generator, Tuple tuple) {
 		notImplemented("DELETE");
 	}
 
@@ -170,7 +170,7 @@ public class TableACCDB extends TableCustom {
 		return 0;
 	}
 
-	private ValueTuple toTuple(Table table, Row row) {
+	private Tuple toTuple(Table table, Row row) {
 		Value[] rowData = new Value[table.getColumnCount()];
 		int columnIndex = 0;
 		for (Column column: table.getColumns()) {
@@ -178,7 +178,7 @@ public class TableACCDB extends TableCustom {
 		    Object value = row.get(columnName);
 		    rowData[columnIndex++] = ValueCharacter.select(generator, (value == null) ? "" : value.toString());
 		}
-		return new ValueTuple(generator, rowData);
+		return new Tuple(generator, rowData);
 	}
 	
 	private TupleIterator iteratorRaw() throws IOException {
@@ -206,7 +206,7 @@ public class TableACCDB extends TableCustom {
 			}
 
 			@Override
-			public ValueTuple next() {
+			public Tuple next() {
 				if (hasNext())
 					try {
 						return toTuple(table, currentLine);

@@ -1,6 +1,6 @@
 package org.reldb.relang.storage;
 
-import org.reldb.rel.exceptions.ExceptionFatal;
+import org.reldb.relang.utilities.ExceptionFatal;
 
 import com.sleepycat.je.*;
 

@@ -55,18 +55,18 @@ public abstract class Table {
 		return database;
 	}
 
-	private DatabaseEntry getKeyValueFromTuple(Generator generator, ValueTuple tuple, int keyNumber) {
+	private DatabaseEntry getKeyValueFromTuple(Generator generator, Tuple tuple, int keyNumber) {
 		DatabaseEntry theKey = new DatabaseEntry();
 		if (headingDefinition.getKeyCount() == 0)
 			database.getTupleBinding().objectToEntry(tuple, theKey);
 		else {
-			ValueTuple keyTuple = keyMaps[keyNumber].project(generator, tuple);
+			Tuple keyTuple = keyMaps[keyNumber].project(generator, tuple);
 			database.getTupleBinding().objectToEntry(keyTuple, theKey);
 		}
 		return theKey;
 	}
 
-	public boolean insertTupleNoDuplicates(Generator generator, Storage table, Transaction txn, ValueTuple tuple,
+	public boolean insertTupleNoDuplicates(Generator generator, Storage table, Transaction txn, Tuple tuple,
 			String description) throws DatabaseException {
 		DatabaseEntry theData = new DatabaseEntry();
 		database.getTupleBinding().objectToEntry(tuple, theData);
@@ -81,7 +81,7 @@ public abstract class Table {
 		return true;
 	}
 
-	private boolean insertTuple(Generator generator, Storage table, Transaction txn, ValueTuple tuple, String description)
+	private boolean insertTuple(Generator generator, Storage table, Transaction txn, Tuple tuple, String description)
 			throws DatabaseException {
 		DatabaseEntry theData = new DatabaseEntry();
 		database.getTupleBinding().objectToEntry(tuple, theData);
@@ -95,11 +95,11 @@ public abstract class Table {
 		return true;
 	}
 
-	public void insert(final Generator generator, final ValueTuple tuple) {
+	public void insert(final Generator generator, final Tuple tuple) {
 		try {
 			(new TransactionRunner() {
 				public Object run(Transaction txn) throws Throwable {
-					insertTupleNoDuplicates(generator, getStorage(txn), txn, (ValueTuple) tuple.getSerializableClone(),
+					insertTupleNoDuplicates(generator, getStorage(txn), txn, (Tuple) tuple.getSerializableClone(),
 							"Inserting");
 					return null;
 				}
@@ -112,7 +112,7 @@ public abstract class Table {
 	}
 
 	private static abstract class Inserter {
-		abstract boolean insert(Generator generator, Storage table, Transaction txn, ValueTuple tuple, String comment);
+		abstract boolean insert(Generator generator, Storage table, Transaction txn, Tuple tuple, String comment);
 	}
 
 	private long insert(final Generator generator, final ValueRelation relation, final Inserter inserter) {
@@ -130,7 +130,7 @@ public abstract class Table {
 						TupleIterator iterator = relation.iterator();
 						try {
 							while (iterator.hasNext()) {
-								ValueTuple tuple = (ValueTuple) iterator.next().getSerializableClone();
+								Tuple tuple = (Tuple) iterator.next().getSerializableClone();
 								tmp.put(tuple);
 							}
 						} finally {
@@ -139,7 +139,7 @@ public abstract class Table {
 						iterator = tmp.values();
 						try {
 							while (iterator.hasNext()) {
-								ValueTuple tuple = iterator.next();
+								Tuple tuple = iterator.next();
 								if (inserter.insert(generator, table, txn, tuple, "Inserting"))
 									insertCount++;
 								else
@@ -164,7 +164,7 @@ public abstract class Table {
 
 	public long insert(final Generator generator, final ValueRelation relation) {
 		return insert(generator, relation, new Inserter() {
-			boolean insert(Generator generator, Storage table, Transaction txn, ValueTuple tuple, String comment) {
+			boolean insert(Generator generator, Storage table, Transaction txn, Tuple tuple, String comment) {
 				return insertTuple(generator, table, txn, tuple, comment);
 			}
 		});
@@ -172,7 +172,7 @@ public abstract class Table {
 
 	public long insertNoDuplicates(Generator generator, ValueRelation relation) {
 		return insert(generator, relation, new Inserter() {
-			boolean insert(Generator generator, Storage table, Transaction txn, ValueTuple tuple, String comment) {
+			boolean insert(Generator generator, Storage table, Transaction txn, Tuple tuple, String comment) {
 				return insertTupleNoDuplicates(generator, table, txn, tuple, comment);
 			}
 		});
@@ -194,9 +194,9 @@ public abstract class Table {
 	}
 
 	/** Obtain tuple value given a key. Return null if not found. */
-	public ValueTuple getTupleForKey(final Generator generator, final ValueTuple tuple) {
+	public Tuple getTupleForKey(final Generator generator, final Tuple tuple) {
 		try {
-			return ((ValueTuple) (new TransactionRunner() {
+			return ((Tuple) (new TransactionRunner() {
 				public Object run(Transaction txn) throws Throwable {
 					DatabaseEntry foundData = new DatabaseEntry();
 					Storage storage = getStorage(txn);
@@ -204,7 +204,7 @@ public abstract class Table {
 						return null;
 					if (storage.getDatabase(0).get(txn, getKeyValueFromTuple(generator, tuple, 0), foundData,
 							LockMode.READ_COMMITTED) == OperationStatus.SUCCESS)
-						return (ValueTuple) database.getTupleBinding().entryToObject(foundData);
+						return (Tuple) database.getTupleBinding().entryToObject(foundData);
 					return null;
 				}
 			}).execute(database));
@@ -216,7 +216,7 @@ public abstract class Table {
 		}
 	}
 
-	public boolean contains(final Generator generator, final ValueTuple tuple) {
+	public boolean contains(final Generator generator, final Tuple tuple) {
 		try {
 			return ((Boolean) (new TransactionRunner() {
 				public Object run(Transaction txn) throws Throwable {
@@ -268,7 +268,7 @@ public abstract class Table {
 	}
 
 	// Delete given tuple.
-	public void delete(final Generator generator, final ValueTuple tuple) {
+	public void delete(final Generator generator, final Tuple tuple) {
 		try {
 			(new TransactionRunner() {
 				public Object run(Transaction txn) throws Throwable {
@@ -298,7 +298,7 @@ public abstract class Table {
 						DatabaseEntry foundKey = new DatabaseEntry();
 						DatabaseEntry foundData = new DatabaseEntry();
 						while (cursor.getNext(foundKey, foundData, LockMode.RMW) == OperationStatus.SUCCESS) {
-							ValueTuple tuple = (ValueTuple) database.getTupleBinding().entryToObject(foundData);
+							Tuple tuple = (Tuple) database.getTupleBinding().entryToObject(foundData);
 							tuple.loaded(generator);
 							if (filter.filter(tuple)) {
 								cursor.delete();
@@ -324,7 +324,7 @@ public abstract class Table {
 	// Delete specified tuples. If there are tuplesToDelete not found in this
 	// Relvar, and errorIfNotIncluded is true, throw an error.
 	public long delete(Context context, ValueRelation tuplesToDelete, boolean errorIfNotIncluded) {
-		final HashMap<ValueTuple, Boolean> toDelete = new HashMap<ValueTuple, Boolean>();
+		final HashMap<Tuple, Boolean> toDelete = new HashMap<Tuple, Boolean>();
 		Generator generator = context.getGenerator();
 		// index the tuplesToDelete into the toDelete index, which uses each
 		// tupleToDelete as a key and a Boolean as the value.
@@ -341,7 +341,7 @@ public abstract class Table {
 			TupleIterator relvarTupleIterator = iterator(generator);
 			try {
 				while (relvarTupleIterator.hasNext()) {
-					ValueTuple keyTuple = relvarTupleIterator.next();
+					Tuple keyTuple = relvarTupleIterator.next();
 					if (toDelete.containsKey(keyTuple))
 						toDelete.put(keyTuple, Boolean.TRUE);
 				}
@@ -357,7 +357,7 @@ public abstract class Table {
 							"RS0235: In I_DELETE, one or more specified tuples are not included in the relvar.");
 		}
 		return delete(generator, new TupleFilter() {
-			public boolean filter(ValueTuple tuple) {
+			public boolean filter(Tuple tuple) {
 				return toDelete.containsKey(tuple);
 			}
 		});
@@ -377,14 +377,14 @@ public abstract class Table {
 						Cursor cursor = tables.getDatabase(0).openCursor(txn, null);
 						try {
 							while (cursor.getNext(foundKey, foundData, LockMode.RMW) == OperationStatus.SUCCESS) {
-								ValueTuple tuple = (ValueTuple) database.getTupleBinding().entryToObject(foundData);
+								Tuple tuple = (Tuple) database.getTupleBinding().entryToObject(foundData);
 								tuple.loaded(generator);
 								if (whereFilter.filter(tuple)) {
-									ValueTuple newTuple = updateMap.map(tuple);
+									Tuple newTuple = updateMap.map(tuple);
 									cursor.delete();
 									for (int i = 1; i < tables.size(); i++)
 										tables.getDatabase(i).delete(txn, getKeyValueFromTuple(generator, tuple, i));
-									ValueTuple data = (ValueTuple) newTuple.getSerializableClone();
+									Tuple data = (Tuple) newTuple.getSerializableClone();
 									insertionTemporaryTable.put(data);
 									updateCount++;
 								}
@@ -416,7 +416,7 @@ public abstract class Table {
 	// Update all tuples using a given TupleMap
 	public long update(final Generator generator, final TupleMap map) {
 		return update(generator, new TupleFilter() {
-			public boolean filter(ValueTuple tuple) {
+			public boolean filter(Tuple tuple) {
 				return true;
 			}
 		}, map);
@@ -427,7 +427,7 @@ public abstract class Table {
 		return new RegisteredTupleIterator(database) {
 			DatabaseEntry foundKey = new DatabaseEntry();
 			DatabaseEntry foundData = new DatabaseEntry();
-			ValueTuple current = null;
+			Tuple current = null;
 			boolean atEnd = false;
 
 			public boolean hasNext() {
@@ -441,7 +441,7 @@ public abstract class Table {
 						cursor = getStorage(txn.getTransaction()).getDatabase(0).openCursor(txn.getTransaction(), null);
 					}
 					if (cursor.getNext(foundKey, foundData, LockMode.DEFAULT) == OperationStatus.SUCCESS) {
-						current = (ValueTuple) database.getTupleBinding().entryToObject(foundData);
+						current = (Tuple) database.getTupleBinding().entryToObject(foundData);
 						current.loaded(generator);
 						return true;
 					} else
@@ -453,7 +453,7 @@ public abstract class Table {
 				return false;
 			}
 
-			public ValueTuple next() {
+			public Tuple next() {
 				if (hasNext())
 					try {
 						return current;
@@ -466,15 +466,15 @@ public abstract class Table {
 	}
 
 	// Alter every tuple to include the rightTuple
-	public void expandTuples(Transaction txn, ValueTuple rightTuple) {
+	public void expandTuples(Transaction txn, Tuple rightTuple) {
 		Storage tables = getStorage(txn);
 		DatabaseEntry foundKey = new DatabaseEntry();
 		DatabaseEntry foundData = new DatabaseEntry();
 		Cursor cursor = tables.getDatabase(0).openCursor(txn, null);
 		try {
 			while (cursor.getNext(foundKey, foundData, LockMode.RMW) == OperationStatus.SUCCESS) {
-				ValueTuple oldTuple = (ValueTuple) database.getTupleBinding().entryToObject(foundData);
-				ValueTuple newTuple = oldTuple.joinDisjoint(rightTuple);
+				Tuple oldTuple = (Tuple) database.getTupleBinding().entryToObject(foundData);
+				Tuple newTuple = oldTuple.joinDisjoint(rightTuple);
 				DatabaseEntry theData = new DatabaseEntry();
 				database.getTupleBinding().objectToEntry(newTuple, theData);
 				cursor.putCurrent(theData);
@@ -492,8 +492,8 @@ public abstract class Table {
 		Cursor cursor = tables.getDatabase(0).openCursor(txn, null);
 		try {
 			while (cursor.getNext(foundKey, foundData, LockMode.RMW) == OperationStatus.SUCCESS) {
-				ValueTuple oldTuple = (ValueTuple) database.getTupleBinding().entryToObject(foundData);
-				ValueTuple newTuple = oldTuple.shrink(attributeIndex);
+				Tuple oldTuple = (Tuple) database.getTupleBinding().entryToObject(foundData);
+				Tuple newTuple = oldTuple.shrink(attributeIndex);
 				DatabaseEntry theData = new DatabaseEntry();
 				database.getTupleBinding().objectToEntry(newTuple, theData);
 				cursor.putCurrent(theData);
@@ -516,7 +516,7 @@ public abstract class Table {
 		Context context = new Context(generator, vm);
 		try {
 			while (cursor.getNext(foundKey, foundData, LockMode.RMW) == OperationStatus.SUCCESS) {
-				ValueTuple oldTuple = (ValueTuple) database.getTupleBinding().entryToObject(foundData);
+				Tuple oldTuple = (Tuple) database.getTupleBinding().entryToObject(foundData);
 
 				Value oldValue = ValueCharacter.select(generator,
 						oldTuple.getValues()[oldAttributeIndex].toParsableString(oldType));
