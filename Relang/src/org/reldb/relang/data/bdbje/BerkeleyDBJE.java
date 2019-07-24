@@ -18,7 +18,7 @@ import com.sleepycat.je.Environment;
 import com.sleepycat.je.EnvironmentConfig;
 import com.sleepycat.je.JEVersion;
 
-public class DBTest2 implements TransactionWorker {
+public class BerkeleyDBJE implements TransactionWorker {
 
 	private static boolean create = true;
 
@@ -54,7 +54,7 @@ public class DBTest2 implements TransactionWorker {
 		var env = new Environment(new File(dir), envConfig);
 
 		// create the application and run a transaction
-		var worker = new DBTest2(env);
+		var worker = new BerkeleyDBJE(env);
 		var runner = new TransactionRunner(env);
 		try {
 			// open and access the database within a transaction
@@ -66,7 +66,7 @@ public class DBTest2 implements TransactionWorker {
 	}
 
 	/** Creates the database for this application */
-	private DBTest2(Environment env) throws Exception {
+	private BerkeleyDBJE(Environment env) throws Exception {
 		this.env = env;
 		open();
 	}
