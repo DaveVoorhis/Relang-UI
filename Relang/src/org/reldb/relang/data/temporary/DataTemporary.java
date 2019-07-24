@@ -1,6 +1,10 @@
-package org.reldb.relang.data;
+package org.reldb.relang.data.temporary;
 
 import java.util.Vector;
+
+import org.reldb.relang.data.Data;
+import org.reldb.relang.data.Heading;
+import org.reldb.relang.data.InvalidValueException;
 
 public class DataTemporary implements Data {
 

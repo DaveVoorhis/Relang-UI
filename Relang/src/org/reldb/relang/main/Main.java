@@ -25,7 +25,7 @@ import org.eclipse.wb.swt.SWTResourceManager;
 import org.reldb.relang.about.AboutDialog;
 import org.reldb.relang.commands.AcceleratedMenuItem;
 import org.reldb.relang.core.Datasheet;
-import org.reldb.relang.data.DataTemporary;
+import org.reldb.relang.data.temporary.DataTemporary;
 import org.reldb.relang.feedback.BugReportDialog;
 import org.reldb.relang.feedback.CrashDialog;
 import org.reldb.relang.feedback.SuggestionboxDialog;

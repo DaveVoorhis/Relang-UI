@@ -4,7 +4,7 @@ import static org.junit.Assert.assertEquals;
 
 import org.junit.Test;
 import org.reldb.relang.data.Data;
-import org.reldb.relang.data.DataTemporary;
+import org.reldb.relang.data.temporary.DataTemporary;
 
 public class TestDataTemporary {
 	

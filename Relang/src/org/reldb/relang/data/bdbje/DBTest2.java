@@ -1,4 +1,6 @@
+package org.reldb.relang.data.bdbje;
 import java.io.File;
+import java.io.Serializable;
 import java.util.SortedMap;
 
 import org.reldb.relang.utilities.ExceptionFatal;
@@ -16,14 +18,14 @@ import com.sleepycat.je.Environment;
 import com.sleepycat.je.EnvironmentConfig;
 import com.sleepycat.je.JEVersion;
 
-public class DBTest1 implements TransactionWorker {
+public class DBTest2 implements TransactionWorker {
 
 	private static boolean create = true;
 
 	private Environment env;
 	private ClassCatalog catalog;
 	private Database db;
-	private SortedMap<Integer, String> map;
+	private SortedMap<Key, Data> map;
 
 	public static void mkdir(String dir) {
 		File dirf = new File(dir);
@@ -40,7 +42,7 @@ public class DBTest1 implements TransactionWorker {
 
 		System.out.println("JEVersion: " + JEVersion.CURRENT_VERSION.getVersionString());
 
-		String dir = "./data/dbtest1";
+		String dir = "./data/dbtest2";
 		mkdir(dir);
 
 		// environment is transactional
@@ -52,7 +54,7 @@ public class DBTest1 implements TransactionWorker {
 		var env = new Environment(new File(dir), envConfig);
 
 		// create the application and run a transaction
-		var worker = new DBTest1(env);
+		var worker = new DBTest2(env);
 		var runner = new TransactionRunner(env);
 		try {
 			// open and access the database within a transaction
@@ -64,7 +66,7 @@ public class DBTest1 implements TransactionWorker {
 	}
 
 	/** Creates the database for this application */
-	private DBTest1(Environment env) throws Exception {
+	private DBTest2(Environment env) throws Exception {
 		this.env = env;
 		open();
 	}
@@ -73,7 +75,44 @@ public class DBTest1 implements TransactionWorker {
 	public void doWork() {
 		writeAndRead();
 	}
+	
+	private static class Data implements Serializable {
+		private static final long serialVersionUID = 1L;
+		private int a;
+		private int b;
+		private int c;
+		public Data(int a, int b, int c) {
+			this.a = a;
+			this.b = b;
+			this.c = c;
+		}
+		public String toString() {
+			return "Data(" + a + ", " + b + ", " + c + ")";
+		}
+		public int getA() {
+			return a;
+		}
+		public int getB() {
+			return b;
+		}
+	}
 
+	private static class Key implements Serializable {
+		private static final long serialVersionUID = 1L;
+		private int a;
+		private int b;
+		public Key(Data data) {
+			this.a = data.getA();
+			this.b = data.getB();
+		}
+		public String toString() {
+			return "Key(" + a + ", " + b + ")";
+		}
+		public int getA() {
+			return a;
+		}
+	}
+	
 	/** Opens the database and creates the Map. */
 	private void open() throws Exception {
 
@@ -88,16 +127,16 @@ public class DBTest1 implements TransactionWorker {
 		var catalogDb = env.openDatabase(null, "catalog", dbConfig);
 		catalog = new StoredClassCatalog(catalogDb);
 
-		// use Integer tuple binding for key entries
-		var keyBinding = TupleBinding.getPrimitiveBinding(Integer.class);
-
-		// use String serial binding for data entries
-		var dataBinding = new SerialBinding<String>(catalog, String.class);
+		// use tuple binding for key entries
+		var keyBinding = new SerialBinding<Key>(catalog, Key.class);
+		
+		// use serial binding for data entries
+		var dataBinding = new SerialBinding<Data>(catalog, Data.class);
 
 		this.db = env.openDatabase(null, "helloworld", dbConfig);
 
 		// create a map view of the database
-		this.map = new StoredSortedMap<Integer, String>(db, keyBinding, dataBinding, true);
+		this.map = new StoredSortedMap<Key, Data>(db, keyBinding, dataBinding, true);
 	}
 
 	/** Closes the database. */
@@ -118,15 +157,20 @@ public class DBTest1 implements TransactionWorker {
 
 	/** Writes and reads the database via the Map. */
 	private void writeAndRead() {
+		final int maxValue = 10000000;
+		final int step = 100000;
+		
 		// check for existing data
-		var key = Integer.valueOf(0);
-		var val = map.get(key);
+		var idata = new Data(0, 0 + 12, 0 * 10);
+		var ikey = new Key(idata);
+		var val = map.get(ikey);
 		if (val == null) {
 			System.out.println("Writing data");
-			for (int i = 0; i < 10000000; i++) {
-				if (i % 100000 == 0)
+			for (int i = 0; i < maxValue; i++) {
+				var data = new Data(i, i + 12, i * 10);
+				if (i % step == 0)
 					System.out.println(i);
-				map.put(Integer.valueOf(i), "Datum " + i);
+				map.put(new Key(data), data);
 			}
 		}
 		// get iterator over map entries
@@ -134,9 +178,10 @@ public class DBTest1 implements TransactionWorker {
 		System.out.println("Reading data");
 		while (iter.hasNext()) {
 			var entry = iter.next();
-			var keyvalue = entry.getKey();
-			if (keyvalue % 100000 == 0)
-				System.out.println(keyvalue + ' ' + entry.getValue());
+			var key = entry.getKey();
+			var keyvalue = key.getA();
+			if (keyvalue % step == 0)
+				System.out.println(key + " " + entry.getValue().toString());
 		}
 		System.out.println("Done");
 	}

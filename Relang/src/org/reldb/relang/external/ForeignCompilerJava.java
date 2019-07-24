@@ -20,12 +20,10 @@ import org.reldb.relang.utilities.ExceptionSemantic;
  */
 public class ForeignCompilerJava {
 	
-	private boolean verbose;
 	private LocalDatabase database;
 	
 	public ForeignCompilerJava(LocalDatabase database, boolean verbose) {
 		this.database = database;
-		this.verbose = verbose;
 	}
     
     /** Return a classpath cleaned of non-existent files and Web Start's deploy.jar.  
@@ -150,11 +148,6 @@ public class ForeignCompilerJava {
     /** Get stripped Java Class name. */
     private static String getStrippedClassname(String name) {
     	return getStrippedName(name);
-    }
-    
-    private void notify(String s) {
-    	if (verbose)
-    		System.out.println(s);
     }
     
 }
