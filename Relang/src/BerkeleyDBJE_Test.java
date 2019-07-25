@@ -1,4 +1,5 @@
-package org.reldb.relang.data.bdbje;
+
+
 import java.io.File;
 import java.io.Serializable;
 import java.util.SortedMap;
@@ -18,7 +19,7 @@ import com.sleepycat.je.Environment;
 import com.sleepycat.je.EnvironmentConfig;
 import com.sleepycat.je.JEVersion;
 
-public class BerkeleyDBJE implements TransactionWorker {
+public class BerkeleyDBJE_Test implements TransactionWorker {
 
 	private static boolean create = true;
 
@@ -54,7 +55,7 @@ public class BerkeleyDBJE implements TransactionWorker {
 		var env = new Environment(new File(dir), envConfig);
 
 		// create the application and run a transaction
-		var worker = new BerkeleyDBJE(env);
+		var worker = new BerkeleyDBJE_Test(env);
 		var runner = new TransactionRunner(env);
 		try {
 			// open and access the database within a transaction
@@ -66,7 +67,7 @@ public class BerkeleyDBJE implements TransactionWorker {
 	}
 
 	/** Creates the database for this application */
-	private BerkeleyDBJE(Environment env) throws Exception {
+	private BerkeleyDBJE_Test(Environment env) throws Exception {
 		this.env = env;
 		open();
 	}
@@ -127,7 +128,7 @@ public class BerkeleyDBJE implements TransactionWorker {
 		var catalogDb = env.openDatabase(null, "catalog", dbConfig);
 		catalog = new StoredClassCatalog(catalogDb);
 
-		// use tuple binding for key entries
+		// use serial binding for key entries
 		var keyBinding = new SerialBinding<Key>(catalog, Key.class);
 		
 		// use serial binding for data entries
