@@ -100,7 +100,10 @@ public class BDBJE implements Closeable {
 	 * @return - a new Database
 	 */
 	Database open(String name, boolean create) {
-		
+		TableDefinition definition = catalog.get(name);
+		if (definition == null) {
+			
+		}
 
 		// use serial binding for key entries
 		var keyBinding = new SerialBinding<Key>(classes, Key.class);
