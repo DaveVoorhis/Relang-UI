@@ -100,21 +100,12 @@ public class BDBJE implements Closeable {
 	 * @return - a new Database
 	 */
 	Database open(String name, boolean create) {
-		TableDefinition definition = catalog.get(name);
-		if (definition == null) {
-			
-		}
-
-		// use serial binding for key entries
-		var keyBinding = new SerialBinding<Key>(classes, Key.class);
+		var dbConfig = new DatabaseConfig();
+		dbConfig.setTransactional(true);
+		dbConfig.setAllowCreate(create);
+		Database db = dataEnv.openDatabase(null, name, dbConfig);
 		
-		// use serial binding for data entries
-		var dataBinding = new SerialBinding<Data>(classes, Data.class);
-
-		this.db = env.openDatabase(null, "helloworld", dbConfig);
-
-		// create a map view of the database
-		this.map = new StoredSortedMap<Key, Data>(db, keyBinding, dataBinding, true);
+		return db;
 	}
 
 	/**
@@ -123,7 +114,7 @@ public class BDBJE implements Closeable {
 	 * @param database
 	 */
 	void close(Database database) {
-		
+		database.close();
 	}
 	
 	/** Closes the database. */
