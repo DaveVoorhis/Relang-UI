@@ -8,11 +8,7 @@ import org.reldb.relang.utilities.Directory;
 import org.reldb.relang.utilities.ExceptionFatal;
 
 import com.sleepycat.bind.serial.ClassCatalog;
-import com.sleepycat.bind.serial.SerialBinding;
 import com.sleepycat.bind.serial.StoredClassCatalog;
-import com.sleepycat.bind.tuple.StringBinding;
-import com.sleepycat.collections.StoredMap;
-import com.sleepycat.collections.StoredSortedMap;
 import com.sleepycat.je.Database;
 import com.sleepycat.je.DatabaseConfig;
 import com.sleepycat.je.Environment;
@@ -26,7 +22,6 @@ public class BDBJE implements Closeable {
 	private Environment classesEnv;
 	private ClassCatalog classes;
 	private Database catalogDb;
-	private StoredMap<String, TableDefinition> catalog;
 
 	public String getBerkeleyJavaDBVersion() {
 		return JEVersion.CURRENT_VERSION.getVersionString();
@@ -84,12 +79,6 @@ public class BDBJE implements Closeable {
 		// Needed for serial bindings (i.e., Java serialization)
 		var classesDb = classesEnv.openDatabase(null, "classes", dbConfig);
 		classes = new StoredClassCatalog(classesDb);
-		
-		// Catalog
-		catalogDb = dataEnv.openDatabase(null, "catalog", dbConfig);
-		var catalogKeyBinding = new StringBinding();
-		var catalogValueBinding = new SerialBinding<TableDefinition>(classes, TableDefinition.class);
-		catalog = new StoredSortedMap<String, TableDefinition>(catalogDb, catalogKeyBinding, catalogValueBinding, true);
 	}
 
 	/** 
@@ -103,18 +92,25 @@ public class BDBJE implements Closeable {
 		var dbConfig = new DatabaseConfig();
 		dbConfig.setTransactional(true);
 		dbConfig.setAllowCreate(create);
-		Database db = dataEnv.openDatabase(null, name, dbConfig);
-		
-		return db;
+		return dataEnv.openDatabase(null, name, dbConfig);
 	}
 
 	/**
 	 * Close an open Berkeley DB "Database" returned by <link>open</link>.
 	 * 
-	 * @param database
+	 * @param database - <link>Database</link> to close.
 	 */
 	void close(Database database) {
 		database.close();
+	}
+
+	/**
+	 * Obtain the Java class catalog.
+	 * 
+	 * @return - <link>ClassCatalog</link>
+	 */
+	ClassCatalog getClassCatalog() {
+		return classes;
 	}
 	
 	/** Closes the database. */
