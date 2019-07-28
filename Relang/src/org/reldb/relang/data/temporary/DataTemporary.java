@@ -25,7 +25,7 @@ public class DataTemporary implements Data {
 	}
 
 	@Override
-	public int getRowCount() {
+	public long getRowCount() {
 		return data.size();
 	}
 

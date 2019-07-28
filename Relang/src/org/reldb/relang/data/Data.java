@@ -7,7 +7,7 @@ public interface Data {
 	public int getColumnCount();
 	
 	/** Obtain the number of rows. */
-	public int getRowCount();
+	public long getRowCount();
 	
 	/** Set the specified column's name. */
 	public void setColumnName(int column, String name);

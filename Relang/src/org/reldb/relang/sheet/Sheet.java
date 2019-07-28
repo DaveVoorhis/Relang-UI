@@ -67,7 +67,9 @@ public class Sheet extends Composite {
 		grid.getGrid().setColumnScrolling(true);
 		grid.getGrid().setRowHeaderVisible(true);
 
-		grid.getGrid().setItemCount(data.getRowCount() + 1);
+		// TODO - fix potential long vs int issue here
+		long rowCount = data.getRowCount() + 1;
+		grid.getGrid().setItemCount((int)rowCount);
 		
 		grid.getGrid().addListener(SWT.SetData, setDataEvt -> {
 			GridItem row = (GridItem)setDataEvt.item;
@@ -85,7 +87,7 @@ public class Sheet extends Composite {
 				cell.setNotifier(new Notifier() {
 					@Override
 					public void changed(GridWidgetInterface gridWidget, Object newContent, GridWidgetInterface.SpecialInstructions specialInstruction) {
-						int getRowCount = data.getRowCount();
+						long getRowCount = data.getRowCount();
 						data.setValue(gridWidget.getColumn(), gridWidget.getRow(), newContent);
 						if (getRowCount != data.getRowCount())
 							Main.addTask(() -> {
