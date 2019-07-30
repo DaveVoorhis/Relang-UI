@@ -1,7 +1,9 @@
 package org.reldb.relang.data.bdbje;
 
+import org.reldb.relang.data.Heading;
 import org.reldb.relang.utilities.ExceptionFatal;
 
+import com.sleepycat.bind.serial.ClassCatalog;
 import com.sleepycat.bind.serial.SerialBinding;
 import com.sleepycat.bind.tuple.StringBinding;
 import com.sleepycat.collections.StoredMap;
@@ -14,24 +16,28 @@ public class BDBJEBase {
 	
 	private BDBJE db;
 	private Database catalogDb;
-	private StoredMap<String, BDBJEDataDefinition> catalog;
+	private StoredMap<String, Heading> catalog;
 	
 	public BDBJEBase(String dir, boolean create) {
 		db = new BDBJE(dir, create);				
 		// Catalog
 		catalogDb = db.open(catalogName, true);
 		var catalogKeyBinding = new StringBinding();
-		var catalogValueBinding = new SerialBinding<BDBJEDataDefinition>(db.getClassCatalog(), BDBJEDataDefinition.class);
-		catalog = new StoredSortedMap<String, BDBJEDataDefinition>(catalogDb, catalogKeyBinding, catalogValueBinding, true);
+		var catalogValueBinding = new SerialBinding<Heading>(db.getClassCatalog(), Heading.class);
+		catalog = new StoredSortedMap<String, Heading>(catalogDb, catalogKeyBinding, catalogValueBinding, true);
 		// Does the Catalog contain the Catalog?
 		if (create && catalog.get(catalogName) == null) {
-			var catalogDefinition = new BDBJEDataDefinition();
+			var catalogDefinition = new Heading();
 			// TODO - define catalog here
-			catalog.put(catalogName, catalogDefinition);
+			updateCatalog(catalogName, catalogDefinition);
 		}
 	}
-
-	public BDBJEData create(String name, BDBJEDataDefinition definition) {
+	
+	void updateCatalog(String name, Heading definition) {
+		catalog.put(name, definition);
+	}
+	
+	public BDBJEData create(String name, Heading definition) {
 		if (catalog.get(name) != null)
 			throw new ExceptionFatal("RS0399: BDBJE table " + name + " already exists.");
 		var database = db.open(name, true);
@@ -59,6 +65,10 @@ public class BDBJEBase {
 
 	public BDBJE getBDBJE() {
 		return db;
+	}
+	
+	Database getCatalog() {
+		return catalogDb;
 	}
 	
 }
