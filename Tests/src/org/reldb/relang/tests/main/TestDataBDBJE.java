@@ -2,14 +2,22 @@ package org.reldb.relang.tests.main;
 
 import static org.junit.Assert.assertEquals;
 
+import org.junit.Before;
 import org.junit.Test;
-import org.reldb.relang.data.temporary.DataTemporary;
+import org.reldb.relang.data.bdbje.BDBJEBase;
 
-public class TestDataTemporary {
+public class TestDataBDBJE {
+	
+	private BDBJEBase base;
+	
+	@Before
+	public void setup() {
+		base = new BDBJEBase("./test", true);
+	}
 	
 	@Test 
 	public void testDataTemporary01() {
-		var data = new DataTemporary();
+		var data = base.create("testData");
 		data.setColumnName(0, "Column1");
 		data.setColumnName(1,  "Column2");
 		data.setColumnType(0, String.class, "");
@@ -29,11 +37,12 @@ public class TestDataTemporary {
 		data.appendDefaultColumn();
 		data.setValue(3, 100, "glub");
 		assertEquals("glub", data.getValue(3,  100));
+		data.close();
 	}
 	
 	@Test
 	public void testDataTemporary02() {
-		var gridData = new DataTemporary();
+		var gridData = base.create("testData2");
 		gridData.setColumnName(0, "Col1");
 		gridData.setColumnName(1, "Col2");
 		gridData.setColumnName(2, "Col3");
@@ -43,6 +52,12 @@ public class TestDataTemporary {
 		gridData.appendRow();
 		assertEquals(3, gridData.getColumnCount());
 		assertEquals(4, gridData.getRowCount());
+		gridData.close();
+	}
+	
+	public void teardown() {
+		if (base != null)
+			base.close();
 	}
 
 }

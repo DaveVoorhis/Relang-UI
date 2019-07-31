@@ -13,6 +13,7 @@ import com.sleepycat.bind.tuple.LongBinding;
 import com.sleepycat.collections.StoredMap;
 import com.sleepycat.collections.StoredSortedMap;
 import com.sleepycat.je.Database;
+import com.sleepycat.je.Transaction;
 
 public class BDBJEData implements Data, Closeable {
 	private BDBJEBase bdbjeBase;
@@ -28,7 +29,7 @@ public class BDBJEData implements Data, Closeable {
 		
 		var dataKeyBinding = new LongBinding();
 		EntryBinding<Vector<Object>> dataValueBinding = new SerialBinding(bdbjeBase.getBDBJE().getClassCatalog(), Vector.class);
-		data = new StoredSortedMap<Long, Vector<Object>>(bdbjeBase.getCatalog(), dataKeyBinding, dataValueBinding, true);
+		data = new StoredSortedMap<Long, Vector<Object>>(db, dataKeyBinding, dataValueBinding, true);
 	}
 
 	public void close() {
@@ -84,9 +85,7 @@ public class BDBJEData implements Data, Closeable {
 	public String appendDefaultColumn() {
 		String newColumnName = heading.appendDefaultColumn();
 		Object defaultValueForNewColumn = heading.getDefaultValueAt(getColumnCount() - 1);
-		data.values().forEach(row -> {
-			row.add(defaultValueForNewColumn);
-		});
+		data.values().forEach(row -> row.add(defaultValueForNewColumn));
 		updateCatalog();
 		return newColumnName;
 	}
@@ -98,10 +97,16 @@ public class BDBJEData implements Data, Closeable {
 
 	@Override
 	public void deleteColumnAt(int column) {
-		heading.deleteColumnAt(column);
+		
+		bdbjeBase.getBDBJE().startTransaction();
+		
 		data.values().forEach(row -> {
 			row.remove(column);
 		});
+		
+		heading.deleteColumnAt(column);
+		
+		
 		updateCatalog();
 	}
 

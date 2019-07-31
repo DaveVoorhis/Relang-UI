@@ -1,15 +1,17 @@
 package org.reldb.relang.data;
 
+import java.io.Serializable;
 import java.util.List;
 import java.util.Vector;
 import java.util.stream.Collectors;
 
-public class Heading {
-	
+public class Heading implements Serializable {
+	private static final long serialVersionUID = 1L;
 	private static final Class<?> defaultNewColumnClass = String.class;
 	private static final Object defaultNewColumnDefaultValue = new String();
 	
-	private static class ColumnType {
+	private static class ColumnType implements Serializable {
+		private static final long serialVersionUID = 1L;
 		public ColumnType(Class<?> type, Object defaultValue) {this.type = type; this.defaultValue = defaultValue;}
 		public Class<?> type;
 		public Object defaultValue;
@@ -18,7 +20,8 @@ public class Heading {
 		}
 	}
 
-	private static class ColumnAttribute {
+	private static class ColumnAttribute implements Serializable {
+		private static final long serialVersionUID = 1L;
 		public ColumnAttribute(String name, ColumnType typeAndDefault) {this.name = name; this.typeAndDefault = typeAndDefault;}
 		public String name;
 		public ColumnType typeAndDefault;

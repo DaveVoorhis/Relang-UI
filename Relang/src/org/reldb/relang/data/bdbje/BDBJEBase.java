@@ -36,13 +36,14 @@ public class BDBJEBase {
 		catalog.put(name, definition);
 	}
 	
-	public BDBJEData create(String name, Heading definition) {
+	public BDBJEData create(String name) {
 		if (catalog.get(name) != null)
 			throw new ExceptionFatal("RS0399: BDBJE table " + name + " already exists.");
 		var database = db.open(name, true);
-		database.getEnvironment().truncateDatabase(null, name, false);
-		catalog.put(name, definition);
-		return new BDBJEData(this, database, definition);
+//		database.getEnvironment().truncateDatabase(null, name, false);
+		var heading = new Heading();
+		catalog.put(name, heading);
+		return new BDBJEData(this, database, heading);
 	}
 	
 	public BDBJEData open(String name) {

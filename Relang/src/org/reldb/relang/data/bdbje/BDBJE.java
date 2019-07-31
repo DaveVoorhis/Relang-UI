@@ -81,6 +81,12 @@ public class BDBJE implements Closeable {
 		classes = new StoredClassCatalog(classesDb);
 	}
 
+	public BDBTransaction startTransaction() {
+		
+		
+		return new BDBTransaction(dataEnv.beginTransaction(arg0, arg1));
+	}
+
 	/** 
 	 * Open a Berkeley DB "Database", i.e., a persistent key/value store.
 	 * 
