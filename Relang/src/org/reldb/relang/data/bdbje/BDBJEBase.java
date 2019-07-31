@@ -3,7 +3,6 @@ package org.reldb.relang.data.bdbje;
 import org.reldb.relang.data.Heading;
 import org.reldb.relang.utilities.ExceptionFatal;
 
-import com.sleepycat.bind.serial.ClassCatalog;
 import com.sleepycat.bind.serial.SerialBinding;
 import com.sleepycat.bind.tuple.StringBinding;
 import com.sleepycat.collections.StoredMap;
