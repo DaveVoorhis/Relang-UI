@@ -71,7 +71,7 @@ public class BDBJEData implements Data, Closeable {
 			throw new InvalidValueException("ERROR: BDBJEData: The type parameter must not be null.");
 		int columnCount = getColumnCount();
 		if (column < 0)
-			throw new InvalidValueException("ERROR: BDBJEData: Attempt to reference non-existent column " + column + " in a GridDataTemporary with column count " + columnCount);
+			throw new InvalidValueException("ERROR: BDBJEData: Attempt to reference non-existent column " + column + " in a BDBJEData with column count " + columnCount);
 		else if (column < heading.getColumnCount()) {
 			if (!data.values().stream().allMatch(row -> type.isAssignableFrom(row.get(column).getClass())))
 				throw new InvalidValueException("ERROR: BDBJEData: Data in column " + column + " cannot be assigned to a " + type.getName());
@@ -107,25 +107,40 @@ public class BDBJEData implements Data, Closeable {
 
 	@Override
 	public void deleteRowAt(int row) {
-		data.remove(Integer.valueOf(row));
+		data.remove((long)row);
 	}
 
 	@Override
 	public void appendRow() {
-		// TODO Auto-generated method stub
-		
+		var row = new Vector<Object>();
+		for (int column = 0; column < heading.getColumnCount(); column++)
+			row.add(heading.getDefaultValueAt(column));
+		data.put((long)data.size(), row);
 	}
 
 	@Override
 	public void setValue(int column, int row, Object value) {
-		// TODO Auto-generated method stub
-		
+		int columnCount = getColumnCount();
+		if (column >= columnCount || column < 0)
+			throw new InvalidValueException("ERROR: BDBJEData: Attempt to reference non-existent column " + column + " in a BDBJEData with column count " + columnCount);
+		if (row < 0)
+			throw new InvalidValueException("ERROR: BDBJEData: Attempt to reference non-existent row " + row);
+		Class<?> headingColumnType = heading.getColumnTypeAt(column);
+		Class<?> valueType = value.getClass();
+		if (!headingColumnType.isAssignableFrom(valueType))
+			throw new InvalidValueException("ERROR: Attempt to assign value of type " + valueType.getName() + " to cell with type " + headingColumnType.getName());
+		while (row >= getRowCount())
+			appendRow();
+		data.get((long)row).set(column, value);
 	}
 
 	@Override
 	public Object getValue(int column, int row) {
-		// TODO Auto-generated method stub
-		return null;
+		if (column >= getColumnCount() || column < 0)
+			throw new InvalidValueException("ERROR: BDBJEData: Attempt to reference non-existent column " + column);
+		if (row > getRowCount() || row < 0)
+			throw new InvalidValueException("ERROR: BDBJEData: Attempt to reference non-existent row " + row);
+		return data.get((long)row).get(column);
 	}
 
 	@Override
