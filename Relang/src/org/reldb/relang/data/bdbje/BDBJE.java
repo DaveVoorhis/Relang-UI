@@ -9,11 +9,16 @@ import org.reldb.relang.utilities.ExceptionFatal;
 
 import com.sleepycat.bind.serial.ClassCatalog;
 import com.sleepycat.bind.serial.StoredClassCatalog;
+import com.sleepycat.collections.TransactionRunner;
+import com.sleepycat.collections.TransactionWorker;
 import com.sleepycat.je.Database;
 import com.sleepycat.je.DatabaseConfig;
+import com.sleepycat.je.DatabaseException;
 import com.sleepycat.je.Environment;
 import com.sleepycat.je.EnvironmentConfig;
 import com.sleepycat.je.JEVersion;
+import com.sleepycat.je.Transaction;
+import com.sleepycat.je.TransactionConfig;
 
 public class BDBJE implements Closeable {
 
@@ -81,12 +86,17 @@ public class BDBJE implements Closeable {
 		classes = new StoredClassCatalog(classesDb);
 	}
 
-	public BDBTransaction startTransaction() {
-		
-		
-		return new BDBTransaction(dataEnv.beginTransaction(arg0, arg1));
+	public Transaction beginTransaction() {
+		var config = new TransactionConfig();
+	    config.setSerializableIsolation(true);		
+		return dataEnv.beginTransaction(null, config);
 	}
 
+	public void transaction(TransactionWorker worker) throws DatabaseException, Exception {
+		var runner = new TransactionRunner(dataEnv);
+		runner.run(worker);
+	}
+	
 	/** 
 	 * Open a Berkeley DB "Database", i.e., a persistent key/value store.
 	 * 

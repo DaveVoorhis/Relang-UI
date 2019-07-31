@@ -13,7 +13,6 @@ import com.sleepycat.bind.tuple.LongBinding;
 import com.sleepycat.collections.StoredMap;
 import com.sleepycat.collections.StoredSortedMap;
 import com.sleepycat.je.Database;
-import com.sleepycat.je.Transaction;
 
 public class BDBJEData implements Data, Closeable {
 	private BDBJEBase bdbjeBase;
@@ -96,18 +95,22 @@ public class BDBJEData implements Data, Closeable {
 	}
 
 	@Override
-	public void deleteColumnAt(int column) {
-		
-		bdbjeBase.getBDBJE().startTransaction();
-		
-		data.values().forEach(row -> {
-			row.remove(column);
-		});
-		
-		heading.deleteColumnAt(column);
-		
-		
-		updateCatalog();
+	public void deleteColumnAt(int column) {		
+		try {
+			bdbjeBase.getBDBJE().transaction(() -> {
+				data.entrySet().forEach(entry -> {
+					var key = entry.getKey();
+					var value = entry.getValue();
+					value.remove(column);
+					data.put(key, value);
+				});
+				heading.deleteColumnAt(column);
+				updateCatalog();			
+			});
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 	}
 
 	@Override
@@ -134,9 +137,18 @@ public class BDBJEData implements Data, Closeable {
 		Class<?> valueType = value.getClass();
 		if (!headingColumnType.isAssignableFrom(valueType))
 			throw new InvalidValueException("ERROR: Attempt to assign value of type " + valueType.getName() + " to cell with type " + headingColumnType.getName());
-		while (row >= getRowCount())
-			appendRow();
-		data.get((long)row).set(column, value);
+		try {
+			bdbjeBase.getBDBJE().transaction(() -> {				
+				while (row >= getRowCount())
+					appendRow();
+				var tuple = data.get((long)row);
+				tuple.set(column, value);
+				data.put((long)row, tuple);
+			});
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 	}
 
 	@Override
