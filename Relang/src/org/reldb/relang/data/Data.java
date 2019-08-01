@@ -31,20 +31,20 @@ public interface Data {
 	public void deleteColumnAt(int column);
 	
 	/** Delete a row. */
-	public void deleteRowAt(int row);
+	public void deleteRowAt(long row);
 	
 	/** Append a blank row. */
 	public void appendRow();
 	
 	/** Set the value of the specified column/row intersection. */
-	public void setValue(int column, int row, Object value);
+	public void setValue(int column, long row, Object value);
 	
 	/** Get the value of the specified column/row intersection. */
-	public Object getValue(int column, int row);
+	public Object getValue(int column, long row);
 	
 	/** Return true if the given column/row intersection has changed but hasn't been written to backing store yet. */
-	public boolean isChanged(int column, int row);
+	public boolean isChanged(int column, long row);
 	
 	/** Return an error message if unable to write changed rows to backing store. */
-	public String getError(int row);
+	public String getError(long row);
 }

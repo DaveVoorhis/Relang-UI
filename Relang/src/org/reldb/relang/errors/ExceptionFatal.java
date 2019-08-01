@@ -1,4 +1,4 @@
-package org.reldb.relang.utilities;
+package org.reldb.relang.errors;
 
 /**
  * This exception is thrown when fatal errors are encountered.

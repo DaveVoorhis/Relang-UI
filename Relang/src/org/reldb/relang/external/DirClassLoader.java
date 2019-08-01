@@ -9,7 +9,7 @@ package org.reldb.relang.external;
 import java.io.*;
 import java.util.*;
 
-import org.reldb.relang.utilities.ExceptionFatal;
+import org.reldb.relang.errors.ExceptionFatal;
 
 /**
  * A class loader to load named classes from a specified directory.  With

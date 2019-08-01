@@ -10,9 +10,9 @@ import java.io.InputStreamReader;
 import java.io.PrintStream;
 import java.io.PrintWriter;
 
+import org.reldb.relang.errors.ExceptionFatal;
+import org.reldb.relang.errors.ExceptionSemantic;
 import org.reldb.relang.storage.LocalDatabase;
-import org.reldb.relang.utilities.ExceptionFatal;
-import org.reldb.relang.utilities.ExceptionSemantic;
 
 /**
  * @author Dave

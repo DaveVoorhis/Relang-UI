@@ -52,7 +52,7 @@ public class DataTemporary implements Data {
 		if (column < 0)
 			throw new InvalidValueException("ERROR: GridDataTemporary: Attempt to reference non-existent column " + column + " in a GridDataTemporary with column count " + columnCount);
 		else if (column < heading.getColumnCount()) {
-			if (!data.stream().allMatch(row -> type.isAssignableFrom(row.get(column).getClass())))
+			if (!data.stream().allMatch(tuple -> type.isAssignableFrom(tuple.get(column).getClass())))
 				throw new InvalidValueException("ERROR: GridDataTemporary: Data in column " + column + " cannot be assigned to a " + type.getName());
 		}
 		heading.setColumnType(column, type, defaultValue);
@@ -78,10 +78,10 @@ public class DataTemporary implements Data {
 	}
 	
 	/** Delete a row. */
-	public void deleteRowAt(int row) {
+	public void deleteRowAt(long row) {
 		if (row < 0 || row >= data.size())
 			throw new InvalidValueException("ERROR: GridDataTemporary: Attempt to reference non-existent row " + row);
-		data.remove(row);
+		data.remove((int)row);
 	}
 	
 	/** Append a blank row. */
@@ -93,7 +93,7 @@ public class DataTemporary implements Data {
 	}
 	
 	@Override
-	public void setValue(int column, int row, Object value) {
+	public void setValue(int column, long row, Object value) {
 		int columnCount = getColumnCount();
 		if (column >= columnCount || column < 0)
 			throw new InvalidValueException("ERROR: GridDataTemporary: Attempt to reference non-existent column " + column + " in a GridDataTemporary with column count " + columnCount);
@@ -105,26 +105,26 @@ public class DataTemporary implements Data {
 			throw new InvalidValueException("ERROR: GridDataTemporary: Attempt to assign value of type " + valueType.getName() + " to cell with type " + headingColumnType.getName());
 		while (row >= getRowCount())
 			appendRow();
-		data.get(row).set(column, value);
+		data.get((int)row).set(column, value);
 	}
 
 	@Override
-	public Object getValue(int column, int row) {
+	public Object getValue(int column, long row) {
 		if (column >= getColumnCount() || column < 0)
 			throw new InvalidValueException("ERROR: GridDataTemporary: Attempt to reference non-existent column " + column);
 		if (row > getRowCount() || row < 0)
 			throw new InvalidValueException("ERROR: GridDataTemporary: Attempt to reference non-existent row " + row);
-		return data.get(row).get(column);
+		return data.get((int)row).get(column);
 	}
 
 	@Override
-	public boolean isChanged(int column, int row) {
+	public boolean isChanged(int column, long row) {
 		// TODO Auto-generated method stub
 		return false;
 	}
 
 	@Override
-	public String getError(int row) {
+	public String getError(long row) {
 		// TODO Auto-generated method stub
 		return null;
 	}

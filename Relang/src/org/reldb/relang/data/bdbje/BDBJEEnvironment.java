@@ -4,8 +4,9 @@ import java.io.Closeable;
 import java.io.File;
 import java.io.FileWriter;
 
+import org.reldb.relang.errors.Err;
+import org.reldb.relang.errors.ExceptionFatal;
 import org.reldb.relang.utilities.Directory;
-import org.reldb.relang.utilities.ExceptionFatal;
 
 import com.sleepycat.bind.serial.ClassCatalog;
 import com.sleepycat.bind.serial.StoredClassCatalog;
@@ -78,6 +79,14 @@ public class BDBJEEnvironment implements Closeable {
 		}
 	}
 
+	private static final int NoteOpening = Err.N("Opening BDBJE at %s.", BDBJEEnvironment.class.toString());
+	private static final int NoteOpened = Err.N("Opened BDBJE at %s.", BDBJEEnvironment.class.toString());
+	private static final int ErrNotExists = Err.E("BDBJE directory %s does not exist.", BDBJEEnvironment.class.toString());
+	private static final String UnableToCreateMsg = "Unable to create directory %s";
+	private static final int ErrUnableToCreate1 = Err.E(UnableToCreateMsg, BDBJEEnvironment.class.toString());
+	private static final int ErrUnableToCreate2 = Err.E(UnableToCreateMsg, BDBJEEnvironment.class.toString());
+	private static final int ErrUnableToCreate3 = Err.E(UnableToCreateMsg, BDBJEEnvironment.class.toString());
+	
 	/**
 	 * Create a connection to the Berkeley DB Java Edition.
 	 * 
@@ -87,21 +96,21 @@ public class BDBJEEnvironment implements Closeable {
 	public BDBJEEnvironment(String dir, boolean create) {
 		homeDir = dir;
 		
-		System.out.println("NOTE: Opening BDBJE at " + homeDir);
+		System.out.println(Err.or(NoteOpening, homeDir));
 		
 		if (!create && !Directory.exists(homeDir))
-			throw new ExceptionFatal("RS0323: BDBJE directory does not exist: " + homeDir);
+			throw new ExceptionFatal(Err.or(ErrNotExists, homeDir));
 		
 		if (!Directory.chkmkdir(homeDir)) 
-			throw new ExceptionFatal("RS0324: Unable to create directory: " + homeDir);	
+			throw new ExceptionFatal(Err.or(ErrUnableToCreate1, homeDir));	
 		
 		var dataDir = getDataDir();
 		if (!Directory.chkmkdir(dataDir))
-			throw new ExceptionFatal("RS0325: Unable to create directory: " + dataDir);
+			throw new ExceptionFatal(Err.or(ErrUnableToCreate2, dataDir));
 		
 		var classDir = getClassDir();
 		if (!Directory.chkmkdir(classDir))
-			throw new ExceptionFatal("RS0326: Unable to create directory: " + classDir);
+			throw new ExceptionFatal(Err.or(ErrUnableToCreate3, classDir));
 
 		if (create)
 			writeClicker();
@@ -121,7 +130,7 @@ public class BDBJEEnvironment implements Closeable {
 		var classesDb = classesEnv.openDatabase(null, "classes", dbConfig);
 		classes = new StoredClassCatalog(classesDb);
 		
-		System.out.println("NOTE: Opened BDBJE at " + homeDir);
+		System.out.println(Err.or(NoteOpened, homeDir));
 	}
 
 	/** 
@@ -197,21 +206,28 @@ public class BDBJEEnvironment implements Closeable {
 		return classes;
 	}
 	
+	private static final int NoteClosing = Err.N("Closing BDBJE at %s.", BDBJEEnvironment.class.toString());
+	private static final int NoteClosed = Err.N("Closed BDBJE at %s.", BDBJEEnvironment.class.toString());
+	private static final int WarnClosingCatalog = Err.W("Error closing catalog at %s due to %s.", BDBJEEnvironment.class.toString());
+	private static final int WarnClosingClassRepo = Err.W("Error closing class repository at %s due to %s.", BDBJEEnvironment.class.toString());
+	private static final int WarnClosingClassRepoEnv = Err.W("Error closing class repository environment at %s due to %s.", BDBJEEnvironment.class.toString());
+	private static final int WarnClosingDataEnv = Err.W("Error closing data storage environment at %s due to %s.", BDBJEEnvironment.class.toString());
+	
 	/** Closes the database. */
 	public void close() {
-		System.out.println("NOTE: Closing BDBJE at " + homeDir);
+		System.out.println(Err.or(NoteClosing, homeDir));
 		if (catalogDb != null) {
 			try {
 				catalogDb.close();
 			} catch (Throwable t) {
-				System.out.println("WARNING: BDBJE: Error closing catalog at " + homeDir + ": " + t);				
+				System.out.println(Err.or(WarnClosingCatalog, homeDir, t.toString()));				
 			}
 		}
 		if (classes != null) {
 			try {
 				classes.close();
 			} catch (Throwable t) {
-				System.out.println("WARNING: BDBJE: Error closing class repository at " + homeDir + ": " + t);
+				System.out.println(Err.or(WarnClosingClassRepo, homeDir, t.toString()));
 			}
 			classes = null;
 		}
@@ -219,7 +235,7 @@ public class BDBJEEnvironment implements Closeable {
 			try {
 				classesEnv.close();
 			} catch (Throwable t) {
-				System.out.println("WARNING: BDBJE: Error closing class repository environment at " + homeDir + ": " + t);
+				System.out.println(Err.or(WarnClosingClassRepoEnv, homeDir, t.toString()));
 			}
 			classesEnv = null;
 		}
@@ -227,11 +243,11 @@ public class BDBJEEnvironment implements Closeable {
 			try {
 				dataEnv.close();
 			} catch (Throwable t) {
-				System.out.println("WARNING: BDBJE: Error closing data storage environment at " + homeDir + ": " + t);
+				System.out.println(Err.or(WarnClosingDataEnv, homeDir, t.toString()));
 			}
 			dataEnv = null;
 		}
-		System.out.println("NOTE: Closed BDBJE at " + homeDir);
+		System.out.println(Err.or(NoteClosed, homeDir));
 	}
 
 }
