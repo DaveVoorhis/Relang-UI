@@ -3,26 +3,29 @@ package org.reldb.relang.data.bdbje;
 import org.reldb.relang.data.Heading;
 import org.reldb.relang.utilities.ExceptionFatal;
 
+import com.sleepycat.bind.serial.ClassCatalog;
 import com.sleepycat.bind.serial.SerialBinding;
 import com.sleepycat.bind.tuple.StringBinding;
 import com.sleepycat.collections.StoredMap;
 import com.sleepycat.collections.StoredSortedMap;
+import com.sleepycat.collections.TransactionWorker;
 import com.sleepycat.je.Database;
+import com.sleepycat.je.DatabaseException;
 
 public class BDBJEBase {
 
 	private final String catalogName = "sys.Catalog";
 	
-	private BDBJE db;
+	private BDBJEEnvironment environment;
 	private Database catalogDb;
 	private StoredMap<String, Heading> catalog;
 	
 	public BDBJEBase(String dir, boolean create) {
-		db = new BDBJE(dir, create);				
+		environment = new BDBJEEnvironment(dir, create);				
 		// Catalog
-		catalogDb = db.open(catalogName, true);
+		catalogDb = environment.open(catalogName, true);
 		var catalogKeyBinding = new StringBinding();
-		var catalogValueBinding = new SerialBinding<Heading>(db.getClassCatalog(), Heading.class);
+		var catalogValueBinding = new SerialBinding<Heading>(environment.getClassCatalog(), Heading.class);
 		catalog = new StoredSortedMap<String, Heading>(catalogDb, catalogKeyBinding, catalogValueBinding, true);
 		// Does the Catalog contain the Catalog?
 		if (create && catalog.get(catalogName) == null) {
@@ -39,8 +42,13 @@ public class BDBJEBase {
 	public BDBJEData create(String name) {
 		if (catalog.get(name) != null)
 			throw new ExceptionFatal("RS0399: BDBJE table " + name + " already exists.");
-		var database = db.open(name, true);
-//		database.getEnvironment().truncateDatabase(null, name, false);
+		try {
+			// if Database (somehow) exists, delete it.
+			(environment.open(name, false)).close();
+			environment.remove(name);
+		} catch (DatabaseException de) {
+		}
+		var database = environment.open(name, true);
 		var heading = new Heading();
 		catalog.put(name, heading);
 		return new BDBJEData(this, database, heading);
@@ -50,7 +58,7 @@ public class BDBJEBase {
 		var definition = catalog.get(name);
 		if (definition == null)
 			throw new ExceptionFatal("RS0400: BDBJE table " + name + " does not exist.");
-		var database = db.open(name, false);
+		var database = environment.open(name, false);
 		return new BDBJEData(this, database, definition);
 	}
 	
@@ -60,15 +68,15 @@ public class BDBJEBase {
 	
 	public void close() {
 		catalogDb.close();
-		db.close();
+		environment.close();
 	}
 
-	public BDBJE getBDBJE() {
-		return db;
+	public ClassCatalog getClassCatalog() {
+		return environment.getClassCatalog();
 	}
-	
-	Database getCatalog() {
-		return catalogDb;
+
+	public void transaction(TransactionWorker worker) throws DatabaseException, Exception {
+		environment.transaction(worker);
 	}
 	
 }

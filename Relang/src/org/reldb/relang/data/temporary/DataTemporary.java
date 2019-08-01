@@ -102,7 +102,7 @@ public class DataTemporary implements Data {
 		Class<?> headingColumnType = heading.getColumnTypeAt(column);
 		Class<?> valueType = value.getClass();
 		if (!headingColumnType.isAssignableFrom(valueType))
-			throw new InvalidValueException("ERROR: Attempt to assign value of type " + valueType.getName() + " to cell with type " + headingColumnType.getName());
+			throw new InvalidValueException("ERROR: GridDataTemporary: Attempt to assign value of type " + valueType.getName() + " to cell with type " + headingColumnType.getName());
 		while (row >= getRowCount())
 			appendRow();
 		data.get(row).set(column, value);

@@ -16,4 +16,22 @@ public class Directory {
 		return true;
 	}
 
+	/**
+	 * Remove the specified file or directory. If it's a directory, remove all files in the specified directory and the directory itself.
+	 * 
+	 * @param dataDir
+	 */
+	public static void rmAll(String dir) {
+		File dirf = new File(dir);
+		if (dirf.isDirectory())
+			for (File file: dirf.listFiles())
+		    	rmAll(file.getAbsolutePath());
+	    else
+	        dirf.delete();
+	}
+
+	public static boolean exists(String fspec) {
+		return (new File(fspec)).exists();
+	}
+
 }

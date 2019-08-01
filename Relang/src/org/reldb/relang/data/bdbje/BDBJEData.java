@@ -6,6 +6,7 @@ import java.util.Vector;
 import org.reldb.relang.data.Data;
 import org.reldb.relang.data.Heading;
 import org.reldb.relang.data.InvalidValueException;
+import org.reldb.relang.utilities.ExceptionFatal;
 
 import com.sleepycat.bind.EntryBinding;
 import com.sleepycat.bind.serial.SerialBinding;
@@ -27,7 +28,7 @@ public class BDBJEData implements Data, Closeable {
 		this.heading = definition;
 		
 		var dataKeyBinding = new LongBinding();
-		EntryBinding<Vector<Object>> dataValueBinding = new SerialBinding(bdbjeBase.getBDBJE().getClassCatalog(), Vector.class);
+		EntryBinding<Vector<Object>> dataValueBinding = new SerialBinding(bdbjeBase.getClassCatalog(), Vector.class);
 		data = new StoredSortedMap<Long, Vector<Object>>(db, dataKeyBinding, dataValueBinding, true);
 	}
 
@@ -84,8 +85,17 @@ public class BDBJEData implements Data, Closeable {
 	public String appendDefaultColumn() {
 		String newColumnName = heading.appendDefaultColumn();
 		Object defaultValueForNewColumn = heading.getDefaultValueAt(getColumnCount() - 1);
-		data.values().forEach(row -> row.add(defaultValueForNewColumn));
-		updateCatalog();
+		try {
+			data.entrySet().forEach(entry -> {
+				var key = entry.getKey();
+				var value = entry.getValue();
+				value.add(defaultValueForNewColumn);
+				data.put(key, value);				
+			});
+			updateCatalog();			
+		} catch (Exception e) {
+			throw new ExceptionFatal("ERROR: BDBJEData: Transaction exception in appendDefaultColumn(): ", e);			
+		}
 		return newColumnName;
 	}
 
@@ -97,7 +107,7 @@ public class BDBJEData implements Data, Closeable {
 	@Override
 	public void deleteColumnAt(int column) {		
 		try {
-			bdbjeBase.getBDBJE().transaction(() -> {
+			bdbjeBase.transaction(() -> {
 				data.entrySet().forEach(entry -> {
 					var key = entry.getKey();
 					var value = entry.getValue();
@@ -108,8 +118,7 @@ public class BDBJEData implements Data, Closeable {
 				updateCatalog();			
 			});
 		} catch (Exception e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			throw new ExceptionFatal("ERROR: BDBJEData: Transaction exception in deleteColumnAt(): ", e);
 		}
 	}
 
@@ -136,9 +145,9 @@ public class BDBJEData implements Data, Closeable {
 		Class<?> headingColumnType = heading.getColumnTypeAt(column);
 		Class<?> valueType = value.getClass();
 		if (!headingColumnType.isAssignableFrom(valueType))
-			throw new InvalidValueException("ERROR: Attempt to assign value of type " + valueType.getName() + " to cell with type " + headingColumnType.getName());
+			throw new InvalidValueException("ERROR: BDBJEData: Attempt to assign value of type " + valueType.getName() + " to cell with type " + headingColumnType.getName());
 		try {
-			bdbjeBase.getBDBJE().transaction(() -> {				
+			bdbjeBase.transaction(() -> {				
 				while (row >= getRowCount())
 					appendRow();
 				var tuple = data.get((long)row);
@@ -146,8 +155,7 @@ public class BDBJEData implements Data, Closeable {
 				data.put((long)row, tuple);
 			});
 		} catch (Exception e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			throw new ExceptionFatal("ERROR: BDBJEData: Transaction exception in setValue(): ", e);
 		}
 	}
 

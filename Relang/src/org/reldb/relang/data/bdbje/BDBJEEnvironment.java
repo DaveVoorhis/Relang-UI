@@ -20,7 +20,7 @@ import com.sleepycat.je.JEVersion;
 import com.sleepycat.je.Transaction;
 import com.sleepycat.je.TransactionConfig;
 
-public class BDBJE implements Closeable {
+public class BDBJEEnvironment implements Closeable {
 
 	private String homeDir;
 	private Environment dataEnv;
@@ -28,12 +28,43 @@ public class BDBJE implements Closeable {
 	private ClassCatalog classes;
 	private Database catalogDb;
 
-	public String getBerkeleyJavaDBVersion() {
-		return JEVersion.CURRENT_VERSION.getVersionString();
+	private static String getDataDir(String homedir) {
+		 return homedir + File.separator + "data";
 	}
 
+	private static String getClassDir(String homedir) {
+		return homedir + File.separator + "classes";
+	}
+
+	private static String getClickerFileName(String homedir) {
+		return homedir + File.separator + "ClickToOpen.rl";
+	}
+	
+	private String getDataDir() {
+		return getDataDir(homeDir);
+	}
+	
+	private String getClassDir() {
+		return getClassDir(homeDir);
+	}
+	
 	private String getClickerFileName() {
-		return homeDir + File.separator + "ClickToOpen.rl";
+		return getClickerFileName(homeDir);
+	}
+	
+	/**
+	 * Purge an existing database.
+	 * 
+	 * @param homedir - directory containing database to purge
+	 */
+	public static void purge(String homedir) {
+		Directory.rmAll(getDataDir(homedir));
+		Directory.rmAll(getClassDir(homedir));
+		Directory.rmAll(getClickerFileName(homedir));
+	}
+
+	public String getBerkeleyJavaDBVersion() {
+		return JEVersion.CURRENT_VERSION.getVersionString();
 	}
 
 	private void writeClicker() {
@@ -53,17 +84,22 @@ public class BDBJE implements Closeable {
 	 * @param dir - directory to hold data
 	 * @param create - true if directory can be created if it doesn't exist
 	 */
-	public BDBJE(String dir, boolean create) {
+	public BDBJEEnvironment(String dir, boolean create) {
 		homeDir = dir;
+		
+		System.out.println("NOTE: Opening BDBJE at " + homeDir);
+		
+		if (!create && !Directory.exists(homeDir))
+			throw new ExceptionFatal("RS0323: BDBJE directory does not exist: " + homeDir);
 		
 		if (!Directory.chkmkdir(homeDir)) 
 			throw new ExceptionFatal("RS0324: Unable to create directory: " + homeDir);	
 		
-		var dataDir = homeDir + File.separator + "data";
+		var dataDir = getDataDir();
 		if (!Directory.chkmkdir(dataDir))
 			throw new ExceptionFatal("RS0325: Unable to create directory: " + dataDir);
 		
-		var classDir = homeDir + File.separator + "classes";
+		var classDir = getClassDir();
 		if (!Directory.chkmkdir(classDir))
 			throw new ExceptionFatal("RS0326: Unable to create directory: " + classDir);
 
@@ -84,17 +120,49 @@ public class BDBJE implements Closeable {
 		// Needed for serial bindings (i.e., Java serialization)
 		var classesDb = classesEnv.openDatabase(null, "classes", dbConfig);
 		classes = new StoredClassCatalog(classesDb);
+		
+		System.out.println("NOTE: Opened BDBJE at " + homeDir);
 	}
 
+	/** 
+	 * Begin a transaction.
+	 * 
+	 * @return <link>Transaction</link>
+	 */
 	public Transaction beginTransaction() {
 		var config = new TransactionConfig();
 	    config.setSerializableIsolation(true);		
 		return dataEnv.beginTransaction(null, config);
 	}
 
+	/**
+	 * Run a TransactionWorker in a transaction.
+	 * 
+	 * @param worker - TransactionWorker instance, which can be a lambda expression.
+	 * @throws DatabaseException
+	 * @throws Exception
+	 */
 	public void transaction(TransactionWorker worker) throws DatabaseException, Exception {
 		var runner = new TransactionRunner(dataEnv);
 		runner.run(worker);
+	}
+
+	/** 
+	 * Delete all records from a named Berkeley DB "Database".
+	 * 
+	 * @param name - Database name.
+	 */
+	public void truncate(String name) {
+		dataEnv.truncateDatabase(null, name, false);
+	}
+
+	/**
+	 * Remove a specified Berkeley DB "Database".
+	 * 
+	 * @param name - Database name.
+	 */
+	public void remove(String name) {
+		dataEnv.removeDatabase(null, name);
 	}
 	
 	/** 
@@ -131,18 +199,19 @@ public class BDBJE implements Closeable {
 	
 	/** Closes the database. */
 	public void close() {
+		System.out.println("NOTE: Closing BDBJE at " + homeDir);
 		if (catalogDb != null) {
 			try {
 				catalogDb.close();
 			} catch (Throwable t) {
-				System.out.println("WARNING: BerkeleyDBJE: Error closing catalog: " + t);				
+				System.out.println("WARNING: BDBJE: Error closing catalog at " + homeDir + ": " + t);				
 			}
 		}
 		if (classes != null) {
 			try {
 				classes.close();
 			} catch (Throwable t) {
-				System.out.println("WARNING: BerkeleyDBJE: Error closing classes storage: " + t);
+				System.out.println("WARNING: BDBJE: Error closing class repository at " + homeDir + ": " + t);
 			}
 			classes = null;
 		}
@@ -150,7 +219,7 @@ public class BDBJE implements Closeable {
 			try {
 				classesEnv.close();
 			} catch (Throwable t) {
-				System.out.println("WARNING: BerkeleyDBJE: Error closing classes storage environment: " + t);
+				System.out.println("WARNING: BDBJE: Error closing class repository environment at " + homeDir + ": " + t);
 			}
 			classesEnv = null;
 		}
@@ -158,10 +227,11 @@ public class BDBJE implements Closeable {
 			try {
 				dataEnv.close();
 			} catch (Throwable t) {
-				System.out.println("WARNING: BerkeleyDBJE: Error closing data storage environment: " + t);
+				System.out.println("WARNING: BDBJE: Error closing data storage environment at " + homeDir + ": " + t);
 			}
 			dataEnv = null;
 		}
+		System.out.println("NOTE: Closed BDBJE at " + homeDir);
 	}
 
 }

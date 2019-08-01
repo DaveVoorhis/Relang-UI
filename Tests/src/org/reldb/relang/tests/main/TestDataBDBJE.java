@@ -2,17 +2,22 @@ package org.reldb.relang.tests.main;
 
 import static org.junit.Assert.assertEquals;
 
-import org.junit.Before;
+import org.junit.AfterClass;
+import org.junit.BeforeClass;
 import org.junit.Test;
+import org.reldb.relang.data.bdbje.BDBJEEnvironment;
 import org.reldb.relang.data.bdbje.BDBJEBase;
 
 public class TestDataBDBJE {
 	
-	private BDBJEBase base;
+	private final static String testDir = "./test";
 	
-	@Before
-	public void setup() {
-		base = new BDBJEBase("./test", true);
+	private static BDBJEBase base;
+	
+	@BeforeClass
+	public static void setup() {
+		BDBJEEnvironment.purge(testDir);
+		base = new BDBJEBase(testDir, true);
 	}
 	
 	@Test 
@@ -55,9 +60,9 @@ public class TestDataBDBJE {
 		gridData.close();
 	}
 	
-	public void teardown() {
-		if (base != null)
-			base.close();
+	@AfterClass
+	public static void teardown() {
+		base.close();
 	}
 
 }
