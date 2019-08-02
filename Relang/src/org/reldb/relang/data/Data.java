@@ -1,7 +1,9 @@
 package org.reldb.relang.data;
 
+import java.io.Closeable;
+
 /* Abstract definition of a Grid's data */
-public interface Data {
+public interface Data extends Closeable {
 	
 	/** Obtain the number of columns. */
 	public int getColumnCount();
@@ -47,4 +49,7 @@ public interface Data {
 	
 	/** Return an error message if unable to write changed rows to backing store. */
 	public String getError(long row);
+	
+	/** Close this Data source. */
+	public void close();
 }

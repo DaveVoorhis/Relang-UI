@@ -4,6 +4,7 @@ import java.awt.Color;
 import java.awt.Graphics2D;
 import java.awt.Rectangle;
 import java.awt.SplashScreen;
+import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.lang.reflect.InvocationTargetException;
@@ -25,7 +26,8 @@ import org.eclipse.wb.swt.SWTResourceManager;
 import org.reldb.relang.about.AboutDialog;
 import org.reldb.relang.commands.AcceleratedMenuItem;
 import org.reldb.relang.core.Datasheet;
-import org.reldb.relang.data.temporary.DataTemporary;
+import org.reldb.relang.data.Data;
+import org.reldb.relang.data.bdbje.BDBJEBase;
 import org.reldb.relang.feedback.BugReportDialog;
 import org.reldb.relang.feedback.CrashDialog;
 import org.reldb.relang.feedback.SuggestionboxDialog;
@@ -304,17 +306,25 @@ public class Main {
 
 	private static void launchNewGrid() {
 		Shell newShell = createShell();
-		newShell.setText("New Grid " + ++gridNumber);
+		var gridName = "New Grid " + ++gridNumber;
+		newShell.setText(gridName);
 		newShell.setLayout(new FillLayout());
-		var gridData = new DataTemporary();
-		gridData.setColumnName(0, "A");
-		gridData.setColumnName(1, "B");
-		gridData.setColumnName(2, "C");
-		gridData.appendRow();
-		gridData.appendRow();
-		gridData.appendRow();
+		var base = new BDBJEBase(System.getProperty("user.home") + File.separator + "relangbase", true);
+		Data gridData;
+		if (base.exists(gridName)) {
+			gridData = base.open(gridName);			
+		} else {
+			gridData = base.create(gridName);
+			gridData.setColumnName(0, "A");
+			gridData.setColumnName(1, "B");
+			gridData.setColumnName(2, "C");
+			gridData.appendRow();
+			gridData.appendRow();
+			gridData.appendRow();
+		}
 		new Sheet(newShell, gridData);
 		newShell.open();
+		newShell.addListener(SWT.Close, evt -> gridData.close());
 	}
 
 	@SuppressWarnings("null")

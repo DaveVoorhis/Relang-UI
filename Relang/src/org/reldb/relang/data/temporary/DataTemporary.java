@@ -132,4 +132,8 @@ public class DataTemporary implements Data {
 		return null;
 	}
 
+	@Override
+	public void close() {
+	}
+
 }

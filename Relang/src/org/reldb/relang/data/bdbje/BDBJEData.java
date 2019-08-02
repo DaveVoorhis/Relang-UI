@@ -1,6 +1,5 @@
 package org.reldb.relang.data.bdbje;
 
-import java.io.Closeable;
 import java.util.Vector;
 
 import org.reldb.relang.data.Data;
@@ -18,7 +17,7 @@ import com.sleepycat.je.Database;
 
 import static org.reldb.relang.strings.Strings.*;
 
-public class BDBJEData implements Data, Closeable {
+public class BDBJEData implements Data {
 	private BDBJEBase bdbjeBase;
 	private Database db;
 	private Heading heading;

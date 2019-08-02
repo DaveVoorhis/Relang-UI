@@ -41,9 +41,25 @@ public class BDBJEBase {
 	void updateCatalog(String name, Heading definition) {
 		catalog.put(name, definition);
 	}
+
+	/**
+	 * Return true if a given Data source exists.
+	 * 
+	 * @param name - name of Data source
+	 * @return - boolean - true if Data source exists
+	 */
+	public boolean exists(String name) {
+		return catalog.get(name) != null;
+	}
 	
+	/**
+	 * Create a Data source with a given name. If it exists already, throw ExceptionFatal.
+	 * 
+	 * @param name - name of Data source.
+	 * @return - BDBJEData
+	 */
 	public BDBJEData create(String name) {
-		if (catalog.get(name) != null)
+		if (exists(name))
 			throw new ExceptionFatal(Str.ing(ErrSourceExists, name));
 		try {
 			// if Database (somehow) exists, delete it.
@@ -57,6 +73,12 @@ public class BDBJEBase {
 		return new BDBJEData(this, database, heading);
 	}
 	
+	/**
+	 * Open a Data source with a given name. If it doesn't exist, throw ExceptionFatal.
+	 * 
+	 * @param name - name of Data source.
+	 * @return - BDBJEData
+	 */
 	public BDBJEData open(String name) {
 		var definition = catalog.get(name);
 		if (definition == null)
@@ -65,10 +87,36 @@ public class BDBJEBase {
 		return new BDBJEData(this, database, definition);
 	}
 	
+	/**
+	 * Open a Data source with a given name. 
+	 * 
+	 * If Data source doesn't exist and <code>create</code> is false, throw an ExceptionFatal. 
+	 * If Data source doesn't exist and <code>create</code> is true, create it.
+	 * If Data source exists, open it regardless of value of <code>create</code>. 
+	 * 
+	 * @param name - name of Data source.
+	 * @param create - boolean - if true and Data source doesn't exist, create it.
+	 * @return
+	 */
+	public BDBJEData open(String name, boolean create) {
+		if (create && !exists(name))
+			return create(name);
+		else
+			return open(name);
+	}
+	
+	/**
+	 * Close an open Data source.
+	 * 
+	 * @param table - BDBJEData
+	 */
 	public void close(BDBJEData table) {
 		table.close();
 	}
 	
+	/**
+	 * Close the database.
+	 */
 	public void close() {
 		catalogDb.close();
 		environment.close();
