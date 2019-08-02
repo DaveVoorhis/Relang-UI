@@ -9,7 +9,10 @@ package org.reldb.relang.external;
 import java.io.*;
 import java.util.*;
 
-import org.reldb.relang.errors.ExceptionFatal;
+import org.reldb.relang.exceptions.ExceptionFatal;
+import org.reldb.relang.strings.Str;
+
+import static org.reldb.relang.strings.Strings.*;
 
 /**
  * A class loader to load named classes from a specified directory.  With
@@ -76,9 +79,9 @@ public class DirClassLoader extends ClassLoader {
 			}
 			reader.close();
 		} catch (FileNotFoundException fnfe) {
-			throw new ExceptionFatal("RS0290: File " + f + " not found for " + name);
+			throw new ExceptionFatal(Str.ing(ErrFileNotFound1, f.toString(), name));
 		} catch (IOException ioe) {
-			throw new ExceptionFatal("RS0291: Error reading " + f + ": " + ioe.toString());
+			throw new ExceptionFatal(Str.ing(ErrReading, f.toString(), ioe.toString()));
 		}
 		return bytes.getBytes();
 	}		

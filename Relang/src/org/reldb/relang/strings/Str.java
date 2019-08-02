@@ -1,5 +1,6 @@
-package org.reldb.relang.errors;
+package org.reldb.relang.strings;
 
+import java.lang.reflect.Modifier;
 import java.util.Vector;
 
 /**
@@ -8,7 +9,7 @@ import java.util.Vector;
  * @author dave
  *
  */
-public class Err {
+public class Str {
 
 	private static Vector<String> strings = new Vector<>();
 	
@@ -45,10 +46,25 @@ public class Err {
 		return strings.get(msgIdx);
 	}
 	
-	public static String or(int msgIdx, Object ...objects) {
+	public static String ing(int msgIdx, Object ...objects) {
 		String formatString = getString(msgIdx);
 		if (formatString == null)
 			return strings.get(errorText) + ": " + msgIdx;
 		return String.format(strings.get(msgPreambleText) + String.format("%05d: ", msgIdx) + formatString, objects);
+	}
+	
+	public static void dump() {
+		var fields = Strings.class.getFields();
+		for (int i = 0; i < fields.length; i++) {
+			var field = fields[i];
+			if (Modifier.isPublic(field.getModifiers()))
+				try {
+					int value = field.getInt(field);
+					String name = field.getName();
+					System.out.println(String.format("MSG%05d  %-40s  %s", value, name, getString(value)));
+				} catch (IllegalArgumentException | IllegalAccessException e) {
+					e.printStackTrace();
+				}
+		}
 	}
 }

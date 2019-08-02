@@ -10,9 +10,12 @@ import java.io.InputStreamReader;
 import java.io.PrintStream;
 import java.io.PrintWriter;
 
-import org.reldb.relang.errors.ExceptionFatal;
-import org.reldb.relang.errors.ExceptionSemantic;
+import org.reldb.relang.exceptions.ExceptionFatal;
+import org.reldb.relang.exceptions.ExceptionSemantic;
 import org.reldb.relang.storage.LocalDatabase;
+import org.reldb.relang.strings.Str;
+
+import static org.reldb.relang.strings.Strings.*;
 
 /**
  * @author Dave
@@ -90,7 +93,7 @@ public class ForeignCompilerJava {
     		sourcePS.print(src);
     		sourcePS.close();
     	} catch (IOException ioe) {
-    		throw new ExceptionFatal("RS0293: Unable to save Java source: " + ioe.toString());
+    		throw new ExceptionFatal(Str.ing(ErrSavingJavaSource, ioe.toString()));
     	}
     	
     	// Start compilation using JDT
@@ -133,7 +136,7 @@ public class ForeignCompilerJava {
     	}
 
     	if (!compiled)
-        	throw new ExceptionSemantic("RS0005: Compilation failed due to errors: \n" + compilerMessages + "\n");    		    
+        	throw new ExceptionSemantic(Str.ing(ErrJavaCompilationFailed, compilerMessages));    		    
     }
     
     /** Get a stripped name.  Only return text after the final '.' */

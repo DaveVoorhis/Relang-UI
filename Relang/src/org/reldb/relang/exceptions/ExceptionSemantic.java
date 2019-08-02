@@ -1,4 +1,4 @@
-package org.reldb.relang.errors;
+package org.reldb.relang.exceptions;
 
 /**
  * This exception is thrown when semantic errors are encountered.

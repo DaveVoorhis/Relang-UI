@@ -6,8 +6,8 @@ import java.util.Vector;
 import org.reldb.relang.data.Data;
 import org.reldb.relang.data.Heading;
 import org.reldb.relang.data.InvalidValueException;
-import org.reldb.relang.errors.Err;
-import org.reldb.relang.errors.ExceptionFatal;
+import org.reldb.relang.exceptions.ExceptionFatal;
+import org.reldb.relang.strings.Str;
 
 import com.sleepycat.bind.EntryBinding;
 import com.sleepycat.bind.serial.SerialBinding;
@@ -15,6 +15,8 @@ import com.sleepycat.bind.tuple.LongBinding;
 import com.sleepycat.collections.StoredMap;
 import com.sleepycat.collections.StoredSortedMap;
 import com.sleepycat.je.Database;
+
+import static org.reldb.relang.strings.Strings.*;
 
 public class BDBJEData implements Data, Closeable {
 	private BDBJEBase bdbjeBase;
@@ -66,27 +68,21 @@ public class BDBJEData implements Data, Closeable {
 	public boolean hasColumnNamed(String name) {
 		return heading.hasColumnNamed(name);
 	}
-	
-	private static final int ErrTypeParmNotNull = Err.E("The type parameter must not be null.", BDBJEData.class.toString());
-	private static final int ErrNonexistentColumn = Err.E("Attempt to reference non-existent column %d in a BDBJEData with column count %d", BDBJEData.class.toString());
-	private static final int ErrTypeMismatch = Err.E("Data in column %d cannot be assigned to a %s.", BDBJEData.class.toString());
 
 	@Override
 	public void setColumnType(int column, Class<?> type, Object defaultValue) {
 		if (type == null)
-			throw new InvalidValueException(Err.or(ErrTypeParmNotNull));
+			throw new InvalidValueException(Str.ing(ErrTypeParmNotNull));
 		int columnCount = getColumnCount();
 		if (column < 0)
-			throw new InvalidValueException(Err.or(ErrNonexistentColumn, column, columnCount));
+			throw new InvalidValueException(Str.ing(ErrNonexistentColumn, column, columnCount));
 		else if (column < heading.getColumnCount()) {
 			if (!data.values().stream().allMatch(tuple -> type.isAssignableFrom(tuple.get(column).getClass())))
-				throw new InvalidValueException(Err.or(ErrTypeMismatch, column, type.getName()));
+				throw new InvalidValueException(Str.ing(ErrTypeMismatch, column, type.getName()));
 		}
 		heading.setColumnType(column, type, defaultValue);
 		updateCatalog();
 	}
-
-	private static final int ErrTEAppendDefaultColumn = Err.E("Transaction exception in appendDefaultColumn().", BDBJEData.class.toString());
 	
 	@Override
 	public String appendDefaultColumn() {
@@ -101,7 +97,7 @@ public class BDBJEData implements Data, Closeable {
 			});
 			updateCatalog();			
 		} catch (Exception e) {
-			throw new ExceptionFatal(Err.or(ErrTEAppendDefaultColumn), e);			
+			throw new ExceptionFatal(Str.ing(ErrTEAppendDefaultColumn), e);			
 		}
 		return newColumnName;
 	}
@@ -111,8 +107,6 @@ public class BDBJEData implements Data, Closeable {
 		return heading.getColumnTypeAt(column);
 	}
 	
-	private static final int ErrTEDeleteColumnAt = Err.E("Transaction exception in deleteColumnAt().", BDBJEData.class.toString());
-
 	@Override
 	public void deleteColumnAt(int column) {		
 		try {
@@ -127,7 +121,7 @@ public class BDBJEData implements Data, Closeable {
 				updateCatalog();			
 			});
 		} catch (Exception e) {
-			throw new ExceptionFatal(Err.or(ErrTEDeleteColumnAt), e);
+			throw new ExceptionFatal(Str.ing(ErrTEDeleteColumnAt), e);
 		}
 	}
 
@@ -144,22 +138,17 @@ public class BDBJEData implements Data, Closeable {
 		data.put((long)data.size(), tuple);
 	}
 	
-	private static final int ErrNonexistentColumn2 = Err.E("Attempt to reference non-existent column %d in a BDBJEData with column count %d.", BDBJEData.class.toString());
-	private static final int ErrNonexistentRow = Err.E("Attempt to reference non-existent row %d.", BDBJEData.class.toString());
-	private static final int ErrTypeMismatch2 = Err.E("Attempt to assign value of type %s to cell with type %s.", BDBJEData.class.toString());
-	private static final int ErrTESetValue = Err.E("Transaction exception in setValue().", BDBJEData.class.toString());
-
 	@Override
 	public void setValue(int column, long row, Object value) {
 		int columnCount = getColumnCount();
 		if (column >= columnCount || column < 0)
-			throw new InvalidValueException(Err.or(ErrNonexistentColumn2, column, columnCount));
+			throw new InvalidValueException(Str.ing(ErrNonexistentColumn2, column, columnCount));
 		if (row < 0)
-			throw new InvalidValueException(Err.or(ErrNonexistentRow, row));
+			throw new InvalidValueException(Str.ing(ErrNonexistentRow, row));
 		Class<?> headingColumnType = heading.getColumnTypeAt(column);
 		Class<?> valueType = value.getClass();
 		if (!headingColumnType.isAssignableFrom(valueType))
-			throw new InvalidValueException(Err.or(ErrTypeMismatch2, valueType.getName(), headingColumnType.getName()));
+			throw new InvalidValueException(Str.ing(ErrTypeMismatch2, valueType.getName(), headingColumnType.getName()));
 		try {
 			bdbjeBase.transaction(() -> {				
 				while (row >= getRowCount())
@@ -169,20 +158,17 @@ public class BDBJEData implements Data, Closeable {
 				data.put(row, tuple);
 			});
 		} catch (Exception e) {
-			throw new ExceptionFatal(Err.or(ErrTESetValue), e);
+			throw new ExceptionFatal(Str.ing(ErrTESetValue), e);
 		}
 	}
 	
-	private static final int ErrNonexistentColumn3 = Err.E("Attempt to reference non-existent column %d in a BDBJEData with column count %d.", BDBJEData.class.toString());
-	private static final int ErrNonexistentRow2 = Err.E("Attempt to reference non-existent row %d.", BDBJEData.class.toString());
-
 	@Override
 	public Object getValue(int column, long row) {
 		int columnCount = getColumnCount();
 		if (column >= columnCount || column < 0)
-			throw new InvalidValueException(Err.or(ErrNonexistentColumn3, column, columnCount));
+			throw new InvalidValueException(Str.ing(ErrNonexistentColumn3, column, columnCount));
 		if (row > getRowCount() || row < 0)
-			throw new InvalidValueException(Err.or(ErrNonexistentRow2, row));
+			throw new InvalidValueException(Str.ing(ErrNonexistentRow2, row));
 		return data.get(row).get(column);
 	}
 

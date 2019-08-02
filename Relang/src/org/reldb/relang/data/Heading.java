@@ -5,6 +5,10 @@ import java.util.List;
 import java.util.Vector;
 import java.util.stream.Collectors;
 
+import org.reldb.relang.strings.Str;
+
+import static org.reldb.relang.strings.Strings.*;
+
 public class Heading implements Serializable {
 	private static final long serialVersionUID = 1L;
 	private static final Class<?> defaultNewColumnClass = String.class;
@@ -12,7 +16,10 @@ public class Heading implements Serializable {
 	
 	private static class ColumnType implements Serializable {
 		private static final long serialVersionUID = 1L;
-		public ColumnType(Class<?> type, Object defaultValue) {this.type = type; this.defaultValue = defaultValue;}
+		public ColumnType(Class<?> type, Object defaultValue) {
+			this.type = type; 
+			this.defaultValue = defaultValue;
+		}
 		public Class<?> type;
 		public Object defaultValue;
 		public String toString() {
@@ -22,7 +29,10 @@ public class Heading implements Serializable {
 
 	private static class ColumnAttribute implements Serializable {
 		private static final long serialVersionUID = 1L;
-		public ColumnAttribute(String name, ColumnType typeAndDefault) {this.name = name; this.typeAndDefault = typeAndDefault;}
+		public ColumnAttribute(String name, ColumnType typeAndDefault) {
+			this.name = name; 
+			this.typeAndDefault = typeAndDefault;
+		}
 		public String name;
 		public ColumnType typeAndDefault;
 		public String toString() {
@@ -35,7 +45,7 @@ public class Heading implements Serializable {
 	
 	private void checkFrozen() {
 		if (frozen)
-			throw new InvalidValueException("ERROR: Heading: " + this + " is in use and can't be changed.");		
+			throw new InvalidValueException(Str.ing(ErrInUse,  this.toString()));	
 	}
 	
 	public Heading() {}
@@ -54,25 +64,25 @@ public class Heading implements Serializable {
 
 	public void widenToIncludeColumnNumber(int columnNumber) {
 		if (columnNumber < 0)
-			throw new InvalidValueException("ERROR: Heading: Invalid column number " + columnNumber);
+			throw new InvalidValueException(Str.ing(ErrInvalidColumn1, columnNumber));
 		while (columnAttributes.size() <= columnNumber)
 			appendDefaultColumn();
 	}
 	
 	public void defineColumn(int columnNumber, String attributeName, Class<?> attributeType, Object defaultValue) {
 		if (columnNumber < 0)
-			throw new InvalidValueException("ERROR: Heading: Invalid column number " + columnNumber);
+			throw new InvalidValueException(Str.ing(ErrInvalidColumn2, columnNumber));
 		if (defaultValue == null)
-			throw new InvalidValueException("ERROR: Heading: Attempt to set null default value.");
+			throw new InvalidValueException(Str.ing(ErrAttemptToSetNullDefault));
 		if (attributeType == null)
-			throw new InvalidValueException("ERROR: Heading: Attempt to set null attribute type.");
+			throw new InvalidValueException(Str.ing(ErrAttemptToSetNullAttribute1));
 		if (attributeName == null)
-			throw new InvalidValueException("ERROR: Heading: attempt to set null attribute name.");
+			throw new InvalidValueException(Str.ing(ErrAttemptToSetNullAttribute2));
 		if (!(attributeType.isAssignableFrom(defaultValue.getClass())))
-				throw new InvalidValueException("ERROR: Heading: defaultValue of type " + defaultValue.getClass() + " cannot be assigned to an " + attributeType);
+				throw new InvalidValueException(Str.ing(ErrDefaultTypeMismatch1, defaultValue.getClass().toString(), attributeType.toString()));
 		checkFrozen();
 		if (hasColumnNamed(attributeName))
-			throw new InvalidValueException("ERROR: Heading: heading " + this + " already contains an attribute named " + attributeName);
+			throw new InvalidValueException(Str.ing(ErrAttributeDuplicate1, this.toString(), attributeName));
 		widenToIncludeColumnNumber(columnNumber);
 		ColumnType columnType = new ColumnType(attributeType, defaultValue);
 		columnAttributes.set(columnNumber, new ColumnAttribute(attributeName, columnType));
@@ -85,12 +95,12 @@ public class Heading implements Serializable {
 
 	public void setColumnName(int columnNumber, String attributeName) {
 		if (columnNumber < 0)
-			throw new InvalidValueException("ERROR: Heading: Invalid column number " + columnNumber);
+			throw new InvalidValueException(Str.ing(ErrInvalidColumn3, columnNumber));
 		if (attributeName == null)
-			throw new InvalidValueException("ERROR: Heading: attempt to set null attribute name.");
+			throw new InvalidValueException(Str.ing(ErrAttemptToSetNullAttribute3));
 		checkFrozen();
 		if (hasColumnNamed(attributeName))
-			throw new InvalidValueException("ERROR: Heading: heading " + this + " already contains an attribute named " + attributeName);
+			throw new InvalidValueException(Str.ing(ErrAttributeDuplicate2, this.toString(), attributeName));
 		widenToIncludeColumnNumber(columnNumber);
 		ColumnType columnType = getColumnType(columnNumber).typeAndDefault;
 		columnAttributes.set(columnNumber, new ColumnAttribute(attributeName, columnType));
@@ -98,16 +108,16 @@ public class Heading implements Serializable {
 	
 	public void setColumnType(int columnNumber, Class<?> attributeType, Object defaultValue) {
 		if (columnNumber < 0)
-			throw new InvalidValueException("ERROR: Heading: Invalid column number " + columnNumber);
+			throw new InvalidValueException(Str.ing(ErrInvalidColumn4, columnNumber));
 		if (defaultValue == null)
-			throw new InvalidValueException("ERROR: Heading: Attempt to set null default value.");
+			throw new InvalidValueException(Str.ing(ErrAttemptToSetNullDefault2));
 		if (attributeType == null)
-			throw new InvalidValueException("ERROR: Heading: Attempt to set null attribute type.");
+			throw new InvalidValueException(Str.ing(ErrAttemptToSetNullAttributeType));
 		checkFrozen();
 		widenToIncludeColumnNumber(columnNumber);
 		String attributeName = getColumnNameAt(columnNumber);
 		if (!(attributeType.isAssignableFrom(defaultValue.getClass())))
-			throw new InvalidValueException("ERROR: Heading: defaultValue of type " + defaultValue.getClass() + " cannot be assigned to an " + attributeType);		
+			throw new InvalidValueException(Str.ing(ErrDefaultTypeMismatch2, defaultValue.getClass().toString(), attributeType.toString()));
 		ColumnType columnType = new ColumnType(attributeType, defaultValue);
 		columnAttributes.set(columnNumber, new ColumnAttribute(attributeName, columnType));
 	}
@@ -116,7 +126,7 @@ public class Heading implements Serializable {
 		checkFrozen();
 		int columnCount = getColumnCount();
 		if (columnNumber >= columnCount || columnNumber < 0)
-			throw new InvalidValueException("ERROR: Heading: Attempt to delete column " + columnNumber + " in a heading with column count " + columnCount);
+			throw new InvalidValueException(Str.ing(ErrInvalidColumn5, columnNumber, columnCount));
 		columnAttributes.remove(columnNumber);
 	}
 	
@@ -155,7 +165,7 @@ public class Heading implements Serializable {
 	private ColumnAttribute getColumnType(int columnNumber) {
 		int columnCount = getColumnCount();
 		if (columnNumber >= columnCount || columnNumber < 0)
-			throw new InvalidValueException("ERROR: Heading: invalid column number " + columnNumber + " in a heading with column count " + columnCount);
+			throw new InvalidValueException(Str.ing(ErrInvalidColumn6, columnNumber, columnCount));
 		return columnAttributes.get(columnNumber);
 	}
 	

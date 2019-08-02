@@ -5,6 +5,9 @@ import java.util.Vector;
 import org.reldb.relang.data.Data;
 import org.reldb.relang.data.Heading;
 import org.reldb.relang.data.InvalidValueException;
+import org.reldb.relang.strings.Str;
+
+import static org.reldb.relang.strings.Strings.*;
 
 public class DataTemporary implements Data {
 
@@ -47,13 +50,13 @@ public class DataTemporary implements Data {
 	@Override
 	public void setColumnType(int column, Class<?> type, Object defaultValue) {
 		if (type == null)
-			throw new InvalidValueException("ERROR: GridDataTemporary: The type parameter must not be null.");
+			throw new InvalidValueException(Str.ing(ErrTypeNotNull));
 		int columnCount = getColumnCount();
 		if (column < 0)
-			throw new InvalidValueException("ERROR: GridDataTemporary: Attempt to reference non-existent column " + column + " in a GridDataTemporary with column count " + columnCount);
+			throw new InvalidValueException(Str.ing(ErrColumnNotFound, column, columnCount));
 		else if (column < heading.getColumnCount()) {
 			if (!data.stream().allMatch(tuple -> type.isAssignableFrom(tuple.get(column).getClass())))
-				throw new InvalidValueException("ERROR: GridDataTemporary: Data in column " + column + " cannot be assigned to a " + type.getName());
+				throw new InvalidValueException(Str.ing(ErrCannotBeAssigned, column, type.getName()));
 		}
 		heading.setColumnType(column, type, defaultValue);
 	}
@@ -80,7 +83,7 @@ public class DataTemporary implements Data {
 	/** Delete a row. */
 	public void deleteRowAt(long row) {
 		if (row < 0 || row >= data.size())
-			throw new InvalidValueException("ERROR: GridDataTemporary: Attempt to reference non-existent row " + row);
+			throw new InvalidValueException(Str.ing(ErrNonexistentRow3, row));
 		data.remove((int)row);
 	}
 	
@@ -96,13 +99,13 @@ public class DataTemporary implements Data {
 	public void setValue(int column, long row, Object value) {
 		int columnCount = getColumnCount();
 		if (column >= columnCount || column < 0)
-			throw new InvalidValueException("ERROR: GridDataTemporary: Attempt to reference non-existent column " + column + " in a GridDataTemporary with column count " + columnCount);
+			throw new InvalidValueException(Str.ing(ErrNonexistentColumn4, column, columnCount));
 		if (row < 0)
-			throw new InvalidValueException("ERROR: GridDataTemporary: Attempt to reference non-existent row " + row);
+			throw new InvalidValueException(Str.ing(ErrNonexistentRow4, row));
 		Class<?> headingColumnType = heading.getColumnTypeAt(column);
 		Class<?> valueType = value.getClass();
 		if (!headingColumnType.isAssignableFrom(valueType))
-			throw new InvalidValueException("ERROR: GridDataTemporary: Attempt to assign value of type " + valueType.getName() + " to cell with type " + headingColumnType.getName());
+			throw new InvalidValueException(Str.ing(ErrTypeMismatch3, valueType.getName(), headingColumnType.getName()));
 		while (row >= getRowCount())
 			appendRow();
 		data.get((int)row).set(column, value);
@@ -111,9 +114,9 @@ public class DataTemporary implements Data {
 	@Override
 	public Object getValue(int column, long row) {
 		if (column >= getColumnCount() || column < 0)
-			throw new InvalidValueException("ERROR: GridDataTemporary: Attempt to reference non-existent column " + column);
+			throw new InvalidValueException(Str.ing(ErrNonexistentColumn5, column));
 		if (row > getRowCount() || row < 0)
-			throw new InvalidValueException("ERROR: GridDataTemporary: Attempt to reference non-existent row " + row);
+			throw new InvalidValueException(Str.ing(ErrNonexistentRow5, row));
 		return data.get((int)row).get(column);
 	}
 

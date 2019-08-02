@@ -1,8 +1,8 @@
 package org.reldb.relang.data.bdbje;
 
 import org.reldb.relang.data.Heading;
-import org.reldb.relang.errors.Err;
-import org.reldb.relang.errors.ExceptionFatal;
+import org.reldb.relang.exceptions.ExceptionFatal;
+import org.reldb.relang.strings.Str;
 
 import com.sleepycat.bind.serial.ClassCatalog;
 import com.sleepycat.bind.serial.SerialBinding;
@@ -12,6 +12,8 @@ import com.sleepycat.collections.StoredSortedMap;
 import com.sleepycat.collections.TransactionWorker;
 import com.sleepycat.je.Database;
 import com.sleepycat.je.DatabaseException;
+
+import static org.reldb.relang.strings.Strings.*;
 
 public class BDBJEBase {
 
@@ -40,12 +42,9 @@ public class BDBJEBase {
 		catalog.put(name, definition);
 	}
 	
-	private static final int ErrExists = Err.E("Data source %s already exists.", BDBJEBase.class.toString());
-	private static final int ErrNotExists = Err.E("Data source %s does not exist.", BDBJEBase.class.toString());
-	
 	public BDBJEData create(String name) {
 		if (catalog.get(name) != null)
-			throw new ExceptionFatal(Err.or(ErrExists, name));
+			throw new ExceptionFatal(Str.ing(ErrSourceExists, name));
 		try {
 			// if Database (somehow) exists, delete it.
 			(environment.open(name, false)).close();
@@ -61,7 +60,7 @@ public class BDBJEBase {
 	public BDBJEData open(String name) {
 		var definition = catalog.get(name);
 		if (definition == null)
-			throw new ExceptionFatal(Err.or(ErrNotExists, name));
+			throw new ExceptionFatal(Str.ing(ErrSourceNotExists, name));
 		var database = environment.open(name, false);
 		return new BDBJEData(this, database, definition);
 	}
