@@ -20,15 +20,11 @@ import org.eclipse.swt.dnd.TextTransfer;
 import org.eclipse.swt.events.MenuAdapter;
 import org.eclipse.swt.events.MenuEvent;
 import org.eclipse.swt.graphics.Image;
-import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.widgets.*;
 import org.eclipse.wb.swt.SWTResourceManager;
 import org.reldb.relang.about.AboutDialog;
 import org.reldb.relang.commands.AcceleratedMenuItem;
-import org.reldb.relang.core.Datasheet;
-import org.reldb.relang.data.Data;
-import org.reldb.relang.data.bdbje.BDBJEBase;
-import org.reldb.relang.datasheet.sheet.Sheet;
+import org.reldb.relang.datasheet.Datasheets;
 import org.reldb.relang.feedback.BugReportDialog;
 import org.reldb.relang.feedback.CrashDialog;
 import org.reldb.relang.feedback.SuggestionboxDialog;
@@ -85,14 +81,15 @@ public class Main {
 		fileItem.setMenu(menu);
 
 		new AcceleratedMenuItem(menu, "&New datasheet\tCtrl-N", SWT.MOD1 | 'N', "add-new-document", event -> {
-			Shell newDatasheet = createShell();
-			newDatasheet.setText("New Datasheet");
-			new Datasheet(newDatasheet);
-			newDatasheet.open();
+			String dbURL = "";
+			// TODO - Dialog to create datasheet here
+			Datasheets.create(createShell(), dbURL);
 		});
 		
 		new AcceleratedMenuItem(menu, "Open datasheet...\tCtrl-O", SWT.MOD1 | 'O', "open-folder-outline", event -> {
-			
+			String dbURL = "";
+			// TODO Dialog to open datasheet here
+			Datasheets.open(createShell(), dbURL);
 		});
 
 		MenuItem recentItem = new MenuItem(menu, SWT.CASCADE);
@@ -104,16 +101,16 @@ public class Main {
 			public void menuShown(MenuEvent arg0) {
 				Menu recentDatabases = new Menu(menu);
 				recentItem.setMenu(recentDatabases);				
-				String[] dbURLs = getRecentlyUsedDatabaseList();
+				String[] dbURLs = getRecentlyUsedDatasheetList();
 				if (dbURLs.length > 0) {
 					int recentlyUsedCount = 0;
 					for (String dbURL: dbURLs) {
-						(new AcceleratedMenuItem(recentDatabases, "Open " + dbURL, 0, "OpenDBLocalIcon", e -> openDatabase(dbURL))).setEnabled(databaseMayExist(dbURL));
+						(new AcceleratedMenuItem(recentDatabases, "Open " + dbURL, 0, "OpenDBLocalIcon", e -> openDatasheet(dbURL))).setEnabled(datasheetMayExist(dbURL));
 						if (++recentlyUsedCount >= 20)	// arbitrarily decide 20 is enough
 							break;
 					}
 					new MenuItem(recentDatabases, SWT.SEPARATOR);
-					new AcceleratedMenuItem(recentDatabases, "Clear this list...", 0, null, e -> clearRecentlyUsedDatabaseList());
+					new AcceleratedMenuItem(recentDatabases, "Clear this list...", 0, null, e -> clearRecentlyUsedDatasheetList());
 				}
 			}
 		});
@@ -121,22 +118,20 @@ public class Main {
 		OSSpecific.addFileMenuItems(menu);
 	}
 	
-	protected static boolean databaseMayExist(String dbURL) {
+	protected static boolean datasheetMayExist(String dbURL) {
 		// TODO Auto-generated method stub
 		return false;
 	}
 
-	protected static Object clearRecentlyUsedDatabaseList() {
+	protected static void clearRecentlyUsedDatasheetList() {
 		// TODO Auto-generated method stub
-		return null;
 	}
 
-	protected static Object openDatabase(String dbURL) {
-		// TODO Auto-generated method stub
-		return null;
+	protected static void openDatasheet(String dbURL) {
+		Datasheets.open(createShell(), dbURL);
 	}
 
-	protected static String[] getRecentlyUsedDatabaseList() {
+	protected static String[] getRecentlyUsedDatasheetList() {
 		// TODO - get list of recently used things
 		return new String[] {};
 	}
@@ -281,8 +276,6 @@ public class Main {
  		linkCommand(Commands.Do.WrapText, new AcceleratedMenuItem(menu, "Wrap text", 0, "wrapIcon", SWT.CHECK));
  		*/
 	}
-
-	static long gridNumber = 0;
 	
 	static void createDataMenu(Menu bar) {
 		MenuItem dataItem = new MenuItem(bar, SWT.CASCADE);
@@ -292,7 +285,7 @@ public class Main {
 		dataItem.setMenu(menu);
 
 		new AcceleratedMenuItem(menu, "New Grid...\tCtrl-G", SWT.MOD1 | 'G', "newgrid", event -> {
-			launchNewGrid();
+			Datasheets.launchNewGrid();
 		});
 		
 		new AcceleratedMenuItem(menu, "Link...\tCtrl-L", SWT.MOD1 | 'L', "link", event -> {
@@ -302,29 +295,6 @@ public class Main {
 		new AcceleratedMenuItem(menu, "Import...\tCtrl-I", SWT.MOD1 | 'I', "import", event -> {
 			
 		});
-	}
-
-	private static void launchNewGrid() {
-		Shell newShell = createShell();
-		var gridName = "New Grid " + ++gridNumber;
-		newShell.setText(gridName);
-		newShell.setLayout(new FillLayout());
-		var base = new BDBJEBase(System.getProperty("user.home") + File.separator + "relangbase", true);
-		Data gridData;
-		if (base.exists(gridName)) {
-			gridData = base.open(gridName);			
-		} else {
-			gridData = base.create(gridName);
-			gridData.setColumnName(0, "A");
-			gridData.setColumnName(1, "B");
-			gridData.setColumnName(2, "C");
-			gridData.appendRow();
-			gridData.appendRow();
-			gridData.appendRow();
-		}
-		new Sheet(newShell, gridData);
-		newShell.open();
-		newShell.addListener(SWT.Close, evt -> gridData.close());
 	}
 
 	@SuppressWarnings("null")
@@ -571,7 +541,8 @@ public class Main {
 		
 		// Thunderbirds are go.
 		shell.open();
-		launchNewGrid();
+		Datasheets.openOrCreate(createShell(), System.getProperty("user.home") + File.separator + "relangbase");
+		Datasheets.launchNewGrid();
 		
 		while (display != null && !display.isDisposed()) {
 			try {
