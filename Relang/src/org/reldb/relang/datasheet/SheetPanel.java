@@ -1,4 +1,4 @@
-package org.reldb.relang.datasheet.sheet;
+package org.reldb.relang.datasheet;
 
 import org.eclipse.nebula.widgets.grid.GridColumn;
 import org.eclipse.nebula.widgets.grid.GridEditor;
@@ -22,7 +22,7 @@ import org.reldb.relang.utilities.DialogBase;
  * 
  * @author dave
  */
-public class Sheet extends Composite {
+public class SheetPanel extends Composite {
 
 	private Datagrid grid;
 	private Data data;
@@ -110,7 +110,7 @@ public class Sheet extends Composite {
 		grid.getGrid().getParent().layout();
 	}
 	
-	public Sheet(Composite parent, Data data) {
+	public SheetPanel(Composite parent, Data data) {
 		super(parent, SWT.NONE);
 		this.data = data;
 		

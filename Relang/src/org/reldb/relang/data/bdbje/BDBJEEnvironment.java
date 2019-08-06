@@ -29,7 +29,6 @@ public class BDBJEEnvironment implements Closeable {
 	private Environment dataEnv;
 	private Environment classesEnv;
 	private ClassCatalog classes;
-	private Database catalogDb;
 
 	private static String getDataDir(String homedir) {
 		 return homedir + File.separator + "data";
@@ -64,6 +63,16 @@ public class BDBJEEnvironment implements Closeable {
 		Directory.rmAll(getDataDir(homedir));
 		Directory.rmAll(getClassDir(homedir));
 		Directory.rmAll(getClickerFileName(homedir));
+	}
+
+	/**
+	 * Return true if a database probably exists.
+	 * 
+	 * @param dbURL - directory of database
+	 * @return - true if database appears to exist (this does not guarantee that it can be opened.)
+	 */
+	public static boolean exists(String dbURL) {
+		return (Directory.exists(dbURL) && Directory.exists(getDataDir(dbURL)) && Directory.exists(getClassDir(dbURL)));
 	}
 
 	public String getBerkeleyJavaDBVersion() {
@@ -202,39 +211,35 @@ public class BDBJEEnvironment implements Closeable {
 	
 	/** Closes the database. */
 	public void close() {
-		System.out.println(Str.ing(NoteClosing, homeDir));
-		if (catalogDb != null) {
-			try {
-				catalogDb.close();
-			} catch (Throwable t) {
-				System.out.println(Str.ing(WarnClosingCatalog, homeDir, t.toString()));				
-			}
-		}
 		if (classes != null) {
+			System.out.println(Str.ing(NoteClosing, homeDir));
 			try {
 				classes.close();
 			} catch (Throwable t) {
 				System.out.println(Str.ing(WarnClosingClassRepo, homeDir, t.toString()));
+			} finally {
+				classes = null;
 			}
-			classes = null;
 		}
 		if (classesEnv != null) {
 			try {
 				classesEnv.close();
 			} catch (Throwable t) {
 				System.out.println(Str.ing(WarnClosingClassRepoEnv, homeDir, t.toString()));
+			} finally {
+				classesEnv = null;
 			}
-			classesEnv = null;
 		}
 		if (dataEnv != null) {
 			try {
 				dataEnv.close();
 			} catch (Throwable t) {
 				System.out.println(Str.ing(WarnClosingDataEnv, homeDir, t.toString()));
+			} finally {
+				dataEnv = null;
 			}
-			dataEnv = null;
+			System.out.println(Str.ing(NoteClosed, homeDir));
 		}
-		System.out.println(Str.ing(NoteClosed, homeDir));
 	}
 
 }

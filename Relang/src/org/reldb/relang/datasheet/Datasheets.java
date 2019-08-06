@@ -1,53 +1,82 @@
 package org.reldb.relang.datasheet;
 
-import java.io.File;
-
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.FillLayout;
+import org.eclipse.swt.widgets.DirectoryDialog;
 import org.eclipse.swt.widgets.Shell;
-import org.reldb.relang.data.Data;
 import org.reldb.relang.data.bdbje.BDBJEBase;
-import org.reldb.relang.datasheet.sheet.Sheet;
+import org.reldb.relang.data.bdbje.BDBJEEnvironment;
+import org.reldb.relang.utilities.MessageDialog;
 
 public class Datasheets {
 
-	static long gridNumber = 0;
-
-	public static void openOrCreate(Shell createShell, String string) {
-		// TODO Auto-generated method stub
-		
-	}
-
-	public static void create(Shell newShell, String dbURL) {
-		// TODO Auto-generated method stub
-		
-	}
-
-	public static void open(Shell newShell, String dbURL) {
-		// TODO Auto-generated method stub
-		
-	}
-
-	public static void launchNewGrid() {
-		var gridName = "New Grid " + ++gridNumber;
-		newShell.setText(gridName);
+	private DirectoryDialog createDialog = null;
+	private DirectoryDialog openDialog = null;
+	
+	public String openOrCreate(Shell newShell, String dbURL, boolean create) {
+		var base = new BDBJEBase(dbURL, create);
+		newShell.setText(newShell.getText() + " - Datasheet " + dbURL);
 		newShell.setLayout(new FillLayout());
-		var base = new BDBJEBase(System.getProperty("user.home") + File.separator + "relangbase", true);
-		Data gridData;
-		if (base.exists(gridName)) {
-			gridData = base.open(gridName);			
-		} else {
-			gridData = base.create(gridName);
-			gridData.setColumnName(0, "A");
-			gridData.setColumnName(1, "B");
-			gridData.setColumnName(2, "C");
-			gridData.appendRow();
-			gridData.appendRow();
-			gridData.appendRow();
-		}
-		new Sheet(newShell, gridData);
+		new Datasheet(newShell, base);
 		newShell.open();
-		newShell.addListener(SWT.Close, evt -> gridData.close());
+		newShell.addListener(SWT.Close, evt -> base.close());		
+		return dbURL;
+	}
+
+	/** Ask the user for an empty directory in which to create a new Datasheet. Create it, display it in the given shell and return the dbURL if successful, null if not. */
+	public String create(Shell newShell) {
+		if (createDialog == null) {
+			createDialog = new DirectoryDialog(newShell);
+			if (openDialog != null)
+				createDialog.setFilterPath(openDialog.getFilterPath());
+			else
+				createDialog.setFilterPath(System.getProperty("user.home"));
+			createDialog.setText("Create Datasheet");
+			createDialog.setMessage("Select or create a directory to hold your new datasheet.");
+		}
+		String dbURL = createDialog.open();
+		if (dbURL == null) {
+			newShell.dispose();
+			return null;
+		}
+		if (BDBJEEnvironment.exists(dbURL)) {
+			MessageDialog.openInformation(newShell, "Datasheet Exists", "A datasheet already exists in " + dbURL);
+			newShell.dispose();
+			return null;
+		}
+		return openOrCreate(newShell, dbURL, true);
+	}
+
+	/** Open a specified existing directory which hopefully contains a Datasheet. Open it in the given shell and return the dbURL if successful, null if not. */
+	public String open(Shell newShell, String dbURL) {
+		if (!BDBJEEnvironment.exists(dbURL)) {
+			MessageDialog.openInformation(newShell, "Datasheet Does Not Exist", "A datasheet can't be found in " + dbURL);
+			newShell.dispose();
+			return null;
+		}
+		return openOrCreate(newShell, dbURL, false);
+	}
+
+	/** Ask the user for an existing directory which contains a Datasheet. Open it in the given shell and return the dbURL if successful, null if not. */
+	public String open(Shell newShell) {
+		if (openDialog == null) {
+			openDialog = new DirectoryDialog(newShell);
+			if (createDialog != null)
+				openDialog.setFilterPath(createDialog.getFilterPath());
+			else
+				openDialog.setFilterPath(System.getProperty("user.home"));
+			openDialog.setText("Open Datasheet");
+			openDialog.setMessage("Select a datasheet directory to open.");
+		}
+		String dbURL = openDialog.open();
+		if (dbURL == null) {
+			newShell.dispose();
+			return null;
+		}
+		return open(newShell, dbURL);
+	}
+
+	public void launchNewGrid() {
 	}
 
 }

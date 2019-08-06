@@ -22,8 +22,10 @@ public class BDBJEBase {
 	private BDBJEEnvironment environment;
 	private Database catalogDb;
 	private StoredMap<String, Heading> catalog;
+	private String dir;
 	
 	public BDBJEBase(String dir, boolean create) {
+		this.dir = dir;
 		environment = new BDBJEEnvironment(dir, create);				
 		// Catalog
 		catalogDb = environment.open(catalogName, true);
@@ -111,14 +113,27 @@ public class BDBJEBase {
 	 * @param table - BDBJEData
 	 */
 	public void close(BDBJEData table) {
-		table.close();
+		if (table == null)
+			return;
+		try {
+			table.close();
+		} finally {
+			table = null;
+		}
 	}
 	
 	/**
 	 * Close the database.
 	 */
 	public void close() {
-		catalogDb.close();
+		if (catalogDb != null)
+			try {
+				catalogDb.close();
+			} catch (Throwable t) {
+				System.out.println(Str.ing(WarnClosingCatalog, dir, t.toString()));
+			} finally {
+				catalogDb = null;
+			}
 		environment.close();
 	}
 

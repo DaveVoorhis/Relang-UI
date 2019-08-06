@@ -24,6 +24,7 @@ import org.eclipse.swt.widgets.*;
 import org.eclipse.wb.swt.SWTResourceManager;
 import org.reldb.relang.about.AboutDialog;
 import org.reldb.relang.commands.AcceleratedMenuItem;
+import org.reldb.relang.data.bdbje.BDBJEEnvironment;
 import org.reldb.relang.datasheet.Datasheets;
 import org.reldb.relang.feedback.BugReportDialog;
 import org.reldb.relang.feedback.CrashDialog;
@@ -47,6 +48,8 @@ public class Main {
 	static Shell shell = null;
 	
 	private static Queue<Runnable> tasks = new LinkedList<Runnable>();
+
+	private static Datasheets datasheets;
 	
 	private static synchronized void quit() {
 		Display display = Display.getCurrent();
@@ -81,15 +84,11 @@ public class Main {
 		fileItem.setMenu(menu);
 
 		new AcceleratedMenuItem(menu, "&New datasheet\tCtrl-N", SWT.MOD1 | 'N', "add-new-document", event -> {
-			String dbURL = "";
-			// TODO - Dialog to create datasheet here
-			Datasheets.create(createShell(), dbURL);
+			addRecentlyUsedDatasheetItem(datasheets.create(createShell()));
 		});
 		
 		new AcceleratedMenuItem(menu, "Open datasheet...\tCtrl-O", SWT.MOD1 | 'O', "open-folder-outline", event -> {
-			String dbURL = "";
-			// TODO Dialog to open datasheet here
-			Datasheets.open(createShell(), dbURL);
+			addRecentlyUsedDatasheetItem(datasheets.open(createShell()));
 		});
 
 		MenuItem recentItem = new MenuItem(menu, SWT.CASCADE);
@@ -119,16 +118,20 @@ public class Main {
 	}
 	
 	protected static boolean datasheetMayExist(String dbURL) {
-		// TODO Auto-generated method stub
-		return false;
+		return BDBJEEnvironment.exists(dbURL);
 	}
 
 	protected static void clearRecentlyUsedDatasheetList() {
 		// TODO Auto-generated method stub
 	}
 
+	protected static void addRecentlyUsedDatasheetItem(String dbURL) {
+		if (dbURL == null)
+			return;
+	}
+	
 	protected static void openDatasheet(String dbURL) {
-		Datasheets.open(createShell(), dbURL);
+		addRecentlyUsedDatasheetItem(datasheets.open(createShell(), dbURL));
 	}
 
 	protected static String[] getRecentlyUsedDatasheetList() {
@@ -285,7 +288,7 @@ public class Main {
 		dataItem.setMenu(menu);
 
 		new AcceleratedMenuItem(menu, "New Grid...\tCtrl-G", SWT.MOD1 | 'G', "newgrid", event -> {
-			Datasheets.launchNewGrid();
+			datasheets.launchNewGrid();
 		});
 		
 		new AcceleratedMenuItem(menu, "Link...\tCtrl-L", SWT.MOD1 | 'L', "link", event -> {
@@ -539,10 +542,12 @@ public class Main {
 		if (!PlatformDetect.isMac())
 			closeSplash();
 		
+		datasheets = new Datasheets();
+		
 		// Thunderbirds are go.
 		shell.open();
-		Datasheets.openOrCreate(createShell(), System.getProperty("user.home") + File.separator + "relangbase");
-		Datasheets.launchNewGrid();
+		var baseDir = System.getProperty("user.home") + File.separator + "relangbase";
+		datasheets.openOrCreate(shell, baseDir, true);
 		
 		while (display != null && !display.isDisposed()) {
 			try {
