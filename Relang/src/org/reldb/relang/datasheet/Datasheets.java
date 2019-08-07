@@ -17,7 +17,8 @@ public class Datasheets {
 		var base = new BDBJEBase(dbURL, create);
 		newShell.setText(newShell.getText() + " - Datasheet " + dbURL);
 		newShell.setLayout(new FillLayout());
-		new Datasheet(newShell, base);
+		var datasheet = new Datasheet(newShell, base);
+		datasheet.addTabSelectionChangeListener(evt -> System.out.println((evt.getCTabItem() == null) ? "<none>" : "Select " + evt.getCTabItem().getText()));
 		newShell.open();
 		newShell.addListener(SWT.Close, evt -> base.close());		
 		return dbURL;
