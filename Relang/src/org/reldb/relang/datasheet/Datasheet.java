@@ -91,6 +91,7 @@ public class Datasheet extends Composite {
 			tbtmNewItem.setText("Tab" + tabFolder.getItemCount());
 			tbtmNewItem.addListener(SWT.Dispose, evt -> fireContentTabSelectionChange());
 			tabFolder.setSelection(tbtmNewItem);
+			tabFolder.showSelection();
 			fireContentTabSelectionChange();
 		});
 		
@@ -101,6 +102,7 @@ public class Datasheet extends Composite {
 		tltmNewItem_2.setText("Demo3");
 	
 		CTabFolder treeFolder = new CTabFolder(sashForm, SWT.BORDER);
+		treeFolder.setSingle(true);
 		treeFolder.setSelectionBackground(Display.getCurrent().getSystemColor(SWT.COLOR_TITLE_INACTIVE_BACKGROUND_GRADIENT));
 		
 		CTabItem tbtmCatalog = new CTabItem(treeFolder, SWT.NONE);
@@ -110,6 +112,8 @@ public class Datasheet extends Composite {
 		tbtmCatalog.setControl(tree);
 		
 		tabFolder = new CTabFolder(sashForm, SWT.BORDER);
+		tabFolder.setMaximizeVisible(true);
+		tabFolder.setMinimizeVisible(true);
 		tabFolder.setSelectionBackground(Display.getCurrent().getSystemColor(SWT.COLOR_TITLE_INACTIVE_BACKGROUND_GRADIENT));
 		tabFolder.addListener(SWT.Selection, e -> fireContentTabSelectionChange());
 		
