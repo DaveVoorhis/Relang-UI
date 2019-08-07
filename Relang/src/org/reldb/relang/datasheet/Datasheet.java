@@ -99,7 +99,7 @@ public class Datasheet extends Composite {
 			fireContentTabSelectionChange();
 			
 			var blah = new Button(tabFolder, SWT.BORDER);
-			blah.setText("This is some sample content.");
+			blah.setText("This is some sample content for " + tbtmNewItem.getText());
 			
 			tbtmNewItem.setControl(blah);
 		});
