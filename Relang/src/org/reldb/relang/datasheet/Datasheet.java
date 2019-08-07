@@ -1,6 +1,7 @@
 package org.reldb.relang.datasheet;
 
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Shell;
 import org.reldb.relang.data.bdbje.BDBJEBase;
@@ -10,6 +11,8 @@ import org.eclipse.swt.widgets.ToolBar;
 import org.eclipse.swt.custom.SashForm;
 import org.eclipse.swt.widgets.Tree;
 import org.eclipse.swt.custom.CTabFolder;
+import org.eclipse.swt.custom.CTabFolder2Adapter;
+import org.eclipse.swt.custom.CTabFolderEvent;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.layout.FormLayout;
 import org.eclipse.swt.layout.FormData;
@@ -18,7 +21,8 @@ import org.eclipse.swt.custom.CTabItem;
 import org.eclipse.swt.widgets.ToolItem;
 
 public class Datasheet extends Composite {
-	private BDBJEBase base = null;	
+	private BDBJEBase base = null;
+	
 	private CTabFolder tabFolder;
 	private CTabItem lastSelection = null;
 	
@@ -93,6 +97,11 @@ public class Datasheet extends Composite {
 			tabFolder.setSelection(tbtmNewItem);
 			tabFolder.showSelection();
 			fireContentTabSelectionChange();
+			
+			var blah = new Button(tabFolder, SWT.BORDER);
+			blah.setText("This is some sample content.");
+			
+			tbtmNewItem.setControl(blah);
 		});
 		
 		ToolItem tltmNewItem_1 = new ToolItem(toolBar, SWT.NONE);
@@ -113,9 +122,16 @@ public class Datasheet extends Composite {
 		
 		tabFolder = new CTabFolder(sashForm, SWT.BORDER);
 		tabFolder.setMaximizeVisible(true);
-		tabFolder.setMinimizeVisible(true);
 		tabFolder.setSelectionBackground(Display.getCurrent().getSystemColor(SWT.COLOR_TITLE_INACTIVE_BACKGROUND_GRADIENT));
 		tabFolder.addListener(SWT.Selection, e -> fireContentTabSelectionChange());
+		tabFolder.addCTabFolder2Listener(new CTabFolder2Adapter() {
+			@Override
+			public void maximize(CTabFolderEvent arg0) {
+				var selection = tabFolder.getSelection();
+				if (selection != null)
+					sashForm.setMaximizedControl(tabFolder);
+			}
+		});
 		
 		sashForm.setWeights(new int[] {1, 3});
 		
