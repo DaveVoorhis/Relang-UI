@@ -1,9 +1,14 @@
 package org.reldb.relang.datasheet;
 
+import java.lang.reflect.Array;
+import java.util.stream.Stream;
+
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Shell;
+import org.reldb.relang.commands.CommandActivator;
+import org.reldb.relang.commands.Commands;
 import org.reldb.relang.data.bdbje.BDBJEBase;
 import org.reldb.relang.utilities.EventHandler;
 import org.eclipse.swt.widgets.ToolBar;
@@ -18,7 +23,6 @@ import org.eclipse.swt.layout.FormLayout;
 import org.eclipse.swt.layout.FormData;
 import org.eclipse.swt.layout.FormAttachment;
 import org.eclipse.swt.custom.CTabItem;
-import org.eclipse.swt.widgets.ToolItem;
 
 public class Datasheet extends Composite {
 	private BDBJEBase base = null;
@@ -27,24 +31,11 @@ public class Datasheet extends Composite {
 	private CTabFolder tabFolder;
 	private CTabItem lastSelection = null;
 	
-	public static class TabSelectionChangeEvent {
-		public final Datasheet sheet;
-		public final CTabItem tabItem;
-
-		public TabSelectionChangeEvent(Datasheet sheet, CTabItem tabItem) {
-			this.sheet = sheet;
-			this.tabItem = tabItem;
-		}
-	}
-
-	public final EventHandler<TabSelectionChangeEvent> tabSelectionChangeEventHandler = new EventHandler<TabSelectionChangeEvent>();
-	
 	protected void fireContentTabSelectionChange() {
 		var selection = tabFolder.getSelection();
-		if (selection != lastSelection) {
-			tabSelectionChangeEventHandler.fire(new TabSelectionChangeEvent(this, selection));
+		if (selection != lastSelection)
 			lastSelection = selection;
-		}
+		updateToolbar();
 	}
 	
 	/**
@@ -61,17 +52,7 @@ public class Datasheet extends Composite {
 		fd_toolBar.right = new FormAttachment(100, 0);
 		toolBar.setLayoutData(fd_toolBar);
 		
-		SashForm sashForm = new SashForm(this, SWT.NONE);
-		FormData fd_sashForm = new FormData();
-		fd_sashForm.top = new FormAttachment(toolBar, 0);		
-		fd_sashForm.left = new FormAttachment(0, 0);
-		fd_sashForm.right = new FormAttachment(100, 0);
-		fd_sashForm.bottom = new FormAttachment(100, 0);
-		sashForm.setLayoutData(fd_sashForm);
-		
-		ToolItem tltmNewItem = new ToolItem(toolBar, SWT.NONE);
-		tltmNewItem.setText("New Tab");
-		tltmNewItem.addListener(SWT.Selection, e -> {
+		Commands.addCommandActivator(new CommandActivator(Commands.Do.NewGrid, toolBar, "newgrid", SWT.NONE, "New grid", e -> {
 			CTabItem tbtmNewItem = new CTabItem(tabFolder, SWT.CLOSE);
 			tbtmNewItem.setText("Tab" + tabFolder.getItemCount());
 			tbtmNewItem.addListener(SWT.Dispose, evt -> fireContentTabSelectionChange());
@@ -83,13 +64,21 @@ public class Datasheet extends Composite {
 			blah.setText("This is some sample content for " + tbtmNewItem.getText());
 			
 			tbtmNewItem.setControl(blah);
-		});
+		}));
+		Commands.addCommandActivator(new CommandActivator(Commands.Do.Link, toolBar, "link", SWT.NONE, "Link...", e -> {
+			
+		}));
+		Commands.addCommandActivator(new CommandActivator(Commands.Do.Import, toolBar, "import", SWT.NONE, "Import...", e -> {
+			
+		}));		
 		
-		ToolItem tltmNewItem_1 = new ToolItem(toolBar, SWT.NONE);
-		tltmNewItem_1.setText("Demo2");
-		
-		ToolItem tltmNewItem_2 = new ToolItem(toolBar, SWT.NONE);
-		tltmNewItem_2.setText("Demo3");
+		SashForm sashForm = new SashForm(this, SWT.NONE);
+		FormData fd_sashForm = new FormData();
+		fd_sashForm.top = new FormAttachment(toolBar, 0);		
+		fd_sashForm.left = new FormAttachment(0, 0);
+		fd_sashForm.right = new FormAttachment(100, 0);
+		fd_sashForm.bottom = new FormAttachment(100, 0);
+		sashForm.setLayoutData(fd_sashForm);
 	
 		CTabFolder treeFolder = new CTabFolder(sashForm, SWT.BORDER);
 		treeFolder.setSelectionBackground(Display.getCurrent().getSystemColor(SWT.COLOR_TITLE_INACTIVE_BACKGROUND_GRADIENT));
@@ -125,20 +114,23 @@ public class Datasheet extends Composite {
 	public Datasheet(Shell newShell, BDBJEBase base) {
 		this(newShell, SWT.NONE);
 		this.base = base;
-		
-		tabSelectionChangeEventHandler.addListener(evt -> {
-			System.out.println("Datasheet tab changed to " + (evt.tabItem) != null ? evt.tabItem.getText() : "null");
-		});
 	}
 
+	private void setToolbarState(boolean enabled) {
+		Stream.of(toolBar.getItems()).forEach(toolItem -> toolItem.setEnabled(enabled));		
+	}
+	
 	public void disableToolbar() {
-		// TODO Auto-generated method stub
-		
+		setToolbarState(false);
+		updateToolbar();
 	}
 
-	public Listener enableToolbar() {
-		// TODO Auto-generated method stub
-		return null;
+	public void enableToolbar() {
+		setToolbarState(true);
+		updateToolbar();
+	}
+	
+	private void updateToolbar() {	
 	}
 	
 	/*
