@@ -9,6 +9,7 @@ import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.MenuItem;
+import org.eclipse.swt.widgets.ToolBar;
 import org.eclipse.swt.widgets.ToolItem;
 import org.reldb.relang.commands.Commands.Do;
 import org.reldb.relang.utilities.IconLoader;
@@ -27,7 +28,7 @@ public class CommandActivator extends ToolItem {
 	private String iconName;
 	private Do command;
     private boolean visible = false;
-    private ManagedToolbar toolbar;
+    private ToolBar toolbar;
 
     private Timer stateTimer = new Timer();
     
@@ -53,7 +54,7 @@ public class CommandActivator extends ToolItem {
     	notifyHidden();
     }
 
-	public CommandActivator(Do command, ManagedToolbar toolBar, String iconName, int style, String tooltipText, Listener listener) {
+	public CommandActivator(Do command, ToolBar toolBar, String iconName, int style, String tooltipText, Listener listener) {
 		super(toolBar, style);
 		this.command = command;
 		this.toolbar = toolBar;
@@ -132,7 +133,7 @@ public class CommandActivator extends ToolItem {
 		return command;
 	}
 
-	public ManagedToolbar getManagedToolbar() {
+	public ToolBar getToolBar() {
 		return toolbar;
 	}
 	

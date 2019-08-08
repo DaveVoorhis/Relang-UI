@@ -6,7 +6,6 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Shell;
 import org.reldb.relang.data.bdbje.BDBJEBase;
 import org.reldb.relang.utilities.EventHandler;
-import org.reldb.relang.utilities.EventListener;
 import org.eclipse.swt.widgets.ToolBar;
 import org.eclipse.swt.custom.SashForm;
 import org.eclipse.swt.widgets.Tree;
@@ -14,6 +13,7 @@ import org.eclipse.swt.custom.CTabFolder;
 import org.eclipse.swt.custom.CTabFolder2Adapter;
 import org.eclipse.swt.custom.CTabFolderEvent;
 import org.eclipse.swt.widgets.Display;
+import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.layout.FormLayout;
 import org.eclipse.swt.layout.FormData;
 import org.eclipse.swt.layout.FormAttachment;
@@ -23,45 +23,26 @@ import org.eclipse.swt.widgets.ToolItem;
 public class Datasheet extends Composite {
 	private BDBJEBase base = null;
 	
+	private ToolBar toolBar;
 	private CTabFolder tabFolder;
 	private CTabItem lastSelection = null;
 	
 	public static class TabSelectionChangeEvent {
-		private Datasheet sheet;
-		private CTabItem tabItem;
+		public final Datasheet sheet;
+		public final CTabItem tabItem;
 
 		public TabSelectionChangeEvent(Datasheet sheet, CTabItem tabItem) {
 			this.sheet = sheet;
 			this.tabItem = tabItem;
 		}
-		
-		public Datasheet getDatasheet() {
-			return sheet;
-		}
-		
-		public CTabItem getCTabItem() {
-			return tabItem;
-		}
 	}
 
-	private EventHandler<TabSelectionChangeEvent> tabSelectionChangeEventHandler = new EventHandler<TabSelectionChangeEvent>();
-	
-	public void addTabSelectionChangeListener(EventListener<TabSelectionChangeEvent> listener) {
-		tabSelectionChangeEventHandler.addListener(listener);
-	}
-	
-	public void removeTabSelectionChangeListener(EventListener<TabSelectionChangeEvent> listener) {
-		tabSelectionChangeEventHandler.removeListener(listener);
-	}
-
-	protected void fireContentTabSelectionChange(TabSelectionChangeEvent event) {
-		tabSelectionChangeEventHandler.fire(event);
-	}
+	public final EventHandler<TabSelectionChangeEvent> tabSelectionChangeEventHandler = new EventHandler<TabSelectionChangeEvent>();
 	
 	protected void fireContentTabSelectionChange() {
 		var selection = tabFolder.getSelection();
 		if (selection != lastSelection) {
-			fireContentTabSelectionChange(new TabSelectionChangeEvent(this, selection));
+			tabSelectionChangeEventHandler.fire(new TabSelectionChangeEvent(this, selection));
 			lastSelection = selection;
 		}
 	}
@@ -73,7 +54,7 @@ public class Datasheet extends Composite {
 		super(newShell, style);
 		setLayout(new FormLayout());
 		
-		ToolBar toolBar = new ToolBar(this, SWT.FLAT);
+		toolBar = new ToolBar(this, SWT.FLAT);
 		FormData fd_toolBar = new FormData();
 		fd_toolBar.top = new FormAttachment(0, 0);
 		fd_toolBar.left = new FormAttachment(0, 0);
@@ -111,7 +92,6 @@ public class Datasheet extends Composite {
 		tltmNewItem_2.setText("Demo3");
 	
 		CTabFolder treeFolder = new CTabFolder(sashForm, SWT.BORDER);
-		treeFolder.setSingle(true);
 		treeFolder.setSelectionBackground(Display.getCurrent().getSystemColor(SWT.COLOR_TITLE_INACTIVE_BACKGROUND_GRADIENT));
 		
 		CTabItem tbtmCatalog = new CTabItem(treeFolder, SWT.NONE);
@@ -126,10 +106,14 @@ public class Datasheet extends Composite {
 		tabFolder.addListener(SWT.Selection, e -> fireContentTabSelectionChange());
 		tabFolder.addCTabFolder2Listener(new CTabFolder2Adapter() {
 			@Override
-			public void maximize(CTabFolderEvent arg0) {
-				var selection = tabFolder.getSelection();
-				if (selection != null)
-					sashForm.setMaximizedControl(tabFolder);
+			public void maximize(CTabFolderEvent evt) {
+				sashForm.setMaximizedControl(tabFolder);
+				tabFolder.setMaximized(true);
+			}
+			@Override
+			public void restore(CTabFolderEvent evt) {
+				sashForm.setMaximizedControl(null);
+				tabFolder.setMaximized(false);
 			}
 		});
 		
@@ -141,6 +125,20 @@ public class Datasheet extends Composite {
 	public Datasheet(Shell newShell, BDBJEBase base) {
 		this(newShell, SWT.NONE);
 		this.base = base;
+		
+		tabSelectionChangeEventHandler.addListener(evt -> {
+			System.out.println("Datasheet tab changed to " + (evt.tabItem) != null ? evt.tabItem.getText() : "null");
+		});
+	}
+
+	public void disableToolbar() {
+		// TODO Auto-generated method stub
+		
+	}
+
+	public Listener enableToolbar() {
+		// TODO Auto-generated method stub
+		return null;
 	}
 	
 	/*

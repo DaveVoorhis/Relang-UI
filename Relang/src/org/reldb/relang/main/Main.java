@@ -9,6 +9,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
+import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.Queue;
 import java.util.concurrent.Semaphore;
@@ -24,6 +25,7 @@ import org.eclipse.swt.widgets.*;
 import org.eclipse.wb.swt.SWTResourceManager;
 import org.reldb.relang.about.AboutDialog;
 import org.reldb.relang.commands.AcceleratedMenuItem;
+import org.reldb.relang.commands.Commands;
 import org.reldb.relang.data.bdbje.BDBJEEnvironment;
 import org.reldb.relang.datasheet.Datasheets;
 import org.reldb.relang.feedback.BugReportDialog;
@@ -53,21 +55,20 @@ public class Main {
 	
 	private static synchronized void quit() {
 		Display display = Display.getCurrent();
-		Shell[] shells = display.getShells();
-		try {
-		for (Shell shell: shells)
-			if (!shell.isDisposed())
-				shell.close();
-		} catch (Throwable t) {
-			System.out.println("Error trying to close shells: " + t);
-			t.printStackTrace();
-		}
-		try {
-			if (!display.isDisposed()) 
-				display.dispose();
-		} catch (Throwable t) {
-			System.out.println("Error trying to close display: " + t);
-			t.printStackTrace();
+		if (display != null) {
+			Shell[] shells = display.getShells();
+			try {
+			for (Shell shell: shells)
+				if (!shell.isDisposed())
+					shell.close();
+			} catch (Throwable t) {
+				System.out.println("Error trying to close shells: " + t);
+				t.printStackTrace();
+			}
+			if (!display.isDisposed())
+				try {
+					display.dispose();
+				} catch (Throwable t) {}
 		}
 		try {
 			SWTResourceManager.dispose();
@@ -287,17 +288,9 @@ public class Main {
 		Menu menu = new Menu(dataItem);
 		dataItem.setMenu(menu);
 
-		new AcceleratedMenuItem(menu, "New Grid...\tCtrl-G", SWT.MOD1 | 'G', "newgrid", event -> {
-			datasheets.launchNewGrid();
-		});
-		
-		new AcceleratedMenuItem(menu, "Link...\tCtrl-L", SWT.MOD1 | 'L', "link", event -> {
-			
-		});
-		
-		new AcceleratedMenuItem(menu, "Import...\tCtrl-I", SWT.MOD1 | 'I', "import", event -> {
-			
-		});
+		Commands.linkCommand(Commands.Do.NewGrid, new AcceleratedMenuItem(menu, "New Grid...\tCtrl-G", SWT.MOD1 | 'G', "newgrid"));
+		Commands.linkCommand(Commands.Do.Link, new AcceleratedMenuItem(menu, "Link...\tCtrl-L", SWT.MOD1 | 'L', "link"));
+		Commands.linkCommand(Commands.Do.Import, new AcceleratedMenuItem(menu, "Import...\tCtrl-I", SWT.MOD1 | 'I', "import"));
 	}
 
 	@SuppressWarnings("null")
@@ -365,6 +358,16 @@ public class Main {
 	private static Shell createShell() {
 		final Shell shell = new Shell(SWT.SHELL_TRIM);
 		createMenuBar(shell);
+		shell.setImage(IconLoader.loadIcon("RelangIcon"));
+		shell.setImages(loadIcons(Display.getCurrent()));
+		shell.setText(Version.getAppID());
+		shell.addListener(SWT.Dispose, evt -> {
+			// shut down application if number of visible shells is 1 or less.
+			if (Arrays.stream(Display.getCurrent().getShells()).filter(sh -> sh.getVisible()).count() <= 1) {
+				LogWin.remove();
+				quit();
+			}
+		});
 		return shell;
 	}
 
@@ -486,17 +489,8 @@ public class Main {
 		}
 		
 		shell = createShell();
-		shell.setImage(IconLoader.loadIcon("RelangIcon"));
-		shell.setImages(loadIcons(display));
-		shell.setText(Version.getAppID());
-		shell.addListener(SWT.Close, e -> {
-			LogWin.remove();
-			shell.dispose();
-		});
-		shell.addDisposeListener(e -> quit());
-		shell.layout();
 
-		LogWin.install(shell);
+		LogWin.install(createShell());
 		
 		Loading.start();
 		

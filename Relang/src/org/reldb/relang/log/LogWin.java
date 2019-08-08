@@ -3,11 +3,12 @@ package org.reldb.relang.log;
 import java.io.BufferedWriter;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.util.Arrays;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.TimeUnit;
 
-import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.FileDialog;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.layout.FormLayout;
@@ -19,11 +20,8 @@ import org.eclipse.swt.widgets.ToolItem;
 import org.reldb.relang.main.Loading;
 import org.reldb.relang.preferences.Preferences;
 import org.reldb.relang.utilities.IconLoader;
-import org.reldb.relang.version.Version;
 import org.eclipse.swt.custom.StyleRange;
 import org.eclipse.swt.custom.StyledText;
-import org.eclipse.swt.events.ShellAdapter;
-import org.eclipse.swt.events.ShellEvent;
 import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.Rectangle;
 
@@ -66,18 +64,18 @@ public class LogWin {
 
 	private static final String rectPrefName = "logwin.rect";
 
-	protected LogWin(Composite parent) {
+	protected LogWin() {
 		messageQueue = new LinkedBlockingQueue<Message>();
-
-		shell = new Shell(parent.getDisplay());
-		shell.setText(Version.getAppName() + " System Log");
+		
+		shell.setText(shell.getText() + " System Log");
 		shell.setLayout(new FormLayout());
-		shell.addShellListener(new ShellAdapter() {
-			@Override
-			public void shellClosed(ShellEvent e) {
-				e.doit = false;
-				shell.setVisible(false);
-			}
+		shell.addListener(SWT.Close, evt -> {
+			// allow application to shut down if number of visible shells is 1 or less. (1 because this shell is visible)
+			if (Arrays.stream(Display.getCurrent().getShells()).filter(sh -> sh.getVisible()).count() <= 1)
+				return;
+			// otherwise, just make this shell invisible until we need it again
+			evt.doit = false;
+			shell.setVisible(false);
 		});
 
 		shell.addListener(SWT.Move, e -> Preferences.setPreference(rectPrefName, shell.getBounds()));
@@ -141,11 +139,11 @@ public class LogWin {
 				} catch (InterruptedException e1) {
 					continue;
 				}
-				if (parent.isDisposed() || parent.getDisplay().isDisposed()) {
+				if (shell.isDisposed() || shell.getDisplay().isDisposed()) {
 					running = false;
 					return;
 				}
-				parent.getDisplay().syncExec(() -> {
+				shell.getDisplay().syncExec(() -> {
 					if (!textLog.isDisposed()) {
 						try {
 							Message message = awaitedEntry;
@@ -226,8 +224,9 @@ public class LogWin {
 	private static Interceptor outInterceptor;
 	private static Interceptor errInterceptor;
 
-	public static void install(Composite parent) {
-		window = new LogWin(parent);
+	public static void install(Shell shell) {
+		LogWin.shell = shell;
+		window = new LogWin();
 
 		class LogMessages implements Logger {
 			public void log(String s) {

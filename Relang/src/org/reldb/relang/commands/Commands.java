@@ -9,71 +9,47 @@ import org.eclipse.swt.events.MenuAdapter;
 import org.eclipse.swt.events.MenuEvent;
 import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.MenuItem;
+import org.eclipse.swt.widgets.ToolBar;
 import org.eclipse.swt.widgets.ToolItem;
 
 public class Commands {
 
 	public static enum Do {
 		MakeBackup,
-		Refresh, 
-		Show, 
-		Edit, 
-		New, 
-		Drop, 
-		Design, 
-		Rename, 
-		Export, 
-		ShowSystemObjects, 
-		DisplayOk, 
-		DisplayAutoClear, 
-		ShowRelationHeadings, 
-		ShowRelationHeadingAttributeTypes, 
-		DisplayEnhancedOutput, 
-		SaveAsText, 
-		SaveAsHTML, 
-		ClearOutput, 
-		WrapText, 
-		CopyInputToOutput, 
-		SaveHistory, 
-		SaveFile, 
-		InsertFile, 
-		LoadFile, 
-		FindReplace, 
-		NextHistory, 
-		PreviousHistory, 
-		SpecialCharacters, 
-		CopyOutputToInput, 
-		InsertFileName,
+		RestoreBackup,
+		NewGrid,
+		Link,
+		Import,
 	}
 
 	private static Map<Do, MenuItem> menuDoMapping = new HashMap<>();
-	private static Map<Do, HashSet<ManagedToolbar>> commandDoMapping = new HashMap<>();
+	private static Map<Do, HashSet<ToolBar>> commandDoMapping = new HashMap<>();
 	
 	public static void addCommandActivator(CommandActivator activator) {
 		synchronized (commandDoMapping) {
-			HashSet<ManagedToolbar> toolbars = commandDoMapping.get(activator.getCommand());
+			HashSet<ToolBar> toolbars = commandDoMapping.get(activator.getCommand());
 			if (toolbars == null)
 				toolbars = new HashSet<>();
-			toolbars.add(activator.getManagedToolbar());
+			toolbars.add(activator.getToolBar());
 			commandDoMapping.put(activator.getCommand(), toolbars);
 		}
 	}
 	
 	public static void removeCommandActivator(CommandActivator activator) {
 		synchronized (commandDoMapping) {
-			HashSet<ManagedToolbar> toolbars = commandDoMapping.get(activator.getCommand());
+			HashSet<ToolBar> toolbars = commandDoMapping.get(activator.getCommand());
 			if (toolbars == null)
 				return;
-			toolbars.remove(activator.getManagedToolbar());
+			toolbars.remove(activator.getToolBar());
 		}
 	}
 	
 	public static CommandActivator getCommandActivator(Do command) {
 		synchronized (commandDoMapping) {
-			HashSet<ManagedToolbar> toolbars = commandDoMapping.get(command);
+			HashSet<ToolBar> toolbars = commandDoMapping.get(command);
 			if (toolbars == null)
 				return null;
-			for (ManagedToolbar toolbar: toolbars) {
+			for (ToolBar toolbar: toolbars) {
 				if (!toolbar.isDisposed() && toolbar.isVisible())
 					for (ToolItem toolItem: toolbar.getItems())
 						if (toolItem instanceof CommandActivator && !toolItem.isDisposed())

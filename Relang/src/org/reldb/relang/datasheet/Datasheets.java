@@ -6,6 +6,7 @@ import org.eclipse.swt.widgets.DirectoryDialog;
 import org.eclipse.swt.widgets.Shell;
 import org.reldb.relang.data.bdbje.BDBJEBase;
 import org.reldb.relang.data.bdbje.BDBJEEnvironment;
+import org.reldb.relang.utilities.EventHandler;
 import org.reldb.relang.utilities.MessageDialog;
 
 public class Datasheets {
@@ -18,9 +19,14 @@ public class Datasheets {
 		newShell.setText(newShell.getText() + " - Datasheet " + dbURL);
 		newShell.setLayout(new FillLayout());
 		var datasheet = new Datasheet(newShell, base);
-		datasheet.addTabSelectionChangeListener(evt -> System.out.println((evt.getCTabItem() == null) ? "<none>" : "Select " + evt.getCTabItem().getText()));
 		newShell.open();
-		newShell.addListener(SWT.Close, evt -> base.close());		
+		newShell.addListener(SWT.Close, evt -> {
+			base.close();
+			datasheet.disableToolbar();
+		});		
+		newShell.addListener(SWT.Activate, evt -> datasheet.enableToolbar());
+		newShell.addListener(SWT.Deactivate, evt -> datasheet.disableToolbar());
+		datasheet.enableToolbar();
 		return dbURL;
 	}
 
@@ -75,9 +81,6 @@ public class Datasheets {
 			return null;
 		}
 		return open(newShell, dbURL);
-	}
-
-	public void launchNewGrid() {
 	}
 
 }
