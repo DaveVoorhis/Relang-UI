@@ -1,6 +1,5 @@
 package org.reldb.relang.datasheet;
 
-import java.lang.reflect.Array;
 import java.util.stream.Stream;
 
 import org.eclipse.swt.SWT;
@@ -10,7 +9,6 @@ import org.eclipse.swt.widgets.Shell;
 import org.reldb.relang.commands.CommandActivator;
 import org.reldb.relang.commands.Commands;
 import org.reldb.relang.data.bdbje.BDBJEBase;
-import org.reldb.relang.utilities.EventHandler;
 import org.eclipse.swt.widgets.ToolBar;
 import org.eclipse.swt.custom.SashForm;
 import org.eclipse.swt.widgets.Tree;
@@ -18,16 +16,19 @@ import org.eclipse.swt.custom.CTabFolder;
 import org.eclipse.swt.custom.CTabFolder2Adapter;
 import org.eclipse.swt.custom.CTabFolderEvent;
 import org.eclipse.swt.widgets.Display;
-import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.layout.FormLayout;
+import org.eclipse.swt.layout.RowLayout;
 import org.eclipse.swt.layout.FormData;
+import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.layout.FormAttachment;
 import org.eclipse.swt.custom.CTabItem;
 
 public class Datasheet extends Composite {
 	private BDBJEBase base = null;
 	
-	private ToolBar toolBar;
+	private Composite toolbarPanel;
+	private ToolBar datasheetToolbar;
+	private ToolBar tabToolbar;
 	private CTabFolder tabFolder;
 	private CTabItem lastSelection = null;
 	
@@ -35,7 +36,7 @@ public class Datasheet extends Composite {
 		var selection = tabFolder.getSelection();
 		if (selection != lastSelection)
 			lastSelection = selection;
-		updateToolbar();
+//		buildTabToolbar();
 	}
 	
 	/**
@@ -45,14 +46,17 @@ public class Datasheet extends Composite {
 		super(newShell, style);
 		setLayout(new FormLayout());
 		
-		toolBar = new ToolBar(this, SWT.FLAT);
-		FormData fd_toolBar = new FormData();
-		fd_toolBar.top = new FormAttachment(0, 0);
-		fd_toolBar.left = new FormAttachment(0, 0);
-		fd_toolBar.right = new FormAttachment(100, 0);
-		toolBar.setLayoutData(fd_toolBar);
+		toolbarPanel = new Composite(this, SWT.NONE);
+		toolbarPanel.setLayout(new RowLayout());
 		
-		Commands.addCommandActivator(new CommandActivator(Commands.Do.NewGrid, toolBar, "newgrid", SWT.NONE, "New grid", e -> {
+		datasheetToolbar = new ToolBar(toolbarPanel, SWT.FLAT);
+
+		FormData fd_toolbarPanel = new FormData();
+		fd_toolbarPanel.top = new FormAttachment(0, 0);
+		fd_toolbarPanel.left = new FormAttachment(0, 0);
+		fd_toolbarPanel.right = new FormAttachment(100, 0);
+		
+		Commands.addCommandActivator(new CommandActivator(Commands.Do.NewGrid, datasheetToolbar, "newgrid", SWT.NONE, "New grid", e -> {
 			CTabItem tbtmNewItem = new CTabItem(tabFolder, SWT.CLOSE);
 			tbtmNewItem.setText("Tab" + tabFolder.getItemCount());
 			tbtmNewItem.addListener(SWT.Dispose, evt -> fireContentTabSelectionChange());
@@ -65,16 +69,16 @@ public class Datasheet extends Composite {
 			
 			tbtmNewItem.setControl(blah);
 		}));
-		Commands.addCommandActivator(new CommandActivator(Commands.Do.Link, toolBar, "link", SWT.NONE, "Link...", e -> {
+		Commands.addCommandActivator(new CommandActivator(Commands.Do.Link, datasheetToolbar, "link", SWT.NONE, "Link...", e -> {
 			
 		}));
-		Commands.addCommandActivator(new CommandActivator(Commands.Do.Import, toolBar, "import", SWT.NONE, "Import...", e -> {
+		Commands.addCommandActivator(new CommandActivator(Commands.Do.Import, datasheetToolbar, "import", SWT.NONE, "Import...", e -> {
 			
 		}));		
 		
 		SashForm sashForm = new SashForm(this, SWT.NONE);
 		FormData fd_sashForm = new FormData();
-		fd_sashForm.top = new FormAttachment(toolBar, 0);		
+		fd_sashForm.top = new FormAttachment(toolbarPanel, 0);		
 		fd_sashForm.left = new FormAttachment(0, 0);
 		fd_sashForm.right = new FormAttachment(100, 0);
 		fd_sashForm.bottom = new FormAttachment(100, 0);
@@ -116,21 +120,33 @@ public class Datasheet extends Composite {
 		this.base = base;
 	}
 
+	private void buildTabToolbar() {
+		if (tabToolbar != null)
+			tabToolbar.dispose();
+		tabToolbar = new ToolBar(toolbarPanel, SWT.FLAT);
+		FormData fd_toolBar = new FormData();
+		fd_toolBar.top = new FormAttachment(0, 0);
+		fd_toolBar.left = new FormAttachment(datasheetToolbar, 0);
+		tabToolbar.setLayoutData(fd_toolBar);
+		toolbarPanel.layout(true);
+	}
+	
+	private void setToolbarState(ToolBar toolBar, boolean enabled) {
+		Stream.of(toolBar.getItems()).forEach(toolItem -> toolItem.setEnabled(enabled));				
+	}
+	
 	private void setToolbarState(boolean enabled) {
-		Stream.of(toolBar.getItems()).forEach(toolItem -> toolItem.setEnabled(enabled));		
+		setToolbarState(datasheetToolbar, enabled);		
+		if (tabToolbar != null)
+			setToolbarState(tabToolbar, enabled);		
 	}
 	
 	public void disableToolbar() {
 		setToolbarState(false);
-		updateToolbar();
 	}
 
 	public void enableToolbar() {
 		setToolbarState(true);
-		updateToolbar();
-	}
-	
-	private void updateToolbar() {	
 	}
 	
 	/*
