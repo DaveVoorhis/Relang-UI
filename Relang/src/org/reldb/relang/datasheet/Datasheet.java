@@ -10,6 +10,7 @@ import org.reldb.relang.commands.CommandActivator;
 import org.reldb.relang.commands.Commands;
 import org.reldb.relang.data.bdbje.BDBJEBase;
 import org.eclipse.swt.widgets.ToolBar;
+import org.eclipse.swt.widgets.ToolItem;
 import org.eclipse.swt.custom.SashForm;
 import org.eclipse.swt.widgets.Tree;
 import org.eclipse.swt.custom.CTabFolder;
@@ -132,8 +133,9 @@ public class Datasheet extends Composite {
 		
 		tabToolbar = new ToolBar(toolbarPanel, SWT.FLAT);
 		
-		
 		// get contents here
+		var toolbarItem = new ToolItem(tabToolbar, SWT.FLAT);
+		toolbarItem.setText("tab item");
 		
 		toolbarPanel.layout(true);
 	}
