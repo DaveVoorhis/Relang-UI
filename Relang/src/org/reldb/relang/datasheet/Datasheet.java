@@ -35,7 +35,7 @@ public class Datasheet extends Composite {
 		var selection = tabFolder.getSelection();
 		if (selection != lastSelection)
 			lastSelection = selection;
-//		buildTabToolbar();
+		buildTabToolbar();
 	}
 	
 	/**
@@ -127,11 +127,14 @@ public class Datasheet extends Composite {
 	private void buildTabToolbar() {
 		if (tabToolbar != null)
 			tabToolbar.dispose();
+		if (toolbarPanel.isDisposed())
+			return;
+		
 		tabToolbar = new ToolBar(toolbarPanel, SWT.FLAT);
-		FormData fd_toolBar = new FormData();
-		fd_toolBar.top = new FormAttachment(0, 0);
-		fd_toolBar.left = new FormAttachment(datasheetToolbar, 0);
-		tabToolbar.setLayoutData(fd_toolBar);
+		
+		
+		// get contents here
+		
 		toolbarPanel.layout(true);
 	}
 	
