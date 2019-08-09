@@ -19,7 +19,6 @@ import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.layout.FormLayout;
 import org.eclipse.swt.layout.RowLayout;
 import org.eclipse.swt.layout.FormData;
-import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.layout.FormAttachment;
 import org.eclipse.swt.custom.CTabItem;
 
@@ -113,6 +112,11 @@ public class Datasheet extends Composite {
 		sashForm.setWeights(new int[] {1, 3});
 		
 		newShell.layout();
+		
+		newShell.addListener(SWT.Close, evt -> disableToolbar());		
+		newShell.addListener(SWT.Activate, evt -> enableToolbar());
+		newShell.addListener(SWT.Deactivate, evt -> disableToolbar());
+		enableToolbar();
 	}
 	
 	public Datasheet(Shell newShell, BDBJEBase base) {
@@ -141,11 +145,11 @@ public class Datasheet extends Composite {
 			setToolbarState(tabToolbar, enabled);		
 	}
 	
-	public void disableToolbar() {
+	private void disableToolbar() {
 		setToolbarState(false);
 	}
 
-	public void enableToolbar() {
+	private void enableToolbar() {
 		setToolbarState(true);
 	}
 	

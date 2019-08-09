@@ -6,7 +6,6 @@ import org.eclipse.swt.widgets.DirectoryDialog;
 import org.eclipse.swt.widgets.Shell;
 import org.reldb.relang.data.bdbje.BDBJEBase;
 import org.reldb.relang.data.bdbje.BDBJEEnvironment;
-import org.reldb.relang.utilities.EventHandler;
 import org.reldb.relang.utilities.MessageDialog;
 
 public class Datasheets {
@@ -18,15 +17,9 @@ public class Datasheets {
 		var base = new BDBJEBase(dbURL, create);
 		newShell.setText(newShell.getText() + " - Datasheet " + dbURL);
 		newShell.setLayout(new FillLayout());
-		var datasheet = new Datasheet(newShell, base);
+		new Datasheet(newShell, base);
 		newShell.open();
-		newShell.addListener(SWT.Close, evt -> {
-			base.close();
-			datasheet.disableToolbar();
-		});		
-		newShell.addListener(SWT.Activate, evt -> datasheet.enableToolbar());
-		newShell.addListener(SWT.Deactivate, evt -> datasheet.disableToolbar());
-		datasheet.enableToolbar();
+		newShell.addListener(SWT.Close, evt -> base.close());
 		return dbURL;
 	}
 
