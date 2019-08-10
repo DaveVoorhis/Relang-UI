@@ -23,7 +23,6 @@ public class BDBJEData implements Data {
 	private Heading heading;
 	private StoredMap<Long, Vector<Object>> data;
 	
-	@SuppressWarnings({ "unchecked", "rawtypes" })
 	public BDBJEData(BDBJEBase bdbjeBase, Database db, Heading definition) {
 		this.bdbjeBase = bdbjeBase;
 		this.db = db;

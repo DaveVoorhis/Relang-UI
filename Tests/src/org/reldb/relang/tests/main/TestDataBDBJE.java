@@ -6,6 +6,7 @@ import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.reldb.relang.data.bdbje.BDBJEEnvironment;
+import org.reldb.relang.data.CatalogEntry;
 import org.reldb.relang.data.bdbje.BDBJEBase;
 
 public class TestDataBDBJE {
@@ -63,8 +64,15 @@ public class TestDataBDBJE {
 	@AfterClass
 	public static void teardown() {
 		try (var catalog = base.open(BDBJEBase.catalogName)) {
-			assertEquals("testData", catalog.getValue(0, 0));
-			assertEquals("testData2", catalog.getValue(0,  1));
+			assertEquals(3, catalog.getRowCount());
+			assertEquals(1, catalog.getColumnCount());
+			assertEquals("CatalogEntry", catalog.getColumnNameAt(0));
+			CatalogEntry entry = (CatalogEntry)catalog.getValue(0, 0);
+			assertEquals("sys.Catalog", entry.name);
+			entry = (CatalogEntry)catalog.getValue(0, 1);
+			assertEquals("testData", entry.name);
+			entry = (CatalogEntry)catalog.getValue(0, 2);
+			assertEquals("testData2", entry.name);
 		}
 		base.close();
 	}

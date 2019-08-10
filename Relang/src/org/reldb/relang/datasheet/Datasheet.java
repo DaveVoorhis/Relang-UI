@@ -113,12 +113,13 @@ public class Datasheet extends Composite {
 		catalogTree.clearAll(true);
 		assert(base != null);
 		assert(BDBJEBase.catalogName != null);
-		var catalog = base.open(BDBJEBase.catalogName);
-		// TODO - this should be the first to be replaced by a transactional tuple/row iterator mechanism
-		long rowCount = catalog.getRowCount();
-		for (long row = 0; row < rowCount; row++) {
-			var item = new TreeItem(catalogTree, SWT.NONE);
-			item.setText(catalog.getValue(0, row).toString());
+		try (var catalog = base.open(BDBJEBase.catalogName)) {
+			// TODO - this should be the first to be replaced by a transactional tuple/row iterator mechanism
+			long rowCount = catalog.getRowCount();
+			for (long row = 0; row < rowCount; row++) {
+				var item = new TreeItem(catalogTree, SWT.NONE);
+				item.setText(catalog.getValue(0, row).toString());
+			}
 		}
 	}
 

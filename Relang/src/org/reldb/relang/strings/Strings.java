@@ -29,7 +29,6 @@ public class Strings {
 	public static final int WarnClosingClassRepoEnv = Str.W("Error closing class repository environment at %s due to %s.", BDBJEEnvironment.class.toString());
 	public static final int WarnClosingDataEnv = Str.W("Error closing data storage environment at %s due to %s.", BDBJEEnvironment.class.toString());
 
-	public static final int WarnClosingCatalog = Str.W("Error closing catalog at %s due to %s.", BDBJEBase.class.toString());
 	public static final int ErrSourceExists = Str.E("Data source %s already exists.", BDBJEBase.class.toString());
 	public static final int ErrSourceNotExists = Str.E("Data source %s does not exist.", BDBJEBase.class.toString());
 	

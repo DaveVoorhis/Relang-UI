@@ -1,16 +1,12 @@
 package org.reldb.relang.data.bdbje;
 
+import org.reldb.relang.data.CatalogEntry;
 import org.reldb.relang.data.Heading;
 import org.reldb.relang.exceptions.ExceptionFatal;
 import org.reldb.relang.strings.Str;
 
 import com.sleepycat.bind.serial.ClassCatalog;
-import com.sleepycat.bind.serial.SerialBinding;
-import com.sleepycat.bind.tuple.StringBinding;
-import com.sleepycat.collections.StoredMap;
-import com.sleepycat.collections.StoredSortedMap;
 import com.sleepycat.collections.TransactionWorker;
-import com.sleepycat.je.Database;
 import com.sleepycat.je.DatabaseException;
 
 import static org.reldb.relang.strings.Strings.*;
@@ -20,28 +16,39 @@ public class BDBJEBase {
 	public static final String catalogName = "sys.Catalog";
 	
 	private BDBJEEnvironment environment;
-	private Database catalogDb;
-	private StoredMap<String, Heading> catalog;
-	private String dir;
+	private BDBJEData catalog;
 	
 	public BDBJEBase(String dir, boolean create) {
-		this.dir = dir;
 		environment = new BDBJEEnvironment(dir, create);				
 		// Catalog
-		catalogDb = environment.open(catalogName, true);
-		var catalogKeyBinding = new StringBinding();
-		var catalogValueBinding = new SerialBinding<Heading>(environment.getClassCatalog(), Heading.class);
-		catalog = new StoredSortedMap<String, Heading>(catalogDb, catalogKeyBinding, catalogValueBinding, true);
+		var catalogDB = environment.open(catalogName, create);
+		var catalogHeading = new Heading();
+		var catalogEntry = new CatalogEntry(catalogName, catalogHeading, null);
+		catalogHeading.appendColumn("CatalogEntry", CatalogEntry.class, catalogEntry);		
+		catalog = new BDBJEData(this, catalogDB, catalogHeading);
 		// Does the Catalog contain the Catalog?
-		if (create && catalog.get(catalogName) == null) {
-			var catalogDefinition = new Heading();
-			catalogDefinition.appendColumn("Name", String.class, "");
-			updateCatalog(catalogName, catalogDefinition);
+		if (catalog.getRowCount() == 0)
+			catalog.setValue(0, 0, catalogEntry);
+	}
+	
+	public CatalogEntry getCatalogEntry(String name) {
+		for (int i = 0; i < catalog.getRowCount(); i++) {
+			var catalogEntry = (CatalogEntry)catalog.getValue(0, i);
+			if (catalogEntry.name.equals(name))
+				return catalogEntry;
 		}
+		return null;
 	}
 	
 	void updateCatalog(String name, Heading definition) {
-		catalog.put(name, definition);
+		var newCatalogEntry = new CatalogEntry(name, definition, null);
+		int i = 0;
+		for (i = 0; i < catalog.getRowCount(); i++) {
+			var catalogEntry = (CatalogEntry)catalog.getValue(0, i);
+			if (catalogEntry.name.equals(name))
+				break;
+		}
+		catalog.setValue(0, i, newCatalogEntry);
 	}
 
 	/**
@@ -51,7 +58,7 @@ public class BDBJEBase {
 	 * @return - boolean - true if Data source exists
 	 */
 	public boolean exists(String name) {
-		return catalog.get(name) != null;
+		return getCatalogEntry(name) != null;
 	}
 	
 	/**
@@ -71,7 +78,7 @@ public class BDBJEBase {
 		}
 		var database = environment.open(name, true);
 		var heading = new Heading();
-		catalog.put(name, heading);
+		updateCatalog(name, heading);
 		return new BDBJEData(this, database, heading);
 	}
 	
@@ -82,11 +89,11 @@ public class BDBJEBase {
 	 * @return - BDBJEData
 	 */
 	public BDBJEData open(String name) {
-		var definition = catalog.get(name);
+		var definition = getCatalogEntry(name);
 		if (definition == null)
 			throw new ExceptionFatal(Str.ing(ErrSourceNotExists, name));
 		var database = environment.open(name, false);
-		return new BDBJEData(this, database, definition);
+		return new BDBJEData(this, database, definition.heading);
 	}
 	
 	/**
@@ -126,14 +133,7 @@ public class BDBJEBase {
 	 * Close the database.
 	 */
 	public void close() {
-		if (catalogDb != null)
-			try {
-				catalogDb.close();
-			} catch (Throwable t) {
-				System.out.println(Str.ing(WarnClosingCatalog, dir, t.toString()));
-			} finally {
-				catalogDb = null;
-			}
+		catalog.close();
 		environment.close();
 	}
 
