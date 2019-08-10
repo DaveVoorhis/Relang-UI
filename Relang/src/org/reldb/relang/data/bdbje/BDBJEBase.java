@@ -32,6 +32,7 @@ public class BDBJEBase {
 	}
 	
 	public CatalogEntry getCatalogEntry(String name) {
+		// TODO - create index mechanism, so iterative search no longer needed
 		for (int i = 0; i < catalog.getRowCount(); i++) {
 			var catalogEntry = (CatalogEntry)catalog.getValue(0, i);
 			if (catalogEntry.name.equals(name))
