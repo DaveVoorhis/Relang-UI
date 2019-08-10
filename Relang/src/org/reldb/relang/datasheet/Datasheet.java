@@ -18,10 +18,12 @@ import org.eclipse.swt.custom.CTabFolder2Adapter;
 import org.eclipse.swt.custom.CTabFolderEvent;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.layout.FormLayout;
+import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.layout.RowLayout;
 import org.eclipse.swt.layout.FormData;
 import org.eclipse.swt.layout.FormAttachment;
 import org.eclipse.swt.custom.CTabItem;
+import org.eclipse.swt.layout.GridData;
 
 public class Datasheet extends Composite {
 	private BDBJEBase base = null;
@@ -47,14 +49,15 @@ public class Datasheet extends Composite {
 		setLayout(new FormLayout());
 		
 		toolbarPanel = new Composite(this, SWT.BORDER);
-		var layout = new RowLayout();
-		layout.fill = true;
-		toolbarPanel.setLayout(layout);
 
 		FormData fd_toolbarPanel = new FormData();
 		fd_toolbarPanel.top = new FormAttachment(0, 0);
 		fd_toolbarPanel.left = new FormAttachment(0, 0);
 		fd_toolbarPanel.right = new FormAttachment(100, 0);
+		toolbarPanel.setLayoutData(fd_toolbarPanel);
+		
+		var layout = new GridLayout(2, false);
+		toolbarPanel.setLayout(layout);
 		
 		datasheetToolbar = new ToolBar(toolbarPanel, SWT.BORDER);
 		
@@ -88,11 +91,12 @@ public class Datasheet extends Composite {
 		buildTabToolbar();
 		
 		SashForm sashForm = new SashForm(this, SWT.NONE);
+		
 		FormData fd_sashForm = new FormData();
-		fd_sashForm.top = new FormAttachment(toolbarPanel, 0);		
+		fd_sashForm.top = new FormAttachment(toolbarPanel);
+		fd_sashForm.bottom = new FormAttachment(100);
 		fd_sashForm.left = new FormAttachment(0, 0);
 		fd_sashForm.right = new FormAttachment(100, 0);
-		fd_sashForm.bottom = new FormAttachment(100, 0);
 		sashForm.setLayoutData(fd_sashForm);
 	
 		CTabFolder treeFolder = new CTabFolder(sashForm, SWT.BORDER);
@@ -142,12 +146,9 @@ public class Datasheet extends Composite {
 		if (toolbarPanel.isDisposed())
 			return;
 		tabToolbar = new ToolBar(toolbarPanel, SWT.BORDER);
-		if (lastSelection != null && lastSelection instanceof Tab) {
-			var tab = (Tab)lastSelection;
-			tab.populateToolbar(tabToolbar);
-		} else
-			for (int i = 0; i < 10; i++)
-				(new ToolItem(tabToolbar, SWT.FLAT)).setText("btn" + i);
+		tabToolbar.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1));
+		if (lastSelection != null && lastSelection instanceof Tab)
+			((Tab)lastSelection).populateToolbar(tabToolbar);
 		toolbarPanel.layout(true);
 	}
 	
