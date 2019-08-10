@@ -17,7 +17,7 @@ import static org.reldb.relang.strings.Strings.*;
 
 public class BDBJEBase {
 
-	private static final String catalogName = "sys.Catalog";
+	public static final String catalogName = "sys.Catalog";
 	
 	private BDBJEEnvironment environment;
 	private Database catalogDb;
@@ -35,7 +35,7 @@ public class BDBJEBase {
 		// Does the Catalog contain the Catalog?
 		if (create && catalog.get(catalogName) == null) {
 			var catalogDefinition = new Heading();
-			// TODO - define catalog here
+			catalogDefinition.appendColumn("Name", String.class, "");
 			updateCatalog(catalogName, catalogDefinition);
 		}
 	}

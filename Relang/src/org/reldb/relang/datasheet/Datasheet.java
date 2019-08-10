@@ -10,16 +10,15 @@ import org.reldb.relang.commands.CommandActivator;
 import org.reldb.relang.commands.Commands;
 import org.reldb.relang.data.bdbje.BDBJEBase;
 import org.eclipse.swt.widgets.ToolBar;
-import org.eclipse.swt.widgets.ToolItem;
 import org.eclipse.swt.custom.SashForm;
 import org.eclipse.swt.widgets.Tree;
+import org.eclipse.swt.widgets.TreeItem;
 import org.eclipse.swt.custom.CTabFolder;
 import org.eclipse.swt.custom.CTabFolder2Adapter;
 import org.eclipse.swt.custom.CTabFolderEvent;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.layout.FormLayout;
 import org.eclipse.swt.layout.GridLayout;
-import org.eclipse.swt.layout.RowLayout;
 import org.eclipse.swt.layout.FormData;
 import org.eclipse.swt.layout.FormAttachment;
 import org.eclipse.swt.custom.CTabItem;
@@ -32,14 +31,8 @@ public class Datasheet extends Composite {
 	private ToolBar datasheetToolbar;
 	private ToolBar tabToolbar;
 	private CTabFolder tabFolder;
-	private CTabItem lastSelection = null;
-	
-	protected void fireContentTabSelectionChange() {
-		var selection = tabFolder.getSelection();
-		if (selection != lastSelection)
-			lastSelection = selection;
-		buildTabToolbar();
-	}
+	private CTabItem lastSelection;
+	private Tree catalogTree;
 	
 	/**
 	 * @wbp.parser.constructor
@@ -48,9 +41,9 @@ public class Datasheet extends Composite {
 		super(newShell, style);
 		setLayout(new FormLayout());
 		
-		toolbarPanel = new Composite(this, SWT.BORDER);
+		toolbarPanel = new Composite(this, SWT.NONE);
 
-		FormData fd_toolbarPanel = new FormData();
+		var fd_toolbarPanel = new FormData();
 		fd_toolbarPanel.top = new FormAttachment(0, 0);
 		fd_toolbarPanel.left = new FormAttachment(0, 0);
 		fd_toolbarPanel.right = new FormAttachment(100, 0);
@@ -59,54 +52,28 @@ public class Datasheet extends Composite {
 		var layout = new GridLayout(2, false);
 		toolbarPanel.setLayout(layout);
 		
-		datasheetToolbar = new ToolBar(toolbarPanel, SWT.BORDER);
-		
-		Commands.addCommandActivator(new CommandActivator(Commands.Do.NewGrid, datasheetToolbar, "newgrid", SWT.NONE, "New grid", e -> {
-			Tab tbtmNewItem = new Tab(tabFolder, SWT.CLOSE) {
-				int items = (int)(Math.random() * 10.0);
-				public void populateToolbar(ToolBar toolBar) {
-					for (int i=0; i<items; i++) {
-						(new ToolItem(toolBar, SWT.FLAT)).setText("Btn" + i);
-					}
-				}
-			};
-			tbtmNewItem.setText("Tab" + tabFolder.getItemCount());
-			tbtmNewItem.addListener(SWT.Dispose, evt -> fireContentTabSelectionChange());
-			tabFolder.setSelection(tbtmNewItem);
-			tabFolder.showSelection();
-			fireContentTabSelectionChange();
-			
-			var blah = new Button(tabFolder, SWT.BORDER);
-			blah.setText("This is some sample content for " + tbtmNewItem.getText());
-			
-			tbtmNewItem.setControl(blah);
-		}));
-		Commands.addCommandActivator(new CommandActivator(Commands.Do.Link, datasheetToolbar, "link", SWT.NONE, "Link...", e -> {
-			
-		}));
-		Commands.addCommandActivator(new CommandActivator(Commands.Do.Import, datasheetToolbar, "import", SWT.NONE, "Import...", e -> {
-			
-		}));		
-		
+		datasheetToolbar = new ToolBar(toolbarPanel, SWT.NONE);
+
+		buildDatasheetToolbar();
 		buildTabToolbar();
 		
-		SashForm sashForm = new SashForm(this, SWT.NONE);
+		var sashForm = new SashForm(this, SWT.NONE);
 		
-		FormData fd_sashForm = new FormData();
+		var fd_sashForm = new FormData();
 		fd_sashForm.top = new FormAttachment(toolbarPanel);
 		fd_sashForm.bottom = new FormAttachment(100);
 		fd_sashForm.left = new FormAttachment(0, 0);
 		fd_sashForm.right = new FormAttachment(100, 0);
 		sashForm.setLayoutData(fd_sashForm);
 	
-		CTabFolder treeFolder = new CTabFolder(sashForm, SWT.BORDER);
+		var treeFolder = new CTabFolder(sashForm, SWT.BORDER);
 		treeFolder.setSelectionBackground(Display.getCurrent().getSystemColor(SWT.COLOR_TITLE_INACTIVE_BACKGROUND_GRADIENT));
 		
-		CTabItem tbtmCatalog = new CTabItem(treeFolder, SWT.NONE);
+		var tbtmCatalog = new CTabItem(treeFolder, SWT.NONE);
 		tbtmCatalog.setText("Catalog");
 		
-		Tree tree = new Tree(treeFolder, SWT.BORDER);
-		tbtmCatalog.setControl(tree);
+		catalogTree = new Tree(treeFolder, SWT.BORDER);
+		tbtmCatalog.setControl(catalogTree);
 		
 		tabFolder = new CTabFolder(sashForm, SWT.BORDER);
 		tabFolder.setMaximizeVisible(true);
@@ -138,6 +105,59 @@ public class Datasheet extends Composite {
 	public Datasheet(Shell newShell, BDBJEBase base) {
 		this(newShell, SWT.NONE);
 		this.base = base;
+		
+		updateCatalogTree();
+	}
+	
+	public void updateCatalogTree() {
+		catalogTree.clearAll(true);
+		assert(base != null);
+		assert(BDBJEBase.catalogName != null);
+		var catalog = base.open(BDBJEBase.catalogName);
+		// TODO - this should be the first to be replaced by a transactional tuple/row iterator mechanism
+		long rowCount = catalog.getRowCount();
+		for (long row = 0; row < rowCount; row++) {
+			var item = new TreeItem(catalogTree, SWT.NONE);
+			item.setText(catalog.getValue(0, row).toString());
+		}
+	}
+
+	public CTabFolder getTabFolder() {
+		return tabFolder;
+	}
+
+	protected void fireContentTabSelectionChange() {
+		var selection = tabFolder.getSelection();
+		if (selection != lastSelection)
+			lastSelection = selection;
+		buildTabToolbar();
+	}
+	
+	private void buildDatasheetToolbar() {
+		Commands.addCommandActivator(new CommandActivator(Commands.Do.NewGrid, datasheetToolbar, "newgrid", SWT.NONE, "New grid", e -> {
+			
+			Tab tbtmNewItem = new Tab(this, SWT.CLOSE);
+			tbtmNewItem.setText("Tab" + tabFolder.getItemCount());
+			tbtmNewItem.addListener(SWT.Dispose, evt -> fireContentTabSelectionChange());
+			tabFolder.setSelection(tbtmNewItem);
+			tabFolder.showSelection();
+			fireContentTabSelectionChange();
+
+			updateCatalogTree();
+			
+			var blah = new Button(tabFolder, SWT.BORDER);
+			blah.setText("This is some sample content for " + tbtmNewItem.getText());
+			
+			tbtmNewItem.setControl(blah);
+		}));
+		
+		Commands.addCommandActivator(new CommandActivator(Commands.Do.Link, datasheetToolbar, "link", SWT.NONE, "Link...", e -> {
+			updateCatalogTree();
+		}));
+		
+		Commands.addCommandActivator(new CommandActivator(Commands.Do.Import, datasheetToolbar, "import", SWT.NONE, "Import...", e -> {
+			updateCatalogTree();
+		}));		
 	}
 
 	private void buildTabToolbar() {
@@ -145,7 +165,7 @@ public class Datasheet extends Composite {
 			tabToolbar.dispose();
 		if (toolbarPanel.isDisposed())
 			return;
-		tabToolbar = new ToolBar(toolbarPanel, SWT.BORDER);
+		tabToolbar = new ToolBar(toolbarPanel, SWT.NONE);
 		tabToolbar.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1));
 		if (lastSelection != null && lastSelection instanceof Tab)
 			((Tab)lastSelection).populateToolbar(tabToolbar);
@@ -169,22 +189,5 @@ public class Datasheet extends Composite {
 	private void enableToolbar() {
 		setToolbarState(true);
 	}
-	
-	/*
-	Data gridData;
-	if (base.exists(gridName)) {
-		gridData = base.open(gridName);
-	} else {
-		gridData = base.create(gridName);
-		gridData.setColumnName(0, "A");
-		gridData.setColumnName(1, "B");
-		gridData.setColumnName(2, "C");
-		gridData.appendRow();
-		gridData.appendRow();
-		gridData.appendRow();
-	}
-	new SheetPanel(newShell, gridData);
-	*/
-	
 	
 }
