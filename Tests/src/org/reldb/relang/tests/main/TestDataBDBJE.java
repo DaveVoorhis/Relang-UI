@@ -62,6 +62,10 @@ public class TestDataBDBJE {
 	
 	@AfterClass
 	public static void teardown() {
+		try (var catalog = base.open(BDBJEBase.catalogName)) {
+			assertEquals("testData", catalog.getValue(0, 0));
+			assertEquals("testData2", catalog.getValue(0,  1));
+		}
 		base.close();
 	}
 
