@@ -34,7 +34,10 @@ public class BDBJEData implements Data {
 	}
 
 	public void close() {
+		if (db == null)
+			return;
 		db.close();
+		db = null;
 	}
 
 	private void updateCatalog() {
