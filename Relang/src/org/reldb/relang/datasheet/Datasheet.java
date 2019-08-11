@@ -8,6 +8,7 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Shell;
 import org.reldb.relang.commands.CommandActivator;
 import org.reldb.relang.commands.Commands;
+import org.reldb.relang.data.CatalogEntry;
 import org.reldb.relang.data.bdbje.BDBJEBase;
 import org.eclipse.swt.widgets.ToolBar;
 import org.eclipse.swt.custom.SashForm;
@@ -74,6 +75,7 @@ public class Datasheet extends Composite {
 		
 		catalogTree = new Tree(treeFolder, SWT.BORDER);
 		tbtmCatalog.setControl(catalogTree);
+		treeFolder.setSelection(tbtmCatalog);
 		
 		tabFolder = new CTabFolder(sashForm, SWT.BORDER);
 		tabFolder.setMaximizeVisible(true);
@@ -104,21 +106,23 @@ public class Datasheet extends Composite {
 	
 	public Datasheet(Shell newShell, BDBJEBase base) {
 		this(newShell, SWT.NONE);
-		this.base = base;
-		
+		this.base = base;	
 		updateCatalogTree();
 	}
 	
 	public void updateCatalogTree() {
-		catalogTree.clearAll(true);
-		assert(base != null);
-		assert(BDBJEBase.catalogName != null);
+		catalogTree.removeAll();
+		var root = new TreeItem(catalogTree, SWT.NONE);
+		root.setText("Root");
+		var categoryData = new TreeItem(root, SWT.NONE);
+		categoryData.setText("Data sources");
 		try (var catalog = base.open(BDBJEBase.catalogName)) {
 			// TODO - this should be the first to be replaced by a transactional tuple/row iterator mechanism
 			long rowCount = catalog.getRowCount();
 			for (long row = 0; row < rowCount; row++) {
-				var item = new TreeItem(catalogTree, SWT.NONE);
-				item.setText(catalog.getValue(0, row).toString());
+				var item = new TreeItem(categoryData, SWT.NONE);
+				var text = ((CatalogEntry)catalog.getValue(0, row)).name;
+				item.setText(text);
 			}
 		}
 	}
