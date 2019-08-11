@@ -29,6 +29,7 @@ public class BDBJEData implements Data {
 		this.heading = definition;
 		
 		var dataKeyBinding = new LongBinding();
+		@SuppressWarnings({ "unchecked", "rawtypes" })
 		EntryBinding<Vector<Object>> dataValueBinding = new SerialBinding(bdbjeBase.getClassCatalog(), Vector.class);
 		data = new StoredSortedMap<Long, Vector<Object>>(db, dataKeyBinding, dataValueBinding, true);
 	}
