@@ -1,4 +1,4 @@
-package org.reldb.relang.datasheet;
+package org.reldb.relang.datasheet.tabs;
 
 import org.eclipse.nebula.widgets.grid.GridColumn;
 import org.eclipse.nebula.widgets.grid.GridEditor;
@@ -22,14 +22,27 @@ import org.reldb.relang.utilities.DialogBase;
  * 
  * @author dave
  */
-public class SheetPanel extends Composite {
+public class GridPanel extends Composite {
 
 	private Datagrid grid;
 	private Data data;
 	
+	public GridPanel(Composite parent, Data data) {
+		super(parent, SWT.NONE);
+		this.data = data;
+		
+		setLayout(new FillLayout());
+		
+		load(0, 0);
+	}
+
+	public void refresh() {
+		reload(grid.getFocusRow(), grid.getFocusColumn());
+	}
+	
 	private void addColumn() {
 		data.appendDefaultColumn();
-		reload(grid.getFocusRow(), grid.getFocusColumn());
+		refresh();
 	}
 
 	private void addColumnAdderColumn() {
@@ -110,15 +123,6 @@ public class SheetPanel extends Composite {
 		grid.getGrid().getParent().layout();
 	}
 	
-	public SheetPanel(Composite parent, Data data) {
-		super(parent, SWT.NONE);
-		this.data = data;
-		
-		setLayout(new FillLayout());
-		
-		load(0, 0);
-	}
-
 	private void showColumnDialog(Event evt) {
 		var column = (GridColumn)evt.item;
 		var parentShell = column.getParent().getShell();

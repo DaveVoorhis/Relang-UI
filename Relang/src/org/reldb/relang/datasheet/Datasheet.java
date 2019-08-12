@@ -91,6 +91,10 @@ public class Datasheet extends Composite {
 		tabFolder.addListener(SWT.Selection, e -> fireContentTabSelectionChange());
 		tabFolder.addCTabFolder2Listener(new CTabFolder2Adapter() {
 			@Override
+			public void close(CTabFolderEvent evt) {
+				fireContentTabSelectionChange((CTabItem)evt.item);
+			}
+			@Override
 			public void maximize(CTabFolderEvent evt) {
 				sashForm.setMaximizedControl(tabFolder);
 				tabFolder.setMaximized(true);
@@ -183,11 +187,17 @@ public class Datasheet extends Composite {
 		return base;
 	}
 
-	protected void fireContentTabSelectionChange() {
+	protected void fireContentTabSelectionChange(CTabItem closing) {
 		var selection = tabFolder.getSelection();
 		if (selection != lastSelection)
 			lastSelection = selection;
+		if (closing == selection)
+			lastSelection = null;
 		buildTabToolbar();
+	}
+	
+	protected void fireContentTabSelectionChange() {
+		fireContentTabSelectionChange(null);
 	}
 	
 	private void buildTabMenu() {
@@ -249,6 +259,7 @@ public class Datasheet extends Composite {
 	private void closeCurrentTab() {
 		if (itemSelectedByMenu != null)
 			itemSelectedByMenu.dispose();
+		fireContentTabSelectionChange();
 	}
 
 	private CTabItem getTab(String name) {
@@ -300,7 +311,7 @@ public class Datasheet extends Composite {
 			return;
 		tabToolbar = new ToolBar(toolbarPanel, SWT.NONE);
 		tabToolbar.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1));
-		if (lastSelection != null && lastSelection instanceof Tab)
+		if (lastSelection != null && !lastSelection.isDisposed() && lastSelection instanceof Tab)
 			((Tab)lastSelection).populateToolbar(tabToolbar);
 		toolbarPanel.layout(true);
 	}
