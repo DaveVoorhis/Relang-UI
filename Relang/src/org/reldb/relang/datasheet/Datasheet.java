@@ -4,7 +4,6 @@ import java.util.Vector;
 import java.util.stream.Stream;
 
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Shell;
 import org.reldb.relang.commands.CommandActivator;
@@ -107,7 +106,7 @@ public class Datasheet extends Composite {
 		
 		newShell.layout();
 		
-		newShell.addListener(SWT.Close, evt -> disableToolbar());		
+		newShell.addListener(SWT.Close, evt -> closeAll());		
 		newShell.addListener(SWT.Activate, evt -> enableToolbar());
 		newShell.addListener(SWT.Deactivate, evt -> disableToolbar());
 
@@ -120,8 +119,10 @@ public class Datasheet extends Composite {
 			if (selection != null) {
 				String name = selection.getText();
 				CTabItem tab = getTab(name);
-				if (tab != null)
+				if (tab != null) {
 					getTabFolder().setSelection(tab);
+					fireContentTabSelectionChange();
+				}
 			}
 		});
 		
@@ -131,8 +132,10 @@ public class Datasheet extends Composite {
 				for (TreeItem item: items)
 					item.setExpanded(!item.getExpanded());
 				TreeItem selection = getTreeSelection();
-				if (selection != null)
-					tabFolder.setSelection(new GridTab(this, selection, SWT.CLOSE));
+				if (selection != null) {
+					tabFolder.setSelection(new GridTab(this, selection.getText(), false, SWT.CLOSE));
+					fireContentTabSelectionChange();
+				}
 			}
 		});
 		
@@ -144,8 +147,10 @@ public class Datasheet extends Composite {
 					item.setExpanded(!item.getExpanded());
 			}
 			TreeItem selection = getTreeSelection();
-			if (selection != null)
-				tabFolder.setSelection(new GridTab(this, selection, SWT.CLOSE));
+			if (selection != null) {
+				tabFolder.setSelection(new GridTab(this, selection.getText(), false, SWT.CLOSE));
+				fireContentTabSelectionChange();
+			}
 		});
 	}
 
@@ -189,41 +194,12 @@ public class Datasheet extends Composite {
 		Menu tabControlMenu = new Menu(tabFolder);
 		tabFolder.setMenu(tabControlMenu);
 		
-		IconMenuItem closer = new IconMenuItem(tabControlMenu, "Close", null, SWT.NONE, e -> {
-			if (itemSelectedByMenu != null)
-				itemSelectedByMenu.dispose();
-		});
-		IconMenuItem closeOthers = new IconMenuItem(tabControlMenu, "Close others", null, SWT.NONE, e -> {
-			tabFolder.setSelection(itemSelectedByMenuIndex);
-			for (CTabItem tab: tabFolder.getItems())
-				if (tab != itemSelectedByMenu)
-					tab.dispose();
-		});
-		IconMenuItem closeLeft = new IconMenuItem(tabControlMenu, "Close left tabs", null, SWT.NONE, e -> {
-			if (itemSelectedByMenuIndex > 0) {
-				var closers = new Vector<CTabItem>();
-				for (int i=0; i<itemSelectedByMenuIndex; i++)
-					closers.add(tabFolder.getItem(i));
-				tabFolder.setSelection(itemSelectedByMenuIndex);
-				for (CTabItem close: closers)
-					close.dispose();
-			}
-		});
-		IconMenuItem closeRight = new IconMenuItem(tabControlMenu, "Close right tabs", null, SWT.NONE, e -> {
-			if (itemSelectedByMenuIndex < tabFolder.getItemCount() - 1) {
-				var closers = new Vector<CTabItem>();
-				for (int i = itemSelectedByMenuIndex + 1; i<tabFolder.getItemCount(); i++)
-					closers.add(tabFolder.getItem(i));
-				tabFolder.setSelection(itemSelectedByMenuIndex);
-				for (CTabItem close: closers)
-					close.dispose();
-			}
-		});
+		IconMenuItem closer = new IconMenuItem(tabControlMenu, "Close", null, SWT.NONE, e -> closeCurrentTab());
+		IconMenuItem closeOthers = new IconMenuItem(tabControlMenu, "Close others", null, SWT.NONE, e -> closeOtherTabs());
+		IconMenuItem closeLeft = new IconMenuItem(tabControlMenu, "Close left tabs", null, SWT.NONE, e -> closeLeftTabs());
+		IconMenuItem closeRight = new IconMenuItem(tabControlMenu, "Close right tabs", null, SWT.NONE, e -> closeRightTabs());
 		new MenuItem(tabControlMenu, SWT.SEPARATOR);
-		IconMenuItem closeAll = new IconMenuItem(tabControlMenu, "Close all", null, SWT.NONE, e -> {
-			while (tabFolder.getItemCount() > 0)
-				tabFolder.getItem(0).dispose();
-		});
+		IconMenuItem closeAll = new IconMenuItem(tabControlMenu, "Close all", null, SWT.NONE, e -> closeAllTabs());
 		
 		tabFolder.addListener(SWT.MenuDetect, e -> {
 			Point clickPosition = Display.getDefault().map(null, tabFolder, new Point(e.x, e.y));
@@ -240,7 +216,41 @@ public class Datasheet extends Composite {
 			}
 		});
 	}
-	
+
+	private void closeRightTabs() {
+		if (itemSelectedByMenuIndex < tabFolder.getItemCount() - 1) {
+			var closers = new Vector<CTabItem>();
+			for (int i = itemSelectedByMenuIndex + 1; i<tabFolder.getItemCount(); i++)
+				closers.add(tabFolder.getItem(i));
+			tabFolder.setSelection(itemSelectedByMenuIndex);
+			for (CTabItem close: closers)
+				close.dispose();
+		}
+	}
+
+	private void closeLeftTabs() {
+		if (itemSelectedByMenuIndex > 0) {
+			var closers = new Vector<CTabItem>();
+			for (int i=0; i<itemSelectedByMenuIndex; i++)
+				closers.add(tabFolder.getItem(i));
+			tabFolder.setSelection(itemSelectedByMenuIndex);
+			for (CTabItem close: closers)
+				close.dispose();
+		}
+	}
+
+	private void closeOtherTabs() {
+		tabFolder.setSelection(itemSelectedByMenuIndex);
+		for (CTabItem tab: tabFolder.getItems())
+			if (tab != itemSelectedByMenu)
+				tab.dispose();
+	}
+
+	private void closeCurrentTab() {
+		if (itemSelectedByMenu != null)
+			itemSelectedByMenu.dispose();
+	}
+
 	private CTabItem getTab(String name) {
 		for (CTabItem tab: tabFolder.getItems())
 			if (tab.getText().equals(name))
@@ -266,27 +276,19 @@ public class Datasheet extends Composite {
 	
 	private void buildDatasheetToolbar() {
 		Commands.addCommandActivator(new CommandActivator(Commands.Do.NewGrid, datasheetToolbar, "newgrid", SWT.NONE, "New grid", e -> {
-			
-			Tab tbtmNewItem = new Tab(this, SWT.CLOSE);
-			tbtmNewItem.setText("Tab" + tabFolder.getItemCount());
-			tbtmNewItem.addListener(SWT.Dispose, evt -> fireContentTabSelectionChange());
-			tabFolder.setSelection(tbtmNewItem);
-			tabFolder.showSelection();
+			var newName = base.getNewName();
+			tabFolder.setSelection(new GridTab(this, newName, true, SWT.CLOSE));			
 			fireContentTabSelectionChange();
-
 			updateCatalogTree();
-			
-			var blah = new Button(tabFolder, SWT.BORDER);
-			blah.setText("This is some sample content for " + tbtmNewItem.getText());
-			
-			tbtmNewItem.setControl(blah);
 		}));
 		
 		Commands.addCommandActivator(new CommandActivator(Commands.Do.Link, datasheetToolbar, "link", SWT.NONE, "Link...", e -> {
+			// TODO - link
 			updateCatalogTree();
 		}));
 		
 		Commands.addCommandActivator(new CommandActivator(Commands.Do.Import, datasheetToolbar, "import", SWT.NONE, "Import...", e -> {
+			// TODO - import
 			updateCatalogTree();
 		}));		
 	}
@@ -311,6 +313,16 @@ public class Datasheet extends Composite {
 		setToolbarState(datasheetToolbar, enabled);		
 		if (tabToolbar != null)
 			setToolbarState(tabToolbar, enabled);		
+	}
+	
+	private void closeAllTabs() {
+		while (tabFolder.getItemCount() > 0)
+			tabFolder.getItem(0).dispose();
+	}
+
+	private void closeAll() {
+		disableToolbar();
+		closeAllTabs();
 	}
 	
 	private void disableToolbar() {

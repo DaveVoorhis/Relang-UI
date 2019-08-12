@@ -61,6 +61,20 @@ public class BDBJEBase {
 	public boolean exists(String name) {
 		return getCatalogEntry(name) != null;
 	}
+
+	/**
+	 * Get an automatically-generated Data source name that doesn't already exist.
+	 * 
+	 * @return - name
+	 */
+	public String getNewName() {
+		int uniqueifier = 1;
+		String name;
+		do {
+			name = "Data" + uniqueifier++;
+		} while (exists(name));
+		return name;
+	}
 	
 	/**
 	 * Create a Data source with a given name. If it exists already, throw ExceptionFatal.
