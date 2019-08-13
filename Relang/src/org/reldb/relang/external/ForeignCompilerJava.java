@@ -17,12 +17,18 @@ import org.reldb.relang.strings.Str;
 import static org.reldb.relang.strings.Strings.*;
 
 /**
+ * Machinery for compiling Java code.
+ * 
  * @author Dave
  *
  */
 public class ForeignCompilerJava {
+	private String userSourcePath;
+	private String homeDir;
 	
-	public ForeignCompilerJava() {
+	public ForeignCompilerJava(String userSourcePath, String homeDir) {
+		this.userSourcePath = userSourcePath;
+		this.homeDir = homeDir;
 	}
     
     /** Return a classpath cleaned of non-existent files and Web Start's deploy.jar.  
@@ -50,8 +56,8 @@ public class ForeignCompilerJava {
 	/** Return classpath to the Relang core. */
     private String getLocalClasspath() {
         String classPath = System.getProperty("user.dir") + 
-        	   java.io.File.pathSeparatorChar + database.getJavaUserSourcePath() +
-        	   java.io.File.pathSeparatorChar + database.getHomeDir();
+        	   java.io.File.pathSeparatorChar + userSourcePath +
+        	   java.io.File.pathSeparatorChar + homeDir;
         return classPath;
     }
    
@@ -78,13 +84,13 @@ public class ForeignCompilerJava {
     			cleanClassPath(getLocalClasspath());
 
         // If resource directory doesn't exist, create it.
-        File resourceDir = new File(database.getJavaUserSourcePath()); 
+        File resourceDir = new File(userSourcePath); 
         if (!(resourceDir.exists()))
             resourceDir.mkdirs();
     	File sourcef;
     	try {
     		// Write source to a Java source file
-    		sourcef = new File(database.getJavaUserSourcePath() + java.io.File.separator + getStrippedClassname(className) + ".java");
+    		sourcef = new File(userSourcePath + java.io.File.separator + getStrippedClassname(className) + ".java");
     		PrintStream sourcePS = new PrintStream(new FileOutputStream(sourcef));
     		sourcePS.print(src);
     		sourcePS.close();
