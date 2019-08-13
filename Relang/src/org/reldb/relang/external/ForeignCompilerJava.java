@@ -24,11 +24,9 @@ import static org.reldb.relang.strings.Strings.*;
  */
 public class ForeignCompilerJava {
 	private String userSourcePath;
-	private String homeDir;
 	
 	public ForeignCompilerJava(String userSourcePath, String homeDir) {
 		this.userSourcePath = userSourcePath;
-		this.homeDir = homeDir;
 	}
     
     /** Return a classpath cleaned of non-existent files and Web Start's deploy.jar.  
@@ -56,8 +54,7 @@ public class ForeignCompilerJava {
 	/** Return classpath to the Relang core. */
     private String getLocalClasspath() {
         String classPath = System.getProperty("user.dir") + 
-        	   java.io.File.pathSeparatorChar + userSourcePath +
-        	   java.io.File.pathSeparatorChar + homeDir;
+        	   java.io.File.pathSeparatorChar + userSourcePath;
         return classPath;
     }
    
