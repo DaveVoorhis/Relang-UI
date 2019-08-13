@@ -25,7 +25,7 @@ import static org.reldb.relang.strings.Strings.*;
 public class ForeignCompilerJava {
 	private String userSourcePath;
 	
-	public ForeignCompilerJava(String userSourcePath, String homeDir) {
+	public ForeignCompilerJava(String userSourcePath) {
 		this.userSourcePath = userSourcePath;
 	}
     
