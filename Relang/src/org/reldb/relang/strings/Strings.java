@@ -7,6 +7,7 @@ import org.reldb.relang.data.bdbje.BDBJEEnvironment;
 import org.reldb.relang.data.temporary.DataTemporary;
 import org.reldb.relang.external.DirClassLoader;
 import org.reldb.relang.external.ForeignCompilerJava;
+import org.reldb.relang.tuples.TupleGenerator;
 
 /**
  * Internationalisable messages.
@@ -77,4 +78,6 @@ public class Strings {
 	
 	public static final int ErrSavingJavaSource = Str.E("Unable to save Java source: %s.", ForeignCompilerJava.class.toString());
 	public static final int ErrJavaCompilationFailed = Str.E("Compilation failed due to errors: %n%s%n", ForeignCompilerJava.class.toString());
+	
+	public static final int ErrUnableToCreateOrOpenCodeDirectory = Str.E("Unable to create or open code directory %s.", TupleGenerator.class.toString());
 }

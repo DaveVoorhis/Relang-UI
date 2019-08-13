@@ -12,7 +12,6 @@ import java.io.PrintWriter;
 
 import org.reldb.relang.exceptions.ExceptionFatal;
 import org.reldb.relang.exceptions.ExceptionSemantic;
-import org.reldb.relang.storage.LocalDatabase;
 import org.reldb.relang.strings.Str;
 
 import static org.reldb.relang.strings.Strings.*;
@@ -23,10 +22,7 @@ import static org.reldb.relang.strings.Strings.*;
  */
 public class ForeignCompilerJava {
 	
-	private LocalDatabase database;
-	
-	public ForeignCompilerJava(LocalDatabase database, boolean verbose) {
-		this.database = database;
+	public ForeignCompilerJava() {
 	}
     
     /** Return a classpath cleaned of non-existent files and Web Start's deploy.jar.  
@@ -51,7 +47,7 @@ public class ForeignCompilerJava {
         return outstr;
     }
     
-	/** Return classpath to the Rel core. */
+	/** Return classpath to the Relang core. */
     private String getLocalClasspath() {
         String classPath = System.getProperty("user.dir") + 
         	   java.io.File.pathSeparatorChar + database.getJavaUserSourcePath() +
