@@ -77,7 +77,6 @@ public class Strings {
 	public static final int ErrReading = Str.E("Error reading %s: %s.", DirClassLoader.class.toString()); 
 	
 	public static final int ErrSavingJavaSource = Str.E("Unable to save Java source: %s.", ForeignCompilerJava.class.toString());
-	public static final int ErrJavaCompilationFailed = Str.E("Compilation failed due to errors: %n%s%n", ForeignCompilerJava.class.toString());
 	
 	public static final int ErrUnableToCreateOrOpenCodeDirectory = Str.E("Unable to create or open code directory %s.", TupleGenerator.class.toString());
 }

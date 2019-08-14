@@ -11,7 +11,6 @@ import java.io.PrintStream;
 import java.io.PrintWriter;
 
 import org.reldb.relang.exceptions.ExceptionFatal;
-import org.reldb.relang.exceptions.ExceptionSemantic;
 import org.reldb.relang.strings.Str;
 
 import static org.reldb.relang.strings.Strings.*;
@@ -58,8 +57,17 @@ public class ForeignCompilerJava {
         return classPath;
     }
    
+    public static class CompilationResults {
+    	public final boolean compiled;
+    	public final String compilerMessages;
+		public CompilationResults(boolean compiled, String compilerMessages) {
+			this.compiled = compiled;
+			this.compilerMessages = compilerMessages;
+		}
+    }
+    
     /** Compile foreign code using Eclipse JDT compiler. */
-    public void compileForeignCode(PrintStream stream, String className, String src) {
+    public CompilationResults compileForeignCode(String className, String src) {
     	ByteArrayOutputStream messageStream = new ByteArrayOutputStream();
     	ByteArrayOutputStream warningStream = new ByteArrayOutputStream();
     	String warningSetting = new String("allDeprecation,"
@@ -133,9 +141,7 @@ public class ForeignCompilerJava {
     		}
     		compilerMessages += str + '\n';
     	}
-
-    	if (!compiled)
-        	throw new ExceptionSemantic(Str.ing(ErrJavaCompilationFailed, compilerMessages));    		    
+    	return new CompilationResults(compiled, compilerMessages);
     }
     
     /** Get a stripped name.  Only return text after the final '.' */
