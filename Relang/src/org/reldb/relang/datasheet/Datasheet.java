@@ -160,7 +160,7 @@ public class Datasheet extends Composite {
 
 	public Datasheet(Shell newShell, BDBJEBase base) {
 		this(newShell, SWT.NONE);
-		this.base = base;	
+		this.base = base;
 		updateCatalogTree();
 	}
 	
