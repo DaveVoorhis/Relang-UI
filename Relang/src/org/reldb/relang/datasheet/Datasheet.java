@@ -30,6 +30,7 @@ import org.eclipse.swt.layout.FormAttachment;
 import org.eclipse.swt.custom.CTabItem;
 import org.eclipse.swt.layout.GridData;
 
+/** Present a collection of data sources and tools for manipulating them. */
 public class Datasheet extends Composite {
 	private BDBJEBase base = null;
 	

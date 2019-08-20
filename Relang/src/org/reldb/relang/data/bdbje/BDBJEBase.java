@@ -1,7 +1,6 @@
 package org.reldb.relang.data.bdbje;
 
 import org.reldb.relang.data.CatalogEntry;
-import org.reldb.relang.data.Heading;
 import org.reldb.relang.exceptions.ExceptionFatal;
 import org.reldb.relang.strings.Str;
 
@@ -22,10 +21,8 @@ public class BDBJEBase {
 		environment = new BDBJEEnvironment(dir, create);				
 		// Catalog
 		var catalogDB = environment.open(catalogName, create);
-		var catalogHeading = new Heading();
-		var catalogEntry = new CatalogEntry(catalogName, catalogHeading, null);
-		catalogHeading.appendColumn("CatalogEntry", CatalogEntry.class, catalogEntry);		
-		catalog = new BDBJEData(this, catalogDB, catalogHeading);
+		var catalogEntry = new CatalogEntry(catalogName, CatalogEntry.class, null);
+		catalog = new BDBJEData(this, catalogDB, CatalogEntry.class);
 		// Does the Catalog contain the Catalog?
 		if (catalog.getRowCount() == 0)
 			catalog.setValue(0, 0, catalogEntry);
