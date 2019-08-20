@@ -41,7 +41,7 @@ public class GridPanel extends Composite {
 	}
 	
 	private void addColumn() {
-		data.appendDefaultColumn();
+		data.extend();
 		refresh();
 	}
 

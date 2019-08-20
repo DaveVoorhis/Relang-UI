@@ -48,6 +48,11 @@ public class BDBJEData<K, V> implements Data<V>, Closeable {
 	public StoredMap<K, V> getStoredMap() {
 		return data;
 	}
+
+	@Override
+	public Class<?> getType() {
+		return type;
+	}
 	
 	@Override
 	public boolean isExtendable() {

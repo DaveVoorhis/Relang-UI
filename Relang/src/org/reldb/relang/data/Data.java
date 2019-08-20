@@ -5,6 +5,8 @@ import java.util.Iterator;
 /** A wrapper around a container to make it visible to, and possibly modifiable by, a Datasheet's GridPanel. */
 public interface Data<T> {
 	
+	public Class<?> getType();
+	
 	public boolean isExtendable();
 	public void extend(String name, Class<?> type);
 	

@@ -166,6 +166,7 @@ public class Datasheet extends Composite {
 		updateCatalogTree();
 	}
 	
+	@SuppressWarnings("unchecked")
 	public void updateCatalogTree() {
 		catalogTree.removeAll();
 		var categoryData = new TreeItem(catalogTree, SWT.NONE);
