@@ -10,19 +10,18 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Text;
-import org.reldb.relang.data.Heading;
 
 public class SearchAdvancedQueryBuilder extends Composite {
 	
 	private static final String[] queryOperationDisplay = new String[] {"=", "≠", "<", ">", "≤", "≥", "contains", "starts with", "doesn’t contain"};
 	private static final String[] queryOperationCode = new String[] {"=", "!=", "<", ">", "<=", ">=", "INDEX_OF(%s, %p) >= 0", "STARTS_WITH(%s, %p)", "INDEX_OF(%s, %p) < 0"}; 
 	
-	private Heading attributes;
+	private Vector<String> attributes;
 	private String whereClause = "";
 	private Vector<Control[]> controls = new Vector<Control[]>();
 	private Vector<String[]> finderSavedState = null;
 	
-	public SearchAdvancedQueryBuilder(Heading attributes, Composite parent, Vector<String[]> finderSavedState) {
+	public SearchAdvancedQueryBuilder(Vector<String> attributes, Composite parent, Vector<String[]> finderSavedState) {
 		super(parent, SWT.NONE);
 		this.finderSavedState = finderSavedState;
 		this.attributes = attributes;
@@ -65,7 +64,7 @@ public class SearchAdvancedQueryBuilder extends Composite {
 			int operationIndex = ((Combo)control[1]).getSelectionIndex();
 			if (operationIndex < 0)
 				continue;
-			String name = attributes.getColumnNameAt(columnIndex);
+			String name = attributes.get(columnIndex);
 			String value = ((Text)control[2]).getText();
 			// TODO - fix
 			/*
@@ -173,7 +172,7 @@ public class SearchAdvancedQueryBuilder extends Composite {
 		Combo newComboColumn;
 		newComboColumn = new Combo(this, SWT.READ_ONLY);
 		newComboColumn.setLayoutData(new GridData(SWT.LEFT, SWT.CENTER, false, false, 1, 1));
-		String[] attributeNames = attributes.getAttributeNames().toArray(new String[0]);
+		String[] attributeNames = attributes.toArray(new String[0]);
 		newComboColumn.setItems(attributeNames);
 		rowControls[0] = newComboColumn;
 		if (rowNum == 0)
