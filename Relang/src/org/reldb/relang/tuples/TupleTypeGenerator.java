@@ -20,7 +20,7 @@ import org.reldb.relang.external.ForeignCompilerJava;
  * @author dave
  *
  */
-public class TupleGenerator {
+public class TupleTypeGenerator {
 	
 	private String dir;
 	private String tupleName;
@@ -30,7 +30,7 @@ public class TupleGenerator {
 	
 	private HashMap<String, Class<?>> attributes = new HashMap<>();
 	
-	public TupleGenerator(String dir, String tupleName) {
+	public TupleTypeGenerator(String dir, String tupleName) {
 		this.dir = dir;
 		this.tupleName = tupleName;
 		if (!Directory.chkmkdir(dir))

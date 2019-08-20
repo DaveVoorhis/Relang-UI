@@ -1,12 +1,9 @@
 package org.reldb.relang.data.bdbje;
 
+import java.io.Closeable;
 import java.util.Iterator;
-import java.util.Vector;
 
-import org.reldb.relang.data.InvalidValueException;
-import org.reldb.relang.data.containers.ContainerWrapper;
-import org.reldb.relang.exceptions.ExceptionFatal;
-import org.reldb.relang.strings.Str;
+import org.reldb.relang.data.Data;
 
 import com.sleepycat.bind.EntryBinding;
 import com.sleepycat.bind.serial.SerialBinding;
@@ -15,9 +12,7 @@ import com.sleepycat.collections.StoredMap;
 import com.sleepycat.collections.StoredSortedMap;
 import com.sleepycat.je.Database;
 
-import static org.reldb.relang.strings.Strings.*;
-
-public class BDBJEData<K, V> implements ContainerWrapper<V> {
+public class BDBJEData<K, V> implements Data<V>, Closeable {
 	private BDBJEBase bdbjeBase;
 	private Class<?> type;
 	private Database db;
@@ -27,7 +22,10 @@ public class BDBJEData<K, V> implements ContainerWrapper<V> {
 		this.bdbjeBase = bdbjeBase;
 		this.type = type;
 		this.db = db;
-		EntryBinding<K> dataKeyBinding = (EntryBinding<K>) getKeyBinding();
+		
+		@SuppressWarnings("unchecked")
+		EntryBinding<K> dataKeyBinding = (EntryBinding<K>)getKeyBinding();
+		@SuppressWarnings({ "rawtypes", "unchecked" })
 		EntryBinding<V> dataValueBinding = new SerialBinding(bdbjeBase.getClassCatalog(), type);
 		data = new StoredSortedMap<K, V>(db, dataKeyBinding, dataValueBinding, true);
 	}
@@ -58,6 +56,8 @@ public class BDBJEData<K, V> implements ContainerWrapper<V> {
 
 	@Override
 	public void extend(String name, Class<?> type) {
+		// TODO - implement extend
+		updateCatalog();
 	}
 
 	@Override
@@ -67,10 +67,32 @@ public class BDBJEData<K, V> implements ContainerWrapper<V> {
 
 	@Override
 	public void reduce(String name) {
-		// TODO Auto-generated method stub
-		
+		// TODO - implement reduce
+		updateCatalog();
 	}
 
+	@Override
+	public boolean isRenameable() {
+		return true;
+	}
+
+	@Override
+	public void rename(String oldName, String newName) {
+		// TODO - implement rename
+		updateCatalog();
+	}
+
+	@Override
+	public boolean isTypeChangeable() {
+		return true;
+	}
+
+	@Override
+	public void changeType(String name, Class<?> type) {
+		// TODO - implement change type
+		updateCatalog();
+	}
+	
 	@Override
 	public boolean isStrictlyReadonly() {
 		return false;
@@ -83,8 +105,7 @@ public class BDBJEData<K, V> implements ContainerWrapper<V> {
 
 	@Override
 	public Iterator<V> iterator() {
-		// TODO Auto-generated method stub
-		return null;
+		return data.values().iterator();
 	}
 	
 }

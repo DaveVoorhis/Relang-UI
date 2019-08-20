@@ -5,7 +5,7 @@ import org.reldb.relang.data.bdbje.BDBJEData;
 import org.reldb.relang.data.bdbje.BDBJEEnvironment;
 import org.reldb.relang.external.DirClassLoader;
 import org.reldb.relang.external.ForeignCompilerJava;
-import org.reldb.relang.tuples.TupleGenerator;
+import org.reldb.relang.tuples.TupleTypeGenerator;
 
 /**
  * Internationalisable messages.
@@ -22,6 +22,7 @@ public class Strings {
 	public static final int ErrUnableToCreate1 = Str.E(UnableToCreateMsg, BDBJEEnvironment.class.toString());
 	public static final int ErrUnableToCreate2 = Str.E(UnableToCreateMsg, BDBJEEnvironment.class.toString());
 	public static final int ErrUnableToCreate3 = Str.E(UnableToCreateMsg, BDBJEEnvironment.class.toString());	
+	public static final int ErrUnableToCreate4 = Str.E(UnableToCreateMsg, BDBJEEnvironment.class.toString());	
 	public static final int NoteClosing = Str.N("Closing BDBJE at %s.", BDBJEEnvironment.class.toString());
 	public static final int NoteClosed = Str.N("Closed BDBJE at %s.", BDBJEEnvironment.class.toString());
 	public static final int WarnClosingClassRepo = Str.W("Error closing class repository at %s due to %s.", BDBJEEnvironment.class.toString());
@@ -30,6 +31,7 @@ public class Strings {
 
 	public static final int ErrSourceExists = Str.E("Data source %s already exists.", BDBJEBase.class.toString());
 	public static final int ErrSourceNotExists = Str.E("Data source %s does not exist.", BDBJEBase.class.toString());
+	public static final int ErrUnableToGenerateTupleType = Str.E("Unable to create tuple type %s.", BDBJEBase.class.toString());
 	
 	public static final int ErrTypeParmNotNull = Str.E("The type parameter must not be null.", BDBJEData.class.toString());
 	public static final int ErrNonexistentColumn = Str.E("Attempt to reference non-existent column %d in a BDBJEData with column count %d", BDBJEData.class.toString());
@@ -48,5 +50,5 @@ public class Strings {
 	
 	public static final int ErrSavingJavaSource = Str.E("Unable to save Java source: %s.", ForeignCompilerJava.class.toString());
 	
-	public static final int ErrUnableToCreateOrOpenCodeDirectory = Str.E("Unable to create or open code directory %s.", TupleGenerator.class.toString());
+	public static final int ErrUnableToCreateOrOpenCodeDirectory = Str.E("Unable to create or open code directory %s.", TupleTypeGenerator.class.toString());
 }

@@ -8,7 +8,7 @@ import java.lang.reflect.Field;
 
 import org.junit.Test;
 import org.reldb.relang.external.DirClassLoader;
-import org.reldb.relang.tuples.TupleGenerator;
+import org.reldb.relang.tuples.TupleTypeGenerator;
 import org.reldb.relang.utilities.Directory;
 
 public class TestTupleGenerator {
@@ -20,7 +20,7 @@ public class TestTupleGenerator {
 		
 		Directory.rmAll(codeDir);
 		
-		var generator = new TupleGenerator(codeDir, tupleName);
+		var generator = new TupleTypeGenerator(codeDir, tupleName);
 		generator.addAttribute("Col1", String.class);
 		generator.addAttribute("Col2", Integer.class);
 		generator.addAttribute("Col3", Boolean.class);
@@ -38,7 +38,7 @@ public class TestTupleGenerator {
 		
 		System.out.println();
 		
-		generator = new TupleGenerator(codeDir, tupleName);
+		generator = new TupleTypeGenerator(codeDir, tupleName);
 		generator.addAttribute("Col5", Float.class);
 		var compilation2 = generator.compile();
 

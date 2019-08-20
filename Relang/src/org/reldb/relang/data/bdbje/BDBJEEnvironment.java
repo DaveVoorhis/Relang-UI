@@ -37,6 +37,10 @@ public class BDBJEEnvironment implements Closeable {
 	private static String getClassDir(String homedir) {
 		return homedir + File.separator + "classes";
 	}
+	
+	private static String getCodeDir(String homedir) {
+		return homedir + File.separator + "code";
+	}
 
 	private static String getClickerFileName(String homedir) {
 		return homedir + File.separator + "ClickToOpen.rl";
@@ -48,6 +52,10 @@ public class BDBJEEnvironment implements Closeable {
 	
 	private String getClassDir() {
 		return getClassDir(homeDir);
+	}
+	
+	public String getCodeDir() {
+		return getCodeDir(homeDir);
 	}
 	
 	private String getClickerFileName() {
@@ -62,6 +70,7 @@ public class BDBJEEnvironment implements Closeable {
 	public static void purge(String homedir) {
 		Directory.rmAll(getDataDir(homedir));
 		Directory.rmAll(getClassDir(homedir));
+		Directory.rmAll(getCodeDir(homedir));
 		Directory.rmAll(getClickerFileName(homedir));
 	}
 
@@ -115,6 +124,10 @@ public class BDBJEEnvironment implements Closeable {
 		if (!Directory.chkmkdir(classDir))
 			throw new ExceptionFatal(Str.ing(ErrUnableToCreate3, classDir));
 
+		var codeDir = getCodeDir();
+		if (!Directory.chkmkdir(codeDir))
+			throw new ExceptionFatal(Str.ing(ErrUnableToCreate4, codeDir));
+		
 		if (create)
 			writeClicker();
 

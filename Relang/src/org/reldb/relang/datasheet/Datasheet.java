@@ -11,6 +11,7 @@ import org.reldb.relang.commands.Commands;
 import org.reldb.relang.commands.IconMenuItem;
 import org.reldb.relang.data.CatalogEntry;
 import org.reldb.relang.data.bdbje.BDBJEBase;
+import org.reldb.relang.data.bdbje.BDBJEData;
 import org.reldb.relang.datasheet.tabs.GridTab;
 import org.eclipse.swt.widgets.ToolBar;
 import org.eclipse.swt.custom.SashForm;
@@ -169,14 +170,12 @@ public class Datasheet extends Composite {
 		catalogTree.removeAll();
 		var categoryData = new TreeItem(catalogTree, SWT.NONE);
 		categoryData.setText("Data");
-		try (var catalog = base.open(BDBJEBase.catalogName)) {
+		try (BDBJEData<String, CatalogEntry> catalog = (BDBJEData<String, CatalogEntry>)base.open(BDBJEBase.catalogName)) {
 			// TODO - this should be the first to be replaced by a transactional tuple/row iterator mechanism
-			long rowCount = catalog.getRowCount();
-			for (long row = 0; row < rowCount; row++) {
+			catalog.iterator().forEachRemaining(entry -> {
 				var item = new TreeItem(categoryData, SWT.NONE);
-				var text = ((CatalogEntry)catalog.getValue(0, row)).name;
-				item.setText(text);
-			}
+				item.setText(entry.name);
+			});
 		}
 	}
 
