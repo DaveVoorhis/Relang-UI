@@ -18,14 +18,14 @@ public class BDBJEData<K, V> implements Data<V>, Closeable {
 	private Database db;
 	private StoredMap<K, V> data;
 	
-	public BDBJEData(BDBJEBase bdbjeBase, Database db, Class<?> type, EntryBinding<K> dataKeyBinding) {
+	public BDBJEData(BDBJEBase bdbjeBase, Database db, Class<?> type, EntryBinding<K> keyBinding) {
 		this.bdbjeBase = bdbjeBase;
 		this.type = type;
 		this.db = db;
 		
 		@SuppressWarnings({ "rawtypes", "unchecked" })
-		EntryBinding<V> dataValueBinding = new SerialBinding(bdbjeBase.getClassCatalog(), type);
-		data = new StoredSortedMap<K, V>(db, dataKeyBinding, dataValueBinding, true);
+		EntryBinding<V> valueBinding = new SerialBinding(bdbjeBase.getClassCatalog(), type);
+		data = new StoredSortedMap<K, V>(db, keyBinding, valueBinding, true);
 	}
 
 	public void close() {

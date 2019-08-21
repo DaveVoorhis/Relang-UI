@@ -5,8 +5,8 @@ import org.reldb.relang.exceptions.ExceptionFatal;
 import org.reldb.relang.strings.Str;
 import org.reldb.relang.tuples.TupleTypeGenerator;
 
-import com.sleepycat.bind.EntryBinding;
 import com.sleepycat.bind.serial.ClassCatalog;
+import com.sleepycat.bind.tuple.LongBinding;
 import com.sleepycat.bind.tuple.StringBinding;
 import com.sleepycat.collections.StoredMap;
 import com.sleepycat.collections.TransactionWorker;
@@ -99,7 +99,7 @@ public class BDBJEBase {
 			throw new ExceptionFatal(Str.ing(ErrUnableToGenerateTupleType, name));
 		}
 		updateCatalog(name, testclass);
-		return new BDBJEData<>(this, database, testclass);
+		return new BDBJEData<>(this, database, testclass, new LongBinding());
 	}
 	
 	/**
@@ -115,7 +115,9 @@ public class BDBJEBase {
 		var database = environment.open(name, false);
 		try {
 			var clazz = dirClassLoader.forName(definition.typeName);
-			return new BDBJEData<>(this, database, clazz);
+			// TODO - eliminate the following hack by generalising how keys are specified
+			var binding = name.equals(catalogName) ? new StringBinding() : new LongBinding();
+			return new BDBJEData<>(this, database, clazz, binding);
 		} catch (ClassNotFoundException e) {
 			throw new ExceptionFatal(Str.ing(ErrUnableToLoadTupleClass, definition.typeName));
 		}

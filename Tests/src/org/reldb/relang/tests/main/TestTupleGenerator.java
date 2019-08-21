@@ -17,6 +17,8 @@ public class TestTupleGenerator {
 	public void testTupleGenerator01() throws ClassNotFoundException, FileNotFoundException, IOException {
 		var codeDir = "./testcode";
 		var tupleName = "TestTuple";
+		var newTupleName = "TestTupleRenamed";
+		var copyTupleName = "TestTupleCopied";
 		
 		Directory.rmAll(codeDir);
 		
@@ -34,7 +36,7 @@ public class TestTupleGenerator {
 		for (Field field: testclass.getFields())
 			System.out.println("Has field: " + field.getType().toString() + " " + field.getName());
 		
-		assertEquals(4, testclass.getFields().length);
+		assertEquals(5, testclass.getFields().length);
 		
 		System.out.println();
 		
@@ -49,7 +51,7 @@ public class TestTupleGenerator {
 		for (Field field: testclass.getFields())
 			System.out.println("Has field: " + field.getType().toString() + " " + field.getName());
 		
-		assertEquals(5, testclass.getFields().length);
+		assertEquals(6, testclass.getFields().length);
 		
 		System.out.println();
 		
@@ -63,7 +65,28 @@ public class TestTupleGenerator {
 		for (Field field: testclass.getFields())
 			System.out.println("Has field: " + field.getType().toString() + " " + field.getName());
 		
-		assertEquals(4, testclass.getFields().length);
+		assertEquals(5, testclass.getFields().length);
+		
+		generator.rename(newTupleName);
+		generator.compile();
+		
+		testclass = loader.forName(newTupleName);
+		for (Field field: testclass.getFields())
+			System.out.println("Has field: " + field.getType().toString() + " " + field.getName());
+		
+		assertEquals(5, testclass.getFields().length);
+		
+		var newGenerator = generator.copyTo(copyTupleName);
+		
+		newGenerator.addAttribute("Col6", Integer.class);
+		newGenerator.removeAttribute("Col3");
+		newGenerator.compile();
+		
+		testclass = loader.forName(copyTupleName);
+		for (Field field: testclass.getFields())
+			System.out.println("Has field: " + field.getType().toString() + " " + field.getName());
+		
+		assertEquals(5, testclass.getFields().length);		
 	}
 
 }
