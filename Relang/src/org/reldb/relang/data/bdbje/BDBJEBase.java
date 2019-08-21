@@ -18,26 +18,23 @@ import org.reldb.relang.compiler.DirClassLoader;
 
 public class BDBJEBase {
 
-	public static final String catalogName = "sys.Catalog";
+	public static final String catalogName = "sys_Catalog";
 	
 	private BDBJEEnvironment environment;
 	private BDBJEData<String, CatalogEntry> catalogData;
 	private StoredMap<String, CatalogEntry> catalog;
+	private DirClassLoader dirClassLoader;
 	
 	public BDBJEBase(String dir, boolean create) {
 		environment = new BDBJEEnvironment(dir, create);				
 		// Catalog
 		var catalogDB = environment.open(catalogName, create);
-		catalogData = new BDBJEData<String, CatalogEntry>(this, catalogDB, CatalogEntry.class) {
-			@Override
-			protected EntryBinding<?> getKeyBinding() {
-				return new StringBinding();
-			}
-		};
+		catalogData = new BDBJEData<String, CatalogEntry>(this, catalogDB, CatalogEntry.class, new StringBinding());
 		catalog = catalogData.getStoredMap();
 		// Does the Catalog contain the Catalog?
 		if (!catalog.containsKey(catalogName))
-			catalog.put(catalogName, new CatalogEntry(catalogName, CatalogEntry.class, null));
+			catalog.put(catalogName, new CatalogEntry(catalogName, CatalogEntry.class.getName(), null));
+		dirClassLoader = new DirClassLoader(environment.getCodeDir());
 	}
 	
 	public String getCodeDir() {
@@ -49,7 +46,7 @@ public class BDBJEBase {
 	}
 	
 	void updateCatalog(String name, Class<?> definition) {
-		catalog.put(name, new CatalogEntry(name, definition, null));
+		catalog.put(name, new CatalogEntry(name, definition.toString(), null));
 	}
 
 	/**
@@ -95,10 +92,9 @@ public class BDBJEBase {
 		var codeDir = environment.getCodeDir();
 		var tupleTypeGenerator = new TupleTypeGenerator(codeDir, name);
 		tupleTypeGenerator.compile();
-		var loader = new DirClassLoader(codeDir);
 		Class<?> testclass;
 		try {
-			testclass = loader.forName(name);
+			testclass = dirClassLoader.forName(name);
 		} catch (ClassNotFoundException e) {
 			throw new ExceptionFatal(Str.ing(ErrUnableToGenerateTupleType, name));
 		}
@@ -117,7 +113,12 @@ public class BDBJEBase {
 		if (definition == null)
 			throw new ExceptionFatal(Str.ing(ErrSourceNotExists, name));
 		var database = environment.open(name, false);
-		return new BDBJEData<>(this, database, definition.type);
+		try {
+			var clazz = dirClassLoader.forName(definition.typeName);
+			return new BDBJEData<>(this, database, clazz);
+		} catch (ClassNotFoundException e) {
+			throw new ExceptionFatal(Str.ing(ErrUnableToLoadTupleClass, definition.typeName));
+		}
 	}
 	
 	/**

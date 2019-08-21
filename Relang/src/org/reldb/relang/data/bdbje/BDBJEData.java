@@ -8,7 +8,6 @@ import org.reldb.relang.tuples.TupleTypeGenerator;
 
 import com.sleepycat.bind.EntryBinding;
 import com.sleepycat.bind.serial.SerialBinding;
-import com.sleepycat.bind.tuple.LongBinding;
 import com.sleepycat.collections.StoredMap;
 import com.sleepycat.collections.StoredSortedMap;
 import com.sleepycat.je.Database;
@@ -19,18 +18,11 @@ public class BDBJEData<K, V> implements Data<V>, Closeable {
 	private Database db;
 	private StoredMap<K, V> data;
 	
-	public BDBJEData(BDBJEBase bdbjeBase, Database db, Class<?> type) {
+	public BDBJEData(BDBJEBase bdbjeBase, Database db, Class<?> type, EntryBinding<K> dataKeyBinding) {
 		this.bdbjeBase = bdbjeBase;
 		this.type = type;
 		this.db = db;
 		
-		var codeDir = bdbjeBase.getCodeDir();
-		var tupleTypeGenerator = new TupleTypeGenerator(codeDir, db.getDatabaseName());
-		if (!tupleTypeGenerator.isExisting())
-			tupleTypeGenerator.compile();
-		
-		@SuppressWarnings("unchecked")
-		EntryBinding<K> dataKeyBinding = (EntryBinding<K>)getKeyBinding();
 		@SuppressWarnings({ "rawtypes", "unchecked" })
 		EntryBinding<V> dataValueBinding = new SerialBinding(bdbjeBase.getClassCatalog(), type);
 		data = new StoredSortedMap<K, V>(db, dataKeyBinding, dataValueBinding, true);
@@ -42,10 +34,6 @@ public class BDBJEData<K, V> implements Data<V>, Closeable {
 		db.close();
 		db = null;
 	}
-
-	protected EntryBinding<?> getKeyBinding() {
-		return new LongBinding();
-	}
 	
 	private void updateCatalog() {
 		bdbjeBase.updateCatalog(db.getDatabaseName(), type);
@@ -55,6 +43,7 @@ public class BDBJEData<K, V> implements Data<V>, Closeable {
 		return data;
 	}
 
+	@SuppressWarnings("unchecked")
 	@Override
 	public Class<V> getType() {
 		return (Class<V>)type;

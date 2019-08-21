@@ -22,41 +22,14 @@ import static org.reldb.relang.strings.Strings.*;
  *
  */
 public class ForeignCompilerJava {
+	private final static boolean verbose = true;
+	
 	private String userSourcePath;
 	
 	public ForeignCompilerJava(String userSourcePath) {
 		this.userSourcePath = userSourcePath;
 	}
-    
-    /** Return a classpath cleaned of non-existent files and Web Start's deploy.jar.  
-     * Classpath elements with spaces are converted to quote-delimited strings. */
-    private final static String cleanClassPath(String s) {
-    	if (java.io.File.separatorChar == '/')
-    		s = s.replace('\\', '/');
-    	else
-    		s = s.replace('/', '\\');
-        String outstr = "";
-        java.util.StringTokenizer st = new java.util.StringTokenizer(s, java.io.File.pathSeparator);
-        while (st.hasMoreElements()) {
-            String element = (String)st.nextElement();
-            java.io.File f = new java.io.File(element);
-            if (f.exists() && !element.contains("deploy.jar")) {
-            	String fname = f.toString();
-            	if (fname.indexOf(' ')>=0)
-            		fname = '"' + fname + '"';
-                outstr += ((outstr.length()>0) ? java.io.File.pathSeparator : "") + fname;
-            }
-        }
-        return outstr;
-    }
-    
-	/** Return classpath to the Relang core. */
-    private String getLocalClasspath() {
-        String classPath = System.getProperty("user.dir") + 
-        	   java.io.File.pathSeparatorChar + userSourcePath;
-        return classPath;
-    }
-   
+	   
     public static class CompilationResults {
     	public final boolean compiled;
     	public final String compilerMessages;
@@ -102,6 +75,11 @@ public class ForeignCompilerJava {
     	} catch (IOException ioe) {
     		throw new ExceptionFatal(Str.ing(ErrSavingJavaSource, ioe.toString()));
     	}
+ 
+    	if (verbose) {
+    		System.out.println(src);
+    		System.out.println("\nCompile:\n" + sourcef);
+    	}
     	
     	// Start compilation using JDT
    		String commandLine = "-1.9 -source 1.9 -warn:" + 
@@ -141,7 +119,38 @@ public class ForeignCompilerJava {
     		}
     		compilerMessages += str + '\n';
     	}
+    	if (verbose)
+    		System.out.println(compilerMessages);
     	return new CompilationResults(compiled, compilerMessages);
+    }
+	
+    /** Return a classpath cleaned of non-existent files and Web Start's deploy.jar.  
+     * Classpath elements with spaces are converted to quote-delimited strings. */
+    private final static String cleanClassPath(String s) {
+    	if (java.io.File.separatorChar == '/')
+    		s = s.replace('\\', '/');
+    	else
+    		s = s.replace('/', '\\');
+        String outstr = "";
+        java.util.StringTokenizer st = new java.util.StringTokenizer(s, java.io.File.pathSeparator);
+        while (st.hasMoreElements()) {
+            String element = (String)st.nextElement();
+            java.io.File f = new java.io.File(element);
+            if (f.exists() && !element.contains("deploy.jar")) {
+            	String fname = f.toString();
+            	if (fname.indexOf(' ')>=0)
+            		fname = '"' + fname + '"';
+                outstr += ((outstr.length()>0) ? java.io.File.pathSeparator : "") + fname;
+            }
+        }
+        return outstr;
+    }
+    
+	/** Return classpath to the Relang core. */
+    private String getLocalClasspath() {
+        String classPath = System.getProperty("user.dir") + 
+        	   java.io.File.pathSeparatorChar + userSourcePath;
+        return classPath;
     }
     
     /** Get a stripped name.  Only return text after the final '.' */

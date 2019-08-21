@@ -42,10 +42,10 @@ public class TupleTypeGenerator {
 				.filter(field -> !Modifier.isStatic(field.getModifiers()) && Modifier.isPublic(field.getModifiers()))
 				.forEach(field -> attributes.put(field.getName(), field.getType()));
 			try {
-				var serialVersionUIDField = tupleClass.getField("serialVersionUID");
-				serialValue = serialVersionUIDField.getLong(null);
+				var serialVersionUIDField = tupleClass.getDeclaredField("serialVersionUID");
+				serialValue = serialVersionUIDField.getLong(null) + 1;
 			} catch (NoSuchFieldException | SecurityException | IllegalArgumentException | IllegalAccessException e) {
-				serialValue = 2;
+				serialValue = 9999999;
 			}
 			existing = true;
 		} catch (ClassNotFoundException e) {
@@ -69,14 +69,15 @@ public class TupleTypeGenerator {
 		var tupleDef = 
 			"import org.reldb.relang.tuples.Tuple;\n\n" +
 			"/** " + tupleName + " tuple class version " + serialValue + " */\n" +
-			"public class " + tupleName + " implements Tuple {\n\t" +
-				"private static final long serialVersionUID = " + serialValue + ";\n\t" +
+			"public class " + tupleName + " implements Tuple {\n" +
+				"\t/** Version number */\n" +
+				"\tpublic static final long serialVersionUID = " + serialValue + ";\n" +
 				attributes
 					.entrySet()
 					.stream()
-					.map(entry -> "/** Field */\n\tpublic " + entry.getValue().getCanonicalName() + " " + entry.getKey())
-					.collect(Collectors.joining(";\n\t")) +
-			";\n}";
+					.map(entry -> "\t/** Field */\n\tpublic " + entry.getValue().getCanonicalName() + " " + entry.getKey() + ";\n")
+					.collect(Collectors.joining()) +
+			"}";
 		var compiler = new ForeignCompilerJava(dir);
 		loader.unload(tupleName);
 		return compiler.compileForeignCode(tupleName, tupleDef);

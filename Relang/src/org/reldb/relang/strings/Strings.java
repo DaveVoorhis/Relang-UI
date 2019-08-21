@@ -32,6 +32,7 @@ public class Strings {
 	public static final int ErrSourceExists = Str.E("Data source %s already exists.", BDBJEBase.class.toString());
 	public static final int ErrSourceNotExists = Str.E("Data source %s does not exist.", BDBJEBase.class.toString());
 	public static final int ErrUnableToGenerateTupleType = Str.E("Unable to create tuple type %s.", BDBJEBase.class.toString());
+	public static final int ErrUnableToLoadTupleClass = Str.E("Unable to load tuple type class %s.", BDBJEBase.class.toString());
 	
 	public static final int ErrTypeParmNotNull = Str.E("The type parameter must not be null.", BDBJEData.class.toString());
 	public static final int ErrNonexistentColumn = Str.E("Attempt to reference non-existent column %d in a BDBJEData with column count %d", BDBJEData.class.toString());

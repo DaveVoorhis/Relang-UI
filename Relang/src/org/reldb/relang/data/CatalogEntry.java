@@ -7,17 +7,17 @@ public class CatalogEntry implements Serializable {
 	private static final long serialVersionUID = 1L;
 	
 	public final String name;
-	public final Class<?> type;
+	public final String typeName;
 	public final CatalogMetadata metadata;
 	
-	public CatalogEntry(String name, Class<?> type, CatalogMetadata metadata) {
+	public CatalogEntry(String name, String typeName, CatalogMetadata metadata) {
 		this.name = name;
-		this.type = type;
+		this.typeName = typeName;
 		this.metadata = metadata;
 	}
 
 	public String toString() {
-		return String.format("CatalogEntry(\"%s\", %s, %s)", name, type.toString(), (metadata != null) ? metadata.toString() : "<null>"); 
+		return String.format("CatalogEntry(\"%s\", %s, %s)", name, typeName, (metadata != null) ? metadata.toString() : "<null>"); 
 	}
 	
 }
