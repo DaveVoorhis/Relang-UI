@@ -99,6 +99,7 @@ public class TupleTypeGenerator {
 	public TupleTypeGenerator copyTo(String newName) {
 		var target = new TupleTypeGenerator(dir, newName);
 		target.attributes = (HashMap<String, Class<?>>)attributes.clone();
+		target.serialValue = serialValue + 1;
 		target.copyFrom = this;
 		return target;
 	}
@@ -114,16 +115,25 @@ public class TupleTypeGenerator {
 			"\t}\n";
 	}
 	
+	private void destroy(String className) {
+		var pathName = dir + File.separator + className;
+		(new File(pathName + ".java")).delete();
+		(new File(pathName + ".class")).delete();		
+	}
+	
+	/** Delete the Java files underpinning this tuple type. */
+	public void destroy() {
+		destroy(tupleName);
+	}
+	
 	/** Compile this tuple type as a class.
 	 * 
 	 * @return - an instance of ForeignCompilerJava.CompilationResults, which indicates compilation results.
 	 */
 	public ForeignCompilerJava.CompilationResults compile() {
 		if (oldTupleName != null) {
-			var pathName = dir + File.separator + oldTupleName;
-			System.out.println("Remove file starting with " + pathName);
-			(new File(pathName + ".java")).delete();
-			(new File(pathName + ".class")).delete();
+			destroy(oldTupleName);
+			oldTupleName = null;
 		}
 		var tupleDef = 
 			"import org.reldb.relang.tuples.Tuple;\n\n" +

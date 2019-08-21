@@ -86,7 +86,10 @@ public class TestTupleGenerator {
 		for (Field field: testclass.getFields())
 			System.out.println("Has field: " + field.getType().toString() + " " + field.getName());
 		
-		assertEquals(5, testclass.getFields().length);		
+		assertEquals(5, testclass.getFields().length);
+		
+		generator.destroy();
+		newGenerator.destroy();
 	}
 
 }
