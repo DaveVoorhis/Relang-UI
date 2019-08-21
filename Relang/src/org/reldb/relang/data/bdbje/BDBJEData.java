@@ -4,6 +4,7 @@ import java.io.Closeable;
 import java.util.Iterator;
 
 import org.reldb.relang.data.Data;
+import org.reldb.relang.tuples.TupleTypeGenerator;
 
 import com.sleepycat.bind.EntryBinding;
 import com.sleepycat.bind.serial.SerialBinding;
@@ -22,6 +23,11 @@ public class BDBJEData<K, V> implements Data<V>, Closeable {
 		this.bdbjeBase = bdbjeBase;
 		this.type = type;
 		this.db = db;
+		
+		var codeDir = bdbjeBase.getCodeDir();
+		var tupleTypeGenerator = new TupleTypeGenerator(codeDir, db.getDatabaseName());
+		if (!tupleTypeGenerator.isExisting())
+			tupleTypeGenerator.compile();
 		
 		@SuppressWarnings("unchecked")
 		EntryBinding<K> dataKeyBinding = (EntryBinding<K>)getKeyBinding();
@@ -50,8 +56,8 @@ public class BDBJEData<K, V> implements Data<V>, Closeable {
 	}
 
 	@Override
-	public Class<?> getType() {
-		return type;
+	public Class<V> getType() {
+		return (Class<V>)type;
 	}
 	
 	@Override
@@ -61,7 +67,11 @@ public class BDBJEData<K, V> implements Data<V>, Closeable {
 
 	@Override
 	public void extend(String name, Class<?> type) {
-		// TODO - implement extend
+		var codeDir = bdbjeBase.getCodeDir();
+		var tupleTypeGenerator = new TupleTypeGenerator(codeDir, db.getDatabaseName());
+		tupleTypeGenerator.addAttribute(name, type);
+		tupleTypeGenerator.compile();
+		// TODO - copy old data to new data here
 		updateCatalog();
 	}
 
@@ -72,7 +82,11 @@ public class BDBJEData<K, V> implements Data<V>, Closeable {
 
 	@Override
 	public void reduce(String name) {
-		// TODO - implement reduce
+		var codeDir = bdbjeBase.getCodeDir();
+		var tupleTypeGenerator = new TupleTypeGenerator(codeDir, db.getDatabaseName());
+		tupleTypeGenerator.removeAttribute(name);
+		tupleTypeGenerator.compile();
+		// TODO - copy old data to new data here
 		updateCatalog();
 	}
 

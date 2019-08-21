@@ -4,7 +4,7 @@
  * Created on 25 April 2004, 02:25
  */
 
-package org.reldb.relang.external;
+package org.reldb.relang.compiler;
 
 /**
  * A BytestreamOutput backed by an array of bytes.

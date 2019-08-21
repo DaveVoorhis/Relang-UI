@@ -1,10 +1,10 @@
 package org.reldb.relang.strings;
 
+import org.reldb.relang.compiler.DirClassLoader;
+import org.reldb.relang.compiler.ForeignCompilerJava;
 import org.reldb.relang.data.bdbje.BDBJEBase;
 import org.reldb.relang.data.bdbje.BDBJEData;
 import org.reldb.relang.data.bdbje.BDBJEEnvironment;
-import org.reldb.relang.external.DirClassLoader;
-import org.reldb.relang.external.ForeignCompilerJava;
 import org.reldb.relang.tuples.TupleTypeGenerator;
 
 /**

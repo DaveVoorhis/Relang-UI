@@ -7,7 +7,7 @@ import java.io.IOException;
 import java.lang.reflect.Field;
 
 import org.junit.Test;
-import org.reldb.relang.external.DirClassLoader;
+import org.reldb.relang.compiler.DirClassLoader;
 import org.reldb.relang.tuples.TupleTypeGenerator;
 import org.reldb.relang.utilities.Directory;
 

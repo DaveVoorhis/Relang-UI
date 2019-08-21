@@ -1,4 +1,4 @@
-package org.reldb.relang.external;
+package org.reldb.relang.compiler;
 
 import java.io.BufferedReader;
 import java.io.ByteArrayInputStream;

@@ -6,6 +6,9 @@ import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.reldb.relang.data.bdbje.BDBJEEnvironment;
+
+import com.sleepycat.collections.StoredMap;
+
 import org.reldb.relang.data.CatalogEntry;
 import org.reldb.relang.data.bdbje.BDBJEBase;
 
@@ -22,57 +25,28 @@ public class TestDataBDBJE {
 	}
 	
 	@Test 
-	public void testDataTemporary01() {
+	public void testData01() {
 		try (var data = base.create("testData")) {
-			data.setColumnName(0, "Column1");
-			data.setColumnName(1,  "Column2");
-			data.setColumnType(0, String.class, "");
-			data.setColumnType(1,  Integer.class, Integer.valueOf(0));
-			data.setValue(0, 1, "blah");
-			data.setValue(1,  1, 22);
-			data.setValue(1, 25, 33);
-			data.setValue(0,  44, "fish");
-			data.setColumnType(1, Object.class, Integer.valueOf(2));
-			assertEquals("blah", data.getValue(0,  1));
-			assertEquals(22, data.getValue(1, 1));
-			assertEquals(33, data.getValue(1, 25));
-			assertEquals("fish", data.getValue(0,  44));
-			data.appendDefaultColumn();
-			data.setValue(2, 2, "zot");
-			assertEquals("zot", data.getValue(2,  2));
-			data.appendDefaultColumn();
-			data.setValue(3, 100, "glub");
-			assertEquals("glub", data.getValue(3,  100));
+			data.extend("col1", String.class);
+			data.extend("col2", Integer.class);
+			var container = (StoredMap<Long, ?>)data.getStoredMap();
+			
 		}
 	}
 	
 	@Test
-	public void testDataTemporary02() {
+	public void testData02() {
 		try (var gridData = base.create("testData2")) {
-			gridData.setColumnName(0, "Col1");
-			gridData.setColumnName(1, "Col2");
-			gridData.setColumnName(2, "Col3");
-			gridData.appendRow();
-			gridData.appendRow();
-			gridData.appendRow();
-			gridData.appendRow();
-			assertEquals(3, gridData.getColumnCount());
-			assertEquals(4, gridData.getRowCount());
 		}
 	}
 	
 	@AfterClass
 	public static void teardown() {
 		try (var catalog = base.open(BDBJEBase.catalogName)) {
-			assertEquals(3, catalog.getRowCount());
-			assertEquals(1, catalog.getColumnCount());
-			assertEquals("CatalogEntry", catalog.getColumnNameAt(0));
-			CatalogEntry entry = (CatalogEntry)catalog.getValue(0, 0);
-			assertEquals("sys.Catalog", entry.name);
-			entry = (CatalogEntry)catalog.getValue(0, 1);
-			assertEquals("testData", entry.name);
-			entry = (CatalogEntry)catalog.getValue(0, 2);
-			assertEquals("testData2", entry.name);
+			var container = (StoredMap<String, CatalogEntry>)catalog.getStoredMap();
+			assertEquals(true, container.containsKey("testData"));
+			assertEquals(true, container.containsKey("testData2"));
+			assertEquals(true, container.containsKey(BDBJEBase.catalogName));
 		}
 		base.close();
 	}

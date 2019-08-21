@@ -6,7 +6,7 @@
  * Created on 24 April 2004, 19:24
  */
 
-package org.reldb.relang.external;
+package org.reldb.relang.compiler;
 
 /**
  * A class to support streaming ValueS into streams of bytes.

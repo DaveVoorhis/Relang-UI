@@ -2,7 +2,6 @@ package org.reldb.relang.data.bdbje;
 
 import org.reldb.relang.data.CatalogEntry;
 import org.reldb.relang.exceptions.ExceptionFatal;
-import org.reldb.relang.external.DirClassLoader;
 import org.reldb.relang.strings.Str;
 import org.reldb.relang.tuples.TupleTypeGenerator;
 
@@ -14,6 +13,8 @@ import com.sleepycat.collections.TransactionWorker;
 import com.sleepycat.je.DatabaseException;
 
 import static org.reldb.relang.strings.Strings.*;
+
+import org.reldb.relang.compiler.DirClassLoader;
 
 public class BDBJEBase {
 

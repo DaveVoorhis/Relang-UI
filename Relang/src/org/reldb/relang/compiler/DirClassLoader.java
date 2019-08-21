@@ -4,7 +4,7 @@
  * Created on 21 August 2004, 21:02
  */
 
-package org.reldb.relang.external;
+package org.reldb.relang.compiler;
 
 import java.io.*;
 import java.util.*;

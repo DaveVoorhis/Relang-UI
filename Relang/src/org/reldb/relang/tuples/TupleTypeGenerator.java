@@ -10,9 +10,9 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.stream.Collectors;
 
+import org.reldb.relang.compiler.DirClassLoader;
+import org.reldb.relang.compiler.ForeignCompilerJava;
 import org.reldb.relang.exceptions.ExceptionFatal;
-import org.reldb.relang.external.DirClassLoader;
-import org.reldb.relang.external.ForeignCompilerJava;
 
 /**
  * Generates Java code to represent a tuple, which is a class that implements Tuple.
