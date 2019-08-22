@@ -47,6 +47,8 @@ public class TestDataBDBJE {
 			assertEquals(true, container.containsKey("testData"));
 			assertEquals(true, container.containsKey("testData2"));
 			assertEquals(true, container.containsKey(BDBJEBase.catalogName));
+			System.out.println("=== Catalog ===");
+			container.forEach((name, catalogEntry) -> System.out.println(name + ": " + catalogEntry));
 		}
 		base.close();
 	}
