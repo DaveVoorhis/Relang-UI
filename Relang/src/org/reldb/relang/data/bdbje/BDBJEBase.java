@@ -46,6 +46,7 @@ public class BDBJEBase {
 	}
 	
 	void updateCatalog(String name, Class<?> tupleType) {
+		environment.truncateClassCatalog();
 		catalog.put(name, new CatalogEntry(name, tupleType.getName(), null));
 	}
 

@@ -6,6 +6,7 @@ import java.util.Iterator;
 import org.reldb.relang.data.Data;
 import org.reldb.relang.exceptions.ExceptionFatal;
 import org.reldb.relang.strings.Str;
+import org.reldb.relang.tuples.Tuple;
 import org.reldb.relang.tuples.TupleTypeGenerator;
 
 import com.sleepycat.bind.EntryBinding;
@@ -28,7 +29,8 @@ public class BDBJEData<K, V> implements Data<V>, Closeable {
 		this.db = db;
 		
 		@SuppressWarnings({ "rawtypes", "unchecked" })
-		EntryBinding<V> valueBinding = new SerialBinding(bdbjeBase.getClassCatalog(), tupleType);
+	//	EntryBinding<V> valueBinding = new SerialBinding(bdbjeBase.getClassCatalog(), tupleType);
+		EntryBinding<V> valueBinding = new SerialBinding(bdbjeBase.getClassCatalog(), Tuple.class);
 		data = new StoredSortedMap<K, V>(db, keyBinding, valueBinding, true);
 	}
 

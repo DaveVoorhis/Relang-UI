@@ -131,19 +131,21 @@ public class BDBJEEnvironment implements Closeable {
 		if (create)
 			writeClicker();
 
-		var envConfig = new EnvironmentConfig();
-		envConfig.setTransactional(true);
-		envConfig.setAllowCreate(create);
+		var dataEnvConfig = new EnvironmentConfig();
+		dataEnvConfig.setTransactional(true);
+		dataEnvConfig.setAllowCreate(create);
+	//	envConfig.setClassLoader(classLoader);
 		
-		dataEnv = new Environment(new File(dataDir), envConfig);
-		classesEnv = new Environment(new File(classDir), envConfig);
-
-		var dbConfig = new DatabaseConfig();
-		dbConfig.setTransactional(true);
-		dbConfig.setAllowCreate(create);
+		dataEnv = new Environment(new File(dataDir), dataEnvConfig);
+		classesEnv = new Environment(new File(classDir), dataEnvConfig);
+		
+		var classEnvConfig = new DatabaseConfig();
+		classEnvConfig.setTransactional(true);
+		classEnvConfig.setAllowCreate(create);
+	//	dbConfig.setClassLoader(classLoader);
 
 		// Needed for serial bindings (i.e., Java serialization)
-		var classesDb = classesEnv.openDatabase(null, "classes", dbConfig);
+		var classesDb = classesEnv.openDatabase(null, "classes", classEnvConfig);
 		classes = new StoredClassCatalog(classesDb);
 		
 		System.out.println(Str.ing(NoteOpened, homeDir));
@@ -220,6 +222,10 @@ public class BDBJEEnvironment implements Closeable {
 	 */
 	ClassCatalog getClassCatalog() {
 		return classes;
+	}
+
+	void truncateClassCatalog() {
+		classesEnv.truncateDatabase(null, "classes", false);
 	}
 	
 	/** Closes the database. */

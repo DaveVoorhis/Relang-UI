@@ -9,7 +9,6 @@ import java.io.File;
 import java.lang.reflect.Modifier;
 import java.util.Arrays;
 import java.util.HashMap;
-import java.util.Map.Entry;
 import java.util.stream.Collectors;
 
 import org.reldb.relang.compiler.DirClassLoader;
