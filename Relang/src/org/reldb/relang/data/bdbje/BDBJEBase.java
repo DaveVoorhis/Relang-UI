@@ -115,7 +115,7 @@ public class BDBJEBase {
 		var database = environment.open(name, false);
 		try {
 			var tupleType = dirClassLoader.forName(definition.typeName);
-			// TODO - eliminate the following hack by generalising how keys are specified
+			// TODO - eliminate the following hack by generalising how BDB keys are specified
 			var binding = name.equals(catalogName) ? new StringBinding() : new LongBinding();
 			return new BDBJEData<>(this, database, tupleType, binding);
 		} catch (ClassNotFoundException e) {
@@ -135,10 +135,7 @@ public class BDBJEBase {
 	 * @return
 	 */
 	public BDBJEData<?, ?> open(String name, boolean create) {
-		if (create && !exists(name))
-			return create(name);
-		else
-			return open(name);
+		return (create && !exists(name)) ? create(name) : open(name);
 	}
 	
 	/**
