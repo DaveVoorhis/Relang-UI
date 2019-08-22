@@ -22,7 +22,7 @@ import static org.reldb.relang.strings.Strings.*;
  *
  */
 public class ForeignCompilerJava {
-	private final static boolean verbose = true;
+	private final static boolean verbose = false;
 	
 	private String userSourcePath;
 	
