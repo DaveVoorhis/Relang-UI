@@ -92,14 +92,14 @@ public class BDBJEBase {
 		var codeDir = environment.getCodeDir();
 		var tupleTypeGenerator = new TupleTypeGenerator(codeDir, name);
 		tupleTypeGenerator.compile();
-		Class<?> testclass;
+		Class<?> tupleType;
 		try {
-			testclass = dirClassLoader.forName(name);
+			tupleType = dirClassLoader.forName(name);
 		} catch (ClassNotFoundException e) {
 			throw new ExceptionFatal(Str.ing(ErrUnableToGenerateTupleType, name));
 		}
-		updateCatalog(name, testclass);
-		return new BDBJEData<>(this, database, testclass, new LongBinding());
+		updateCatalog(name, tupleType);
+		return new BDBJEData<>(this, database, tupleType, new LongBinding());
 	}
 	
 	/**
@@ -114,10 +114,10 @@ public class BDBJEBase {
 			throw new ExceptionFatal(Str.ing(ErrSourceNotExists, name));
 		var database = environment.open(name, false);
 		try {
-			var clazz = dirClassLoader.forName(definition.typeName);
+			var tupleType = dirClassLoader.forName(definition.typeName);
 			// TODO - eliminate the following hack by generalising how keys are specified
 			var binding = name.equals(catalogName) ? new StringBinding() : new LongBinding();
-			return new BDBJEData<>(this, database, clazz, binding);
+			return new BDBJEData<>(this, database, tupleType, binding);
 		} catch (ClassNotFoundException e) {
 			throw new ExceptionFatal(Str.ing(ErrUnableToLoadTupleClass, definition.typeName));
 		}
