@@ -9,6 +9,7 @@ import java.io.File;
 import java.lang.reflect.Modifier;
 import java.util.Arrays;
 import java.util.HashMap;
+import java.util.Map.Entry;
 import java.util.stream.Collectors;
 
 import org.reldb.relang.compiler.DirClassLoader;
@@ -115,6 +116,31 @@ public class TupleTypeGenerator {
 			"\t}\n";
 	}
 	
+	private String getFormatString() {
+		return 
+			tupleName 
+			+ " {" 
+			+ attributes.entrySet().stream().map(entry -> entry.getKey() + " = %s").collect(Collectors.joining(", ")) 
+			+ "}";
+	}
+	
+	private String getContentString() {
+		return
+			attributes.entrySet().stream().map(entry -> "this." + entry.getKey()).collect(Collectors.joining(", "));
+	}
+
+	private String prefixIfPresent(String s, String prefix) {
+		if (s != null && s.length() > 0)
+			return prefix + s;
+		return "";
+	}
+	
+	private String getToStringCode() {
+		return
+			"\t/** Create string representation of this tuple. */\n" +
+			"\tpublic String toString() {\n\t\treturn String.format(\"" + getFormatString() + "\"" + prefixIfPresent(getContentString(), ", ") + ");\n\t}\n";
+	}
+	
 	private void destroy(String className) {
 		var pathName = dir + File.separator + className;
 		(new File(pathName + ".java")).delete();
@@ -147,6 +173,7 @@ public class TupleTypeGenerator {
 					.map(entry -> "\t/** Field */\n\tpublic " + entry.getValue().getCanonicalName() + " " + entry.getKey() + ";\n")
 					.collect(Collectors.joining()) +
 				getCopyFromCode() +
+				getToStringCode() +
 			"}";
 		var compiler = new ForeignCompilerJava(dir);
 		loader.unload(tupleName);

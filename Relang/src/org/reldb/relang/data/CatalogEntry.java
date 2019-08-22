@@ -1,8 +1,8 @@
 package org.reldb.relang.data;
 
-import java.io.Serializable;
+import org.reldb.relang.tuples.Tuple;
 
-public class CatalogEntry implements Serializable {
+public class CatalogEntry implements Tuple {
 
 	private static final long serialVersionUID = 1L;
 	

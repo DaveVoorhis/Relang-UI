@@ -45,8 +45,8 @@ public class BDBJEBase {
 		return catalog.get(name);
 	}
 	
-	void updateCatalog(String name, Class<?> definition) {
-		catalog.put(name, new CatalogEntry(name, definition.toString(), null));
+	void updateCatalog(String name, Class<?> tupleType) {
+		catalog.put(name, new CatalogEntry(name, tupleType.getName(), null));
 	}
 
 	/**
@@ -91,7 +91,9 @@ public class BDBJEBase {
 		var database = environment.open(name, true);
 		var codeDir = environment.getCodeDir();
 		var tupleTypeGenerator = new TupleTypeGenerator(codeDir, name);
-		tupleTypeGenerator.compile();
+		var compileResult = tupleTypeGenerator.compile();
+		if (!compileResult.compiled)
+			throw new ExceptionFatal(Str.ing(ErrUnableToGenerateTupleType2, name, compileResult));
 		Class<?> tupleType;
 		try {
 			tupleType = dirClassLoader.forName(name);

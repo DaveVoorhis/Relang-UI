@@ -10,8 +10,8 @@ public interface Data<T> {
 	public boolean isExtendable();
 	public void extend(String name, Class<?> type);
 	
-	public boolean isReducable();
-	public void reduce(String name);
+	public boolean isRemovable();
+	public void remove(String name);
 	
 	public boolean isRenameable();
 	public void rename(String oldName, String newName);

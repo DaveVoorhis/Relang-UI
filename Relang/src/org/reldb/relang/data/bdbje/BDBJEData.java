@@ -4,6 +4,8 @@ import java.io.Closeable;
 import java.util.Iterator;
 
 import org.reldb.relang.data.Data;
+import org.reldb.relang.exceptions.ExceptionFatal;
+import org.reldb.relang.strings.Str;
 import org.reldb.relang.tuples.TupleTypeGenerator;
 
 import com.sleepycat.bind.EntryBinding;
@@ -12,19 +14,21 @@ import com.sleepycat.collections.StoredMap;
 import com.sleepycat.collections.StoredSortedMap;
 import com.sleepycat.je.Database;
 
+import static org.reldb.relang.strings.Strings.*;
+
 public class BDBJEData<K, V> implements Data<V>, Closeable {
 	private BDBJEBase bdbjeBase;
-	private Class<?> type;
+	private Class<?> tupleType;
 	private Database db;
 	private StoredMap<K, V> data;
 	
-	public BDBJEData(BDBJEBase bdbjeBase, Database db, Class<?> type, EntryBinding<K> keyBinding) {
+	public BDBJEData(BDBJEBase bdbjeBase, Database db, Class<?> tupleType, EntryBinding<K> keyBinding) {
 		this.bdbjeBase = bdbjeBase;
-		this.type = type;
+		this.tupleType = tupleType;
 		this.db = db;
 		
 		@SuppressWarnings({ "rawtypes", "unchecked" })
-		EntryBinding<V> valueBinding = new SerialBinding(bdbjeBase.getClassCatalog(), type);
+		EntryBinding<V> valueBinding = new SerialBinding(bdbjeBase.getClassCatalog(), tupleType);
 		data = new StoredSortedMap<K, V>(db, keyBinding, valueBinding, true);
 	}
 
@@ -36,7 +40,7 @@ public class BDBJEData<K, V> implements Data<V>, Closeable {
 	}
 	
 	private void updateCatalog() {
-		bdbjeBase.updateCatalog(db.getDatabaseName(), type);
+		bdbjeBase.updateCatalog(db.getDatabaseName(), tupleType);
 	}
 
 	public StoredMap<K, V> getStoredMap() {
@@ -46,7 +50,7 @@ public class BDBJEData<K, V> implements Data<V>, Closeable {
 	@SuppressWarnings("unchecked")
 	@Override
 	public Class<V> getType() {
-		return (Class<V>)type;
+		return (Class<V>)tupleType;
 	}
 	
 	@Override
@@ -59,22 +63,26 @@ public class BDBJEData<K, V> implements Data<V>, Closeable {
 		var codeDir = bdbjeBase.getCodeDir();
 		var tupleTypeGenerator = new TupleTypeGenerator(codeDir, db.getDatabaseName());
 		tupleTypeGenerator.addAttribute(name, type);
-		tupleTypeGenerator.compile();
+		var compileResult = tupleTypeGenerator.compile();
+		if (!compileResult.compiled)
+			throw new ExceptionFatal(Str.ing(ErrUnableToExtendTupleType, name, compileResult));
 		// TODO - copy old data to new data here
 		updateCatalog();
 	}
 
 	@Override
-	public boolean isReducable() {
+	public boolean isRemovable() {
 		return true;
 	}
 
 	@Override
-	public void reduce(String name) {
+	public void remove(String name) {
 		var codeDir = bdbjeBase.getCodeDir();
 		var tupleTypeGenerator = new TupleTypeGenerator(codeDir, db.getDatabaseName());
 		tupleTypeGenerator.removeAttribute(name);
-		tupleTypeGenerator.compile();
+		var compileResult = tupleTypeGenerator.compile();
+		if (!compileResult.compiled)
+			throw new ExceptionFatal(Str.ing(ErrUnableToRemoveInTupleType, name, compileResult));
 		// TODO - copy old data to new data here
 		updateCatalog();
 	}

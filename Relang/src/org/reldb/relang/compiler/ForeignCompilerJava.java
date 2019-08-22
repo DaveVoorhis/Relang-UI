@@ -37,6 +37,9 @@ public class ForeignCompilerJava {
 			this.compiled = compiled;
 			this.compilerMessages = compilerMessages;
 		}
+		public String toString() {
+			return "CompilationResults:\n" + compilerMessages;
+		}
     }
     
     /** Compile foreign code using Eclipse JDT compiler. */

@@ -9,6 +9,7 @@ import org.reldb.relang.data.bdbje.BDBJEEnvironment;
 
 import com.sleepycat.collections.StoredMap;
 
+import org.reldb.relang.compiler.DirClassLoader;
 import org.reldb.relang.data.CatalogEntry;
 import org.reldb.relang.data.bdbje.BDBJEBase;
 
@@ -17,20 +18,33 @@ public class TestDataBDBJE {
 	private final static String testDir = "./test";
 	
 	private static BDBJEBase base;
+	private static DirClassLoader loader;
 	
 	@BeforeClass
 	public static void setup() {
 		BDBJEEnvironment.purge(testDir);
 		base = new BDBJEBase(testDir, true);
+		loader = new DirClassLoader(testDir);
 	}
 	
 	@Test 
-	public void testData01() {
-		try (var data = base.create("testData")) {
+	public void testData01() throws ClassNotFoundException {
+		final String tupleTypeName = "testData";
+		try (var data = base.create(tupleTypeName)) {
 			data.extend("col1", String.class);
 			data.extend("col2", Integer.class);
-			var container = (StoredMap<Long, ?>)data.getStoredMap();
 			
+			// get class
+			// get instance
+			// initialise instance
+			// insert instance
+			// initialise instance to something else
+			// insert instance
+			// etc.
+			
+			var container = (StoredMap<Long, ?>)data.getStoredMap();
+			container.forEach((key, value) -> value.toString());
+	
 		}
 	}
 	
