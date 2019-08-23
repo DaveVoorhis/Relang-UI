@@ -23,7 +23,6 @@ public class BDBJEBase {
 	private BDBJEEnvironment environment;
 	private BDBJEData<String, CatalogEntry> catalogData;
 	private StoredMap<String, CatalogEntry> catalog;
-	private DirClassLoader dirClassLoader;
 	
 	public BDBJEBase(String dir, boolean create) {
 		environment = new BDBJEEnvironment(dir, create);				
@@ -34,7 +33,6 @@ public class BDBJEBase {
 		// Does the Catalog contain the Catalog?
 		if (!catalog.containsKey(catalogName))
 			catalog.put(catalogName, new CatalogEntry(catalogName, CatalogEntry.class.getName(), null));
-		dirClassLoader = new DirClassLoader(environment.getCodeDir());
 	}
 	
 	public String getCodeDir() {
@@ -46,7 +44,6 @@ public class BDBJEBase {
 	}
 	
 	void updateCatalog(String name, Class<?> tupleType) {
-		environment.truncateClassCatalog();
 		catalog.put(name, new CatalogEntry(name, tupleType.getName(), null));
 	}
 
@@ -97,7 +94,7 @@ public class BDBJEBase {
 			throw new ExceptionFatal(Str.ing(ErrUnableToGenerateTupleType2, name, compileResult));
 		Class<?> tupleType;
 		try {
-			tupleType = dirClassLoader.forName(name);
+			tupleType = environment.getClassLoader().forName(name);
 		} catch (ClassNotFoundException e) {
 			throw new ExceptionFatal(Str.ing(ErrUnableToGenerateTupleType, name));
 		}
@@ -117,7 +114,7 @@ public class BDBJEBase {
 			throw new ExceptionFatal(Str.ing(ErrSourceNotExists, name));
 		var database = environment.open(name, false);
 		try {
-			var tupleType = dirClassLoader.forName(definition.typeName);
+			var tupleType = environment.getClassLoader().forName(definition.typeName);
 			// TODO - eliminate the following hack by generalising how BDB keys are specified
 			var binding = name.equals(catalogName) ? new StringBinding() : new LongBinding();
 			return new BDBJEData<>(this, database, tupleType, binding);
@@ -166,6 +163,10 @@ public class BDBJEBase {
 
 	public ClassCatalog getClassCatalog() {
 		return environment.getClassCatalog();
+	}
+
+	public DirClassLoader getClassLoader() {
+		return environment.getClassLoader();
 	}
 
 	public void transaction(TransactionWorker worker) throws DatabaseException, Exception {

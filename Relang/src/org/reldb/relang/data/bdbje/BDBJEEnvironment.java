@@ -4,6 +4,7 @@ import java.io.Closeable;
 import java.io.File;
 import java.io.FileWriter;
 
+import org.reldb.relang.compiler.DirClassLoader;
 import org.reldb.relang.exceptions.ExceptionFatal;
 import org.reldb.relang.strings.Str;
 import org.reldb.relang.utilities.Directory;
@@ -29,6 +30,7 @@ public class BDBJEEnvironment implements Closeable {
 	private Environment dataEnv;
 	private Environment classesEnv;
 	private ClassCatalog classes;
+	private DirClassLoader classLoader;
 
 	private static String getDataDir(String homedir) {
 		 return homedir + File.separator + "data";
@@ -131,10 +133,12 @@ public class BDBJEEnvironment implements Closeable {
 		if (create)
 			writeClicker();
 
+		classLoader = new DirClassLoader(codeDir);
+		
 		var dataEnvConfig = new EnvironmentConfig();
 		dataEnvConfig.setTransactional(true);
 		dataEnvConfig.setAllowCreate(create);
-	//	envConfig.setClassLoader(classLoader);
+		dataEnvConfig.setClassLoader(classLoader);
 		
 		dataEnv = new Environment(new File(dataDir), dataEnvConfig);
 		classesEnv = new Environment(new File(classDir), dataEnvConfig);
@@ -142,7 +146,6 @@ public class BDBJEEnvironment implements Closeable {
 		var classEnvConfig = new DatabaseConfig();
 		classEnvConfig.setTransactional(true);
 		classEnvConfig.setAllowCreate(create);
-	//	dbConfig.setClassLoader(classLoader);
 
 		// Needed for serial bindings (i.e., Java serialization)
 		var classesDb = classesEnv.openDatabase(null, "classes", classEnvConfig);
@@ -224,8 +227,13 @@ public class BDBJEEnvironment implements Closeable {
 		return classes;
 	}
 
-	void truncateClassCatalog() {
-		classesEnv.truncateDatabase(null, "classes", false);
+	/**
+	 * Obtain the class loader.
+	 * 
+	 * @return the instance of DirClassLoader used by this BDBJEEnvironment.
+	 */
+	public DirClassLoader getClassLoader() {
+		return classLoader;
 	}
 	
 	/** Closes the database. */

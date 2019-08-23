@@ -12,7 +12,6 @@ import org.reldb.relang.tuples.Tuple;
 
 import com.sleepycat.collections.StoredMap;
 
-import org.reldb.relang.compiler.DirClassLoader;
 import org.reldb.relang.data.CatalogEntry;
 import org.reldb.relang.data.bdbje.BDBJEBase;
 
@@ -21,13 +20,11 @@ public class TestDataBDBJE {
 	private final static String testDir = "./test";
 	
 	private static BDBJEBase base;
-	private static DirClassLoader loader;
 	
 	@BeforeClass
 	public static void setup() {
 		BDBJEEnvironment.purge(testDir);
 		base = new BDBJEBase(testDir, true);
-		loader = new DirClassLoader(base.getCodeDir());
 	}
 	
 	@Test 
@@ -55,7 +52,7 @@ public class TestDataBDBJE {
 			 */
 			
 			// get class
-			var tupleType = loader.forName(tupleTypeName);
+			var tupleType = base.getClassLoader().forName(tupleTypeName);
 			// get instance
 			var tuple = tupleType.getConstructor().newInstance();
 			// initialise instance
@@ -70,6 +67,7 @@ public class TestDataBDBJE {
 			container.put(Long.valueOf(2), (Tuple)tuple);
 			
 			// Iterate and display container contents
+			System.out.println("=== Container Contents ===");
 			container.forEach((key, value) -> System.out.println(key + ": " + value.toString()));
 		}
 	}
