@@ -17,6 +17,8 @@ import org.reldb.relang.data.bdbje.BDBJEBase;
 
 public class TestDataBDBJE {
 	
+	private final static boolean verbose = true;
+	
 	private final static String testDir = "./test";
 	
 	private static BDBJEBase base;
@@ -25,6 +27,18 @@ public class TestDataBDBJE {
 	public static void setup() {
 		BDBJEEnvironment.purge(testDir);
 		base = new BDBJEBase(testDir, true);
+	}
+	
+	private static void showContainer(String prompt, StoredMap<?, ?> container) {
+		if (verbose)
+			System.out.println(prompt);
+		container.forEach((key, value) -> {
+			var str = key + ": " + value.toString();
+			if (verbose)
+				System.out.println(str);
+		});
+		if (verbose)
+			System.out.println();
 	}
 	
 	@Test 
@@ -51,9 +65,9 @@ public class TestDataBDBJE {
 			 * 
 			 */
 			
-			// get class
+			// get tuple class
 			var tupleType = base.getClassLoader().forName(tupleTypeName);
-			// get instance
+			// get tuple instance
 			var tuple = tupleType.getConstructor().newInstance();
 			// initialise instance
 			tupleType.getField("col1").set(tuple, "blah");
@@ -67,8 +81,26 @@ public class TestDataBDBJE {
 			container.put(Long.valueOf(2), (Tuple)tuple);
 			
 			// Iterate and display container contents
-			System.out.println("=== Container Contents ===");
-			container.forEach((key, value) -> System.out.println(key + ": " + value.toString()));
+			showContainer("\n=== Container Contents Before Schema Change ===", container);
+			
+			// change schema
+			data.extend("col3", Double.class);
+			data.remove("col2");
+			
+			// get tuple type class and instance
+			tupleType = base.getClassLoader().forName(tupleTypeName);
+			tuple = tupleType.getConstructor().newInstance();
+			// insert instance into database
+			tupleType.getField("col1").set(tuple, "blat");
+			tupleType.getField("col3").set(tuple, 2.7);
+			container.put(Long.valueOf(3), (Tuple)tuple);
+			// insert instance into database
+			tupleType.getField("col1").set(tuple, "zap");
+			tupleType.getField("col3").set(tuple, -33.4);
+			container.put(Long.valueOf(3), (Tuple)tuple);
+			
+			// Iterate and display container contents
+			showContainer("\n=== Container Contents After Schema Change ===", container);
 		}
 	}
 	
@@ -86,8 +118,7 @@ public class TestDataBDBJE {
 			assertEquals(true, container.containsKey("testData"));
 			assertEquals(true, container.containsKey("testData2"));
 			assertEquals(true, container.containsKey(BDBJEBase.catalogName));
-			System.out.println("=== Catalog ===");
-			container.forEach((name, catalogEntry) -> System.out.println(name + ": " + catalogEntry));
+			showContainer("\n=== Catalog ===", container);
 		}
 		base.close();
 	}

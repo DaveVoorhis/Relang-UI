@@ -13,6 +13,8 @@ import org.reldb.relang.utilities.Directory;
 
 public class TestTupleGenerator {
 	
+	private final static boolean verbose = false;
+	
 	@Test 
 	public void testTupleGenerator01() throws ClassNotFoundException, FileNotFoundException, IOException {
 		var codeDir = "./testcode";
@@ -28,42 +30,55 @@ public class TestTupleGenerator {
 		generator.addAttribute("Col3", Boolean.class);
 		generator.addAttribute("Col4", Double.class);
 		var compilation = generator.compile();
-		System.out.println("=== Compilation " + ((compilation.compiled) ? "succeeded" : "failed") + " ===");
-		System.out.println(compilation.compilerMessages);
+		
+		if (verbose) {
+			System.out.println("=== Compilation " + ((compilation.compiled) ? "succeeded" : "failed") + " ===");
+			System.out.println(compilation.compilerMessages);
+		}
 		
 		var loader = new DirClassLoader(codeDir);
 		var testclass = loader.forName(tupleName);
+		
 		for (Field field: testclass.getFields())
-			System.out.println("Has field: " + field.getType().toString() + " " + field.getName());
+			if (verbose)
+				System.out.println("Has field: " + field.getType().toString() + " " + field.getName());
 		
 		assertEquals(5, testclass.getFields().length);
 		
-		System.out.println();
+		if (verbose)
+			System.out.println();
 		
 		generator = new TupleTypeGenerator(codeDir, tupleName);
 		generator.addAttribute("Col5", Float.class);
 		var compilation2 = generator.compile();
 
-		System.out.println("=== Compilation " + ((compilation2.compiled) ? "succeeded" : "failed") + " ===");
-		System.out.println(compilation2.compilerMessages);
+		if (verbose) {
+			System.out.println("=== Compilation " + ((compilation2.compiled) ? "succeeded" : "failed") + " ===");
+			System.out.println(compilation2.compilerMessages);
+		}
 		
 		testclass = loader.forName(tupleName);
 		for (Field field: testclass.getFields())
-			System.out.println("Has field: " + field.getType().toString() + " " + field.getName());
+			if (verbose)
+				System.out.println("Has field: " + field.getType().toString() + " " + field.getName());
 		
 		assertEquals(6, testclass.getFields().length);
 		
-		System.out.println();
+		if (verbose)
+			System.out.println();
 		
 		generator.removeAttribute("Col4");
 		generator.compile();
 		
-		System.out.println("=== Compilation " + ((compilation2.compiled) ? "succeeded" : "failed") + " ===");
-		System.out.println(compilation2.compilerMessages);
+		if (verbose) {
+			System.out.println("=== Compilation " + ((compilation2.compiled) ? "succeeded" : "failed") + " ===");
+			System.out.println(compilation2.compilerMessages);
+		}
 		
 		testclass = loader.forName(tupleName);
 		for (Field field: testclass.getFields())
-			System.out.println("Has field: " + field.getType().toString() + " " + field.getName());
+			if (verbose)
+				System.out.println("Has field: " + field.getType().toString() + " " + field.getName());
 		
 		assertEquals(5, testclass.getFields().length);
 		
@@ -72,7 +87,8 @@ public class TestTupleGenerator {
 		
 		testclass = loader.forName(newTupleName);
 		for (Field field: testclass.getFields())
-			System.out.println("Has field: " + field.getType().toString() + " " + field.getName());
+			if (verbose)
+				System.out.println("Has field: " + field.getType().toString() + " " + field.getName());
 		
 		assertEquals(5, testclass.getFields().length);
 		
@@ -84,7 +100,8 @@ public class TestTupleGenerator {
 		
 		testclass = loader.forName(copyTupleName);
 		for (Field field: testclass.getFields())
-			System.out.println("Has field: " + field.getType().toString() + " " + field.getName());
+			if (verbose)
+				System.out.println("Has field: " + field.getType().toString() + " " + field.getName());
 		
 		assertEquals(5, testclass.getFields().length);
 		
