@@ -79,6 +79,11 @@ public class TestDataBDBJE {
 			tupleType.getField("col2").set(tuple, 5);
 			// insert instance
 			container.put(Long.valueOf(2), (Tuple)tuple);
+			// initialise instance to something else
+			tupleType.getField("col1").set(tuple, "zaz");
+			tupleType.getField("col2").set(tuple, 66);
+			// update instance
+			container.put(Long.valueOf(2), (Tuple)tuple);
 			
 			// Iterate and display container contents
 			showContainer("\n=== Container Contents Before Schema Change ===", container);
@@ -94,7 +99,7 @@ public class TestDataBDBJE {
 			tupleType.getField("col1").set(tuple, "blat");
 			tupleType.getField("col3").set(tuple, 2.7);
 			container.put(Long.valueOf(3), (Tuple)tuple);
-			// insert instance into database
+			// update instance in database
 			tupleType.getField("col1").set(tuple, "zap");
 			tupleType.getField("col3").set(tuple, -33.4);
 			container.put(Long.valueOf(3), (Tuple)tuple);
