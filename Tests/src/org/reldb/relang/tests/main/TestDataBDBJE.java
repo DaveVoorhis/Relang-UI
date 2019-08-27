@@ -23,6 +23,10 @@ public class TestDataBDBJE {
 	
 	private static BDBJEBase base;
 	
+	private final static String storageName1 = "TestData";
+	private final static String storageName2 = "AnotherTestData";
+	private final static String storageNameRenamed = "TestDataRenamed";
+	
 	@BeforeClass
 	public static void setup() {
 		BDBJEEnvironment.purge(testDir);
@@ -43,8 +47,7 @@ public class TestDataBDBJE {
 	
 	@Test 
 	public void testData01() throws ClassNotFoundException, NoSuchMethodException, SecurityException, IllegalArgumentException, IllegalAccessException, NoSuchFieldException, InstantiationException, InvocationTargetException {
-		final String tupleTypeName = "testData";
-		try (var data = base.create(tupleTypeName)) {
+		try (var data = base.create(storageName1)) {
 			data.extend("col1", String.class);
 			data.extend("col2", Integer.class);
 
@@ -66,7 +69,7 @@ public class TestDataBDBJE {
 			 */
 			
 			// get tuple class
-			var tupleType = base.getClassLoader().forName(tupleTypeName);
+			var tupleType = base.getTupleTypeOf(storageName1);
 			// get tuple instance
 			var tuple = tupleType.getConstructor().newInstance();
 			// initialise instance
@@ -86,14 +89,14 @@ public class TestDataBDBJE {
 			container.put(Long.valueOf(2), (Tuple)tuple);
 			
 			// Iterate and display container contents
-			showContainer("\n=== Container Contents Before Schema Change ===", container);
+			showContainer("\n=== Container Contents Before Schema Change (should have col1 and col2) ===", container);
 			
 			// change schema
 			data.extend("col3", Double.class);
 			data.remove("col2");
 			
 			// get tuple type class and instance
-			tupleType = base.getClassLoader().forName(tupleTypeName);
+			tupleType = base.getTupleTypeOf(storageName1);
 			tuple = tupleType.getConstructor().newInstance();
 			// insert instance into database
 			tupleType.getField("col1").set(tuple, "blat");
@@ -105,13 +108,30 @@ public class TestDataBDBJE {
 			container.put(Long.valueOf(3), (Tuple)tuple);
 			
 			// Iterate and display container contents
-			showContainer("\n=== Container Contents After Schema Change ===", container);
+			showContainer("\n=== Container Contents After Schema Change (should have col1 and col3) ===", container);
+			
+			// Rename container
+			data.renameAllTo(storageNameRenamed);
+			
+			// Iterate and display container contents
+			showContainer("\n=== Container Contents After Schema Change (container renamed) ===", container);
+			
+			// get tuple type class and instance
+			tupleType = base.getTupleTypeOf(storageNameRenamed);
+			tuple = tupleType.getConstructor().newInstance();
+			// insert instance into database
+			tupleType.getField("col1").set(tuple, "zip");
+			tupleType.getField("col3").set(tuple, 44.234);
+			container.put(Long.valueOf(4), (Tuple)tuple);
+			
+			// Iterate and display container contents
+			showContainer("\n=== Container Contents After Schema Change (added a tuple) ===", container);
 		}
 	}
 	
 	@Test
 	public void testData02() {
-		try (var gridData = base.create("testData2")) {
+		try (var gridData = base.create(storageName2)) {
 		}
 	}
 	
@@ -120,8 +140,8 @@ public class TestDataBDBJE {
 		try (var catalog = base.open(BDBJEBase.catalogName)) {
 			@SuppressWarnings("unchecked")
 			var container = (StoredMap<String, CatalogEntry>)catalog.getStoredMap();
-			assertEquals(true, container.containsKey("testData"));
-			assertEquals(true, container.containsKey("testData2"));
+			assertEquals(true, container.containsKey(storageNameRenamed));
+			assertEquals(true, container.containsKey(storageName2));
 			assertEquals(true, container.containsKey(BDBJEBase.catalogName));
 			showContainer("\n=== Catalog ===", container);
 		}

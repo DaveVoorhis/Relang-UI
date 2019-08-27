@@ -26,7 +26,7 @@ public class TupleTypeGenerator {
 	private String dir;
 	private String tupleName;
 	private boolean existing;
-	private long serialValue = 1;
+	private long serialValue = 0;
 	private DirClassLoader loader;
 	private String oldTupleName;	
 	private HashMap<String, Class<?>> attributes = new HashMap<>();
@@ -45,7 +45,7 @@ public class TupleTypeGenerator {
 				.forEach(field -> attributes.put(field.getName(), field.getType()));
 			try {
 				var serialVersionUIDField = tupleClass.getDeclaredField("serialVersionUID");
-				serialValue = serialVersionUIDField.getLong(null) + 1;
+				serialValue = serialVersionUIDField.getLong(null);
 			} catch (NoSuchFieldException | SecurityException | IllegalArgumentException | IllegalAccessException e) {
 				serialValue = 9999999;
 			}
@@ -78,6 +78,18 @@ public class TupleTypeGenerator {
 	 */
 	public void removeAttribute(String name) {
 		attributes.remove(name);
+	}
+
+	public Object renameAttribute(String oldName, String newName) {
+		// TODO Auto-generated method stub
+		System.out.println("TupleTypeGenerator: renameAttribute not implemented yet.");
+		return null;
+	}
+
+	public Object changeAttributeType(String name, Class<?> type) {
+		// TODO Auto-generated method stub
+		System.out.println("TupleTypeGenerator: changeAttributeType not implemented yet.");
+		return null;
 	}
 	
 	/** Rename this tuple type (class) definition and associated files to that specified by newName. NOTE: Will not take effect until compile() has been invoked.
@@ -150,6 +162,10 @@ public class TupleTypeGenerator {
 	public void destroy() {
 		destroy(tupleName);
 	}
+
+	public long getSerial() {
+		return serialValue;
+	}
 	
 	/** Compile this tuple type as a class.
 	 * 
@@ -178,4 +194,5 @@ public class TupleTypeGenerator {
 		loader.unload(tupleName);
 		return compiler.compileForeignCode(tupleName, tupleDef);
 	}
+	
 }

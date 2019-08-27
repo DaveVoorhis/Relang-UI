@@ -72,6 +72,33 @@ public class BDBJEBase {
 	}
 	
 	/**
+	 * Load a class using the classloader.
+	 * 
+	 * @param name - String - name of class to be loaded.
+	 * @return - Class<?> - loaded Class.
+	 * @throws ClassNotFoundException if class is not found.
+	 */
+	public Class<?> loadClass(String name) throws ClassNotFoundException {
+		return environment.getClassLoader().forName(name);
+	}
+	
+	/**
+	 * Get 
+	 * @param name
+	 * @return
+	 */
+	public String getTupleTypeNameOf(String name) {
+		var definition = getCatalogEntry(name);
+		if (definition == null)
+			throw new ExceptionFatal(Str.ing(ErrSourceNotExists, name));
+		return definition.typeName;
+	}
+	
+	public Class<?> getTupleTypeOf(String name) throws ClassNotFoundException {
+		return loadClass(getTupleTypeNameOf(name));
+	}
+	
+	/**
 	 * Create a Data source with a given name. If it exists already, throw ExceptionFatal.
 	 * 
 	 * @param name - name of Data source.
@@ -109,18 +136,16 @@ public class BDBJEBase {
 	 * @return - BDBJEData
 	 */
 	public BDBJEData<?, ?> open(String name) {
-		var definition = getCatalogEntry(name);
-		if (definition == null)
-			throw new ExceptionFatal(Str.ing(ErrSourceNotExists, name));
-		var database = environment.open(name, false);
+		Class<?> tupleType;
 		try {
-			var tupleType = environment.getClassLoader().forName(definition.typeName);
-			// TODO - eliminate the following hack by generalising how BDB keys are specified
-			var binding = name.equals(catalogName) ? new StringBinding() : new LongBinding();
-			return new BDBJEData<>(this, database, tupleType, binding);
+			tupleType = getTupleTypeOf(name);
 		} catch (ClassNotFoundException e) {
-			throw new ExceptionFatal(Str.ing(ErrUnableToLoadTupleClass, definition.typeName));
+			throw new ExceptionFatal(Str.ing(ErrUnableToLoadTupleClass, name));
 		}
+		// TODO - eliminate the following hack by generalising how BDB keys are specified
+		var binding = name.equals(catalogName) ? new StringBinding() : new LongBinding();
+		var database = environment.open(name, false);
+		return new BDBJEData<>(this, database, tupleType, binding);
 	}
 	
 	/**
@@ -136,6 +161,21 @@ public class BDBJEBase {
 	 */
 	public BDBJEData<?, ?> open(String name, boolean create) {
 		return (create && !exists(name)) ? create(name) : open(name);
+	}
+
+	/**
+	 * Rename a Data source.
+	 * 
+	 * @param oldName - old name
+	 * @param newName - new name
+	 */
+	public void rename(String oldName, String newName) {
+		var catalogEntry = catalog.get(oldName);
+		if (catalogEntry == null)
+			return;
+		catalog.remove(oldName);
+		environment.rename(oldName, newName);
+		catalog.put(newName, catalogEntry);
 	}
 	
 	/**

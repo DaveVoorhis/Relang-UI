@@ -33,7 +33,7 @@ public class Strings {
 	public static final int ErrSourceNotExists = Str.E("Data source %s does not exist.", BDBJEBase.class.toString());
 	public static final int ErrUnableToGenerateTupleType = Str.E("Unable to create tuple type %s.", BDBJEBase.class.toString());
 	public static final int ErrUnableToGenerateTupleType2 = Str.E("Unable to create tuple type %s:\n%s", BDBJEBase.class.toString());
-	public static final int ErrUnableToLoadTupleClass = Str.E("Unable to load tuple type class %s.", BDBJEBase.class.toString());
+	public static final int ErrUnableToLoadTupleClass = Str.E("Unable to load tuple type class for %s.", BDBJEBase.class.toString());
 	
 	public static final int ErrFileNotFound1 = Str.E("File %s not found for %s.", DirClassLoader.class.toString()); 
 	public static final int ErrReading = Str.E("Error reading %s: %s.", DirClassLoader.class.toString()); 
@@ -44,5 +44,9 @@ public class Strings {
 
 	public static final int ErrUnableToExtendTupleType = Str.E("Unable to extend tuple type %s:\n%s", BDBJEData.class.toString());
 	public static final int ErrUnableToRemoveInTupleType = Str.E("Unable to remove attribute in tuple type %s:\n%s", BDBJEData.class.toString());
-	
+	public static final int ErrUnableToLoadTupleType = Str.E("Unable to load tuple type for %s.", BDBJEData.class.toString());	
+	public static final int ErrUnableToLoadTupleTypeClass = Str.E("Unable to load tuple type %s.", BDBJEData.class.toString());	
+	public static final int ErrUnableToLocateCopyFromMethod = Str.E("Unable to load copyFrom method from tuple type %s.", BDBJEData.class.toString());
+	public static final int ErrSchemaUpdateFailure = Str.E("Unable to update schema due to: %s", BDBJEData.class.toString());
+	public static final int ErrSchemaUpdateCopyFromFailure = Str.E("Unable to update schema due to failure in copyFrom method: %s", BDBJEData.class.toString());
 }

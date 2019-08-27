@@ -194,6 +194,16 @@ public class BDBJEEnvironment implements Closeable {
 	public void remove(String name) {
 		dataEnv.removeDatabase(null, name);
 	}
+
+	/**
+	 * Rename a specified Berkeley DB "Database".
+	 * 
+	 * @param oldName - old name
+	 * @param newName - new name
+	 */
+	public void rename(String oldName, String newName) {
+		dataEnv.renameDatabase(null, oldName, newName);
+	}
 	
 	/** 
 	 * Open a Berkeley DB "Database", i.e., a persistent key/value store.
