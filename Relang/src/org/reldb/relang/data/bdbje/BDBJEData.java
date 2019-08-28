@@ -12,7 +12,7 @@ import org.reldb.relang.tuples.TupleTypeGenerator;
 
 import static org.reldb.relang.strings.Strings.*;
 
-public class BDBJEData<K extends Serializable, V extends Serializable> implements Data<K, V> {
+public class BDBJEData<K extends Serializable, V extends Tuple> implements Data<K, V> {
 	private BDBJEBase base;
 	private String name;
 	
@@ -161,7 +161,7 @@ public class BDBJEData<K extends Serializable, V extends Serializable> implement
 	}
 
 	@Override
-	public void access(Transaction<K, V> xaction) {
+	public void access(Access xaction) {
 		base.openAndRun(this, xaction);
 	}
 	

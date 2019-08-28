@@ -1,7 +1,8 @@
 package org.reldb.relang.data.bdbje;
 
+import org.reldb.relang.data.Access;
 import org.reldb.relang.data.CatalogEntry;
-import org.reldb.relang.data.Data.Transaction;
+import org.reldb.relang.data.Data;
 import org.reldb.relang.exceptions.ExceptionFatal;
 import org.reldb.relang.strings.Str;
 import org.reldb.relang.tuples.Tuple;
@@ -18,6 +19,8 @@ import com.sleepycat.collections.TransactionWorker;
 import com.sleepycat.je.DatabaseException;
 
 import static org.reldb.relang.strings.Strings.*;
+
+import java.io.Serializable;
 
 import org.reldb.relang.compiler.DirClassLoader;
 
@@ -152,15 +155,6 @@ public class BDBJEBase {
 		var database = environment.open(name, false);
 		return new BDBJEData<>(this, database, tupleType, binding);
 	}
-
-	void openAndRun(BDBJEData bdbjeData, Transaction xaction) {
-		
-//		EntryBinding<V> valueBinding = new SerialBinding(bdbjeBase.getClassCatalog(), Tuple.class);
-//		data = new StoredSortedMap<K, V>(db, keyBinding, valueBinding, true);
-		
-		// TODO Auto-generated method stub
-		
-	}
 	
 	/**
 	 * Open a Data source with a given name. 
@@ -175,6 +169,15 @@ public class BDBJEBase {
 	 */
 	public BDBJEData<?, ?> open(String name, boolean create) {
 		return (create && !exists(name)) ? create(name) : open(name);
+	}
+
+	void openAndRun(BDBJEData bdbjeData, Data.Access xaction) {
+		
+//		EntryBinding<V> valueBinding = new SerialBinding(bdbjeBase.getClassCatalog(), Tuple.class);
+//		data = new StoredSortedMap<K, V>(db, keyBinding, valueBinding, true);
+		
+		// TODO Auto-generated method stub
+		
 	}
 
 	/**

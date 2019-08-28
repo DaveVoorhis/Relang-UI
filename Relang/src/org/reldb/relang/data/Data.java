@@ -3,8 +3,10 @@ package org.reldb.relang.data;
 import java.io.Serializable;
 import java.util.Map;
 
+import org.reldb.relang.tuples.Tuple;
+
 /** A wrapper around a container to make it visible to, and possibly modifiable by, a Datasheet's GridPanel. */
-public interface Data<K extends Serializable, V extends Serializable> {
+public interface Data<K extends Serializable, V extends Tuple> {
 	
 	/**
 	 * Get the type contained by the container.
@@ -56,16 +58,16 @@ public interface Data<K extends Serializable, V extends Serializable> {
 	
 	/** True if this Data is read-only and will not accept data updates. */
 	public boolean isStrictlyReadonly();
-	
+
 	@FunctionalInterface
-	public static interface Transaction<KK, VV> {
-		public abstract void go(Map<KK, VV> map);
+	public interface Access {
+		public abstract void go(Map map);
 	}
-	
+
 	/**
 	 * Access the underlying data container to retrieve data or perform an update.
 	 * 
-	 * @param xaction - Transaction - typically a lambda expression representing data retrieval or update.
+	 * @param xaction - Access - a lambda expression representing data retrieval or update.
 	 */
-	public void access(Transaction<K, V> xaction);
+	public void access(Access xaction);
 }
