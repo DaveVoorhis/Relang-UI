@@ -1,9 +1,8 @@
 package org.reldb.relang.data.bdbje;
 
-import java.io.Closeable;
+import java.io.Serializable;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
-import java.util.Iterator;
 
 import org.reldb.relang.data.Data;
 import org.reldb.relang.exceptions.ExceptionFatal;
@@ -11,52 +10,30 @@ import org.reldb.relang.strings.Str;
 import org.reldb.relang.tuples.Tuple;
 import org.reldb.relang.tuples.TupleTypeGenerator;
 
-import com.sleepycat.bind.EntryBinding;
-import com.sleepycat.bind.serial.SerialBinding;
-import com.sleepycat.collections.StoredMap;
-import com.sleepycat.collections.StoredSortedMap;
-import com.sleepycat.je.Database;
-
 import static org.reldb.relang.strings.Strings.*;
 
-public class BDBJEData<K, V> implements Data<V>, Closeable {
+public class BDBJEData<K extends Serializable, V extends Serializable> implements Data<K, V> {
 	private BDBJEBase base;
-	private Class<?> tupleType;
-	private Database db;
-	private StoredMap<K, V> data;
+	private String name;
 	
-	public BDBJEData(BDBJEBase bdbjeBase, Database db, Class<?> tupleType, EntryBinding<K> keyBinding) {
+	BDBJEData(BDBJEBase bdbjeBase, String name) {
 		this.base = bdbjeBase;
-		this.tupleType = tupleType;
-		this.db = db;
-		
-		@SuppressWarnings({ "rawtypes", "unchecked" })
-		EntryBinding<V> valueBinding = new SerialBinding(bdbjeBase.getClassCatalog(), Tuple.class);
-		data = new StoredSortedMap<K, V>(db, keyBinding, valueBinding, true);
-	}
-
-	public void close() {
-		if (db == null)
-			return;
-		db.close();
-		db = null;
+		this.name = name;
 	}
 	
-	private void updateCatalog() {
-		base.updateCatalog(db.getDatabaseName(), tupleType);
-	}
-
-	/** Obtain the container.
-	 * 	
-	 * @return - StoredMap<K, V>
-	 */
-	public StoredMap<K, V> getStoredMap() {
-		return data;
-	}
-
 	@SuppressWarnings("unchecked")
-	private void copyOldToNew(Class<?> oldTupleClass, String newName) {
-		Class<?> newTupleClass;
+	@Override
+	public Class<V> getType() {
+		try {
+			return (Class<V>)base.getTupleTypeOf(name);
+		} catch (ClassNotFoundException e) {
+			throw new ExceptionFatal(Str.ing(ErrUnableToLoadTupleTypeClass2, name));
+		}
+	}
+	
+	@SuppressWarnings("unchecked")
+	private Class<? extends Tuple> copyOldToNew(Class<? extends Tuple> oldTupleClass, String newName) {
+		Class<? extends Tuple> newTupleClass;
 		try {
 			newTupleClass = base.loadClass(newName);
 		} catch (ClassNotFoundException e) {
@@ -70,20 +47,18 @@ public class BDBJEData<K, V> implements Data<V>, Closeable {
 		}
 		try {
 			var newInstance = newTupleClass.getConstructor().newInstance();
-			base.transaction(() -> {
-				data.forEach((key, value) -> {
-					try {
-						copyFrom.invoke(newInstance, value);
-					} catch (IllegalAccessException | IllegalArgumentException | InvocationTargetException e) {
-						throw new ExceptionFatal(Str.ing(ErrSchemaUpdateCopyFromFailure, e.getMessage()));						
-					}
-					data.put(key, (V)newInstance);
-				});
-			});
+			base.transaction(() -> access(data -> data.forEach((key, value) -> {
+				try {
+					copyFrom.invoke(newInstance, value);
+				} catch (IllegalAccessException | IllegalArgumentException | InvocationTargetException e) {
+					throw new ExceptionFatal(Str.ing(ErrSchemaUpdateCopyFromFailure, e.getMessage()));						
+				}
+				data.put(key, (V)newInstance);
+			})));
 		} catch (Exception e) {
 			throw new ExceptionFatal(Str.ing(ErrSchemaUpdateFailure, e.getMessage()));
 		}
-		tupleType = newTupleClass;
+		return newTupleClass;
 	}
 	
 	@FunctionalInterface
@@ -97,9 +72,9 @@ public class BDBJEData<K, V> implements Data<V>, Closeable {
 	}
 	
 	private void changeSchema(Action tupleTypeAction, Renamer tupleTypeRenamer) {
-		String dbName = db.getDatabaseName();
+		String dbName = name;
 		String oldTupleClassName;
-		Class<?> oldTupleClass;
+		Class<? extends Tuple> oldTupleClass;
 		try {
 			oldTupleClassName = base.getTupleTypeNameOf(dbName);
 			oldTupleClass = base.loadClass(oldTupleClassName);
@@ -115,8 +90,8 @@ public class BDBJEData<K, V> implements Data<V>, Closeable {
 		var compileResult = tupleTypeGenerator.compile();
 		if (!compileResult.compiled)
 			throw new ExceptionFatal(Str.ing(ErrUnableToExtendTupleType, newName, compileResult));
-		copyOldToNew(oldTupleClass, newName);
-		updateCatalog();
+		var newTupleType = copyOldToNew(oldTupleClass, newName);
+		base.updateCatalog(name, newTupleType);
 		oldTupleTypeGenerator.destroy();		
 	}
 
@@ -125,12 +100,13 @@ public class BDBJEData<K, V> implements Data<V>, Closeable {
 	}
 	
 	private void changeSchema(Action tupleTypeAction) {
-		changeSchema(tupleTypeAction, tupleTypeGenerator -> db.getDatabaseName() + (tupleTypeGenerator.getSerial() + 1));
+		changeSchema(tupleTypeAction, tupleTypeGenerator -> name + (tupleTypeGenerator.getSerial() + 1));
 	}
 
 	/** Rename this data store; do not rename associated tuple type. */
 	public void renameDataTo(String newName) {
-		base.rename(db.getDatabaseName(), newName);
+		base.rename(name, newName);
+		name = newName;
 	}
 
 	/** Rename this data store and associated tuple type. */
@@ -139,19 +115,13 @@ public class BDBJEData<K, V> implements Data<V>, Closeable {
 		renameDataTo(newName);
 	}
 	
-	@SuppressWarnings("unchecked")
-	@Override
-	public Class<V> getType() {
-		return (Class<V>)tupleType;
-	}
-	
 	@Override
 	public boolean isExtendable() {
 		return true;
 	}
 	
 	@Override
-	public void extend(String name, Class<?> type) {
+	public void extend(String name, Class<? extends Serializable> type) {
 		changeSchema((Action)tupleTypeGenerator -> tupleTypeGenerator.addAttribute(name, type));
 	}
 
@@ -181,7 +151,7 @@ public class BDBJEData<K, V> implements Data<V>, Closeable {
 	}
 
 	@Override
-	public void changeType(String name, Class<?> type) {
+	public void changeType(String name, Class<? extends Serializable> type) {
 		changeSchema((Action)tupleTypeGenerator -> tupleTypeGenerator.changeAttributeType(name, type));
 	}
 	
@@ -191,13 +161,8 @@ public class BDBJEData<K, V> implements Data<V>, Closeable {
 	}
 
 	@Override
-	public int size() {
-		return data.size();
-	}
-
-	@Override
-	public Iterator<V> iterator() {
-		return data.values().iterator();
+	public void access(Transaction<K, V> xaction) {
+		base.openAndRun(this, xaction);
 	}
 	
 }

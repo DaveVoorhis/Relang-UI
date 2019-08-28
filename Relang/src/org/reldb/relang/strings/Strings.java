@@ -49,4 +49,5 @@ public class Strings {
 	public static final int ErrUnableToLocateCopyFromMethod = Str.E("Unable to load copyFrom method from tuple type %s.", BDBJEData.class.toString());
 	public static final int ErrSchemaUpdateFailure = Str.E("Unable to update schema due to: %s", BDBJEData.class.toString());
 	public static final int ErrSchemaUpdateCopyFromFailure = Str.E("Unable to update schema due to failure in copyFrom method: %s", BDBJEData.class.toString());
+	public static final int ErrUnableToLoadTupleTypeClass2 = Str.E("Unable to load tuple type for %s.", BDBJEData.class.toString());	
 }

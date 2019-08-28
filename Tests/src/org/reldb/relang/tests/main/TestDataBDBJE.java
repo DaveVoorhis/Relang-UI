@@ -51,20 +51,18 @@ public class TestDataBDBJE {
 			data.extend("col1", String.class);
 			data.extend("col2", Integer.class);
 
-			@SuppressWarnings("unchecked")
-			var container = (StoredMap<Long, Tuple>)data.getStoredMap();
-
 			/*
 			 * The complexity below is needed because the new tuple type has been dynamically created in-line here. 
 			 * If it has already been created elsewhere, we can simply use it in a conventional Java fashion. The code would then be:
 			 * 
+			 * var data = base.open("dataname");
 			 * var tuple = new testData();
 			 * tuple.col1 = "blah";
 			 * tuple.col2 = 3;
-			 * container.put(Long.valueOf(1), tuple);
+			 * data.access(container -> container.put(Long.valueOf(1), tuple));
 			 * tuple.col1 = "zot";
 			 * tuple.col2 = 5;
-			 * container.put(Long.valueOf(2), tuple);
+			 * data.access(container -> container.put(Long.valueOf(2), tuple));
 			 * 
 			 */
 			
@@ -76,20 +74,20 @@ public class TestDataBDBJE {
 			tupleType.getField("col1").set(tuple, "blah");
 			tupleType.getField("col2").set(tuple, 3);		
 			// insert instance into database
-			container.put(Long.valueOf(1), (Tuple)tuple);			
+			data.access(container -> container.put(Long.valueOf(1), (Tuple)tuple));			
 			// initialise instance to something else
 			tupleType.getField("col1").set(tuple, "zot");
 			tupleType.getField("col2").set(tuple, 5);
 			// insert instance
-			container.put(Long.valueOf(2), (Tuple)tuple);
+			data.access(container -> container.put(Long.valueOf(2), (Tuple)tuple));
 			// initialise instance to something else
 			tupleType.getField("col1").set(tuple, "zaz");
 			tupleType.getField("col2").set(tuple, 66);
 			// update instance
-			container.put(Long.valueOf(2), (Tuple)tuple);
+			data.access(container -> container.put(Long.valueOf(2), (Tuple)tuple));
 			
 			// Iterate and display container contents
-			showContainer("\n=== Container Contents Before Schema Change (should have col1 and col2) ===", container);
+			data.access(container -> showContainer("\n=== Container Contents Before Schema Change (should have col1 and col2) ===", container));
 			
 			// change schema
 			data.extend("col3", Double.class);
@@ -101,20 +99,20 @@ public class TestDataBDBJE {
 			// insert instance into database
 			tupleType.getField("col1").set(tuple, "blat");
 			tupleType.getField("col3").set(tuple, 2.7);
-			container.put(Long.valueOf(3), (Tuple)tuple);
+			data.access(container -> container.put(Long.valueOf(3), (Tuple)tuple));
 			// update instance in database
 			tupleType.getField("col1").set(tuple, "zap");
 			tupleType.getField("col3").set(tuple, -33.4);
-			container.put(Long.valueOf(3), (Tuple)tuple);
+			data.access(container -> container.put(Long.valueOf(3), (Tuple)tuple));
 			
 			// Iterate and display container contents
-			showContainer("\n=== Container Contents After Schema Change (should have col1 and col3) ===", container);
+			data.access(container -> showContainer("\n=== Container Contents After Schema Change (should have col1 and col3) ===", container));
 			
 			// Rename container
 			data.renameAllTo(storageNameRenamed);
 			
 			// Iterate and display container contents
-			showContainer("\n=== Container Contents After Schema Change (container renamed) ===", container);
+			data.access(container -> showContainer("\n=== Container Contents After Schema Change (container renamed) ===", container));
 			
 			// get tuple type class and instance
 			tupleType = base.getTupleTypeOf(storageNameRenamed);
@@ -122,10 +120,10 @@ public class TestDataBDBJE {
 			// insert instance into database
 			tupleType.getField("col1").set(tuple, "zip");
 			tupleType.getField("col3").set(tuple, 44.234);
-			container.put(Long.valueOf(4), (Tuple)tuple);
+			data.access(container -> container.put(Long.valueOf(4), (Tuple)tuple));
 			
 			// Iterate and display container contents
-			showContainer("\n=== Container Contents After Schema Change (added a tuple) ===", container);
+			data.access(container -> showContainer("\n=== Container Contents After Schema Change (added a tuple) ===", container));
 		}
 	}
 	

@@ -1,14 +1,19 @@
 package org.reldb.relang.data.bdbje;
 
 import org.reldb.relang.data.CatalogEntry;
+import org.reldb.relang.data.Data.Transaction;
 import org.reldb.relang.exceptions.ExceptionFatal;
 import org.reldb.relang.strings.Str;
+import org.reldb.relang.tuples.Tuple;
 import org.reldb.relang.tuples.TupleTypeGenerator;
 
+import com.sleepycat.bind.EntryBinding;
 import com.sleepycat.bind.serial.ClassCatalog;
+import com.sleepycat.bind.serial.SerialBinding;
 import com.sleepycat.bind.tuple.LongBinding;
 import com.sleepycat.bind.tuple.StringBinding;
 import com.sleepycat.collections.StoredMap;
+import com.sleepycat.collections.StoredSortedMap;
 import com.sleepycat.collections.TransactionWorker;
 import com.sleepycat.je.DatabaseException;
 
@@ -78,8 +83,8 @@ public class BDBJEBase {
 	 * @return - Class<?> - loaded Class.
 	 * @throws ClassNotFoundException if class is not found.
 	 */
-	public Class<?> loadClass(String name) throws ClassNotFoundException {
-		return environment.getClassLoader().forName(name);
+	public Class<? extends Tuple> loadClass(String name) throws ClassNotFoundException {
+		return (Class<? extends Tuple>) environment.getClassLoader().forName(name);
 	}
 	
 	/**
@@ -146,6 +151,15 @@ public class BDBJEBase {
 		var binding = name.equals(catalogName) ? new StringBinding() : new LongBinding();
 		var database = environment.open(name, false);
 		return new BDBJEData<>(this, database, tupleType, binding);
+	}
+
+	void openAndRun(BDBJEData bdbjeData, Transaction xaction) {
+		
+//		EntryBinding<V> valueBinding = new SerialBinding(bdbjeBase.getClassCatalog(), Tuple.class);
+//		data = new StoredSortedMap<K, V>(db, keyBinding, valueBinding, true);
+		
+		// TODO Auto-generated method stub
+		
 	}
 	
 	/**
