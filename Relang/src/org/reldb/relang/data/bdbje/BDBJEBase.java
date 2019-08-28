@@ -1,6 +1,5 @@
 package org.reldb.relang.data.bdbje;
 
-import org.reldb.relang.data.Access;
 import org.reldb.relang.data.CatalogEntry;
 import org.reldb.relang.data.Data;
 import org.reldb.relang.exceptions.ExceptionFatal;
