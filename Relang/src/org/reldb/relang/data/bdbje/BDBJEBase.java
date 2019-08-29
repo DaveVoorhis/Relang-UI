@@ -7,53 +7,79 @@ import org.reldb.relang.strings.Str;
 import org.reldb.relang.tuples.Tuple;
 import org.reldb.relang.tuples.TupleTypeGenerator;
 
-import com.sleepycat.bind.EntryBinding;
 import com.sleepycat.bind.serial.ClassCatalog;
 import com.sleepycat.bind.serial.SerialBinding;
 import com.sleepycat.bind.tuple.LongBinding;
 import com.sleepycat.bind.tuple.StringBinding;
-import com.sleepycat.collections.StoredMap;
 import com.sleepycat.collections.StoredSortedMap;
 import com.sleepycat.collections.TransactionWorker;
+import com.sleepycat.je.Database;
 import com.sleepycat.je.DatabaseException;
 
 import static org.reldb.relang.strings.Strings.*;
 
-import java.io.Serializable;
+import java.io.Closeable;
+import java.util.HashMap;
+import java.util.Map;
 
 import org.reldb.relang.compiler.DirClassLoader;
 
-public class BDBJEBase {
+public class BDBJEBase implements Closeable {
 
 	public static final String catalogName = "sys_Catalog";
 	
-	private BDBJEEnvironment environment;
-	private BDBJEData<String, CatalogEntry> catalogData;
-	private StoredMap<String, CatalogEntry> catalog;
+	private BDBJEEnvironment environment;	
+	private BDBJEData<String, CatalogEntry> catalog;
+
+	// There can only be one BDBJEData instance per Data source name.
+	private Map<String, BDBJEData<?, ?>> dataSources = new HashMap<>();
 	
+	/**
+	 * Open or create a database.
+	 * 
+	 * @param dir - String - full specification of the database directory.
+	 * @param create - boolean - if true, the database will be created if it doesn't exist.
+	 */
 	public BDBJEBase(String dir, boolean create) {
-		environment = new BDBJEEnvironment(dir, create);				
-		// Catalog
-		var catalogDB = environment.open(catalogName, create);
-		catalogData = new BDBJEData<String, CatalogEntry>(this, catalogDB, CatalogEntry.class, new StringBinding());
-		catalog = catalogData.getStoredMap();
-		// Does the Catalog contain the Catalog?
-		if (!catalog.containsKey(catalogName))
-			catalog.put(catalogName, new CatalogEntry(catalogName, CatalogEntry.class.getName(), null));
+		environment = new BDBJEEnvironment(dir, create);
+		environment.open(catalogName, true).close();
+		catalog = new BDBJEData<String, CatalogEntry>(this, catalogName);
+		updateCatalog(catalogName, CatalogEntry.class);
 	}
 	
+	/**
+	 * Obtain the subdirectory of the database where Java code is defined.
+	 * 
+	 * @return - String - full directory of source code.
+	 */
 	public String getCodeDir() {
 		return environment.getCodeDir();
 	}
 	
+	/**
+	 * Obtain the CatalogEntry (metadata) associated with a given Data (storage) name.
+	 * 
+	 * @param name
+	 * @return
+	 */
 	public CatalogEntry getCatalogEntry(String name) {
-		return catalog.get(name);
+		return (CatalogEntry)query(catalog, catalog -> catalog.get(name));
 	}
 	
+	@SuppressWarnings("unchecked")
+	void updateCatalog(String name, CatalogEntry entry) {
+		query(catalog, catalog -> catalog.put(name, entry));
+	}
+	
+	@SuppressWarnings("unchecked")
 	void updateCatalog(String name, Class<?> tupleType) {
-		catalog.put(name, new CatalogEntry(name, tupleType.getName(), null));
+		query(catalog, catalog -> catalog.put(name, new CatalogEntry(name, tupleType.getName(), null)));
 	}
 
+	void removeCatalogEntry(String name) {
+		query(catalog, catalog -> catalog.remove(name));
+	}
+	
 	/**
 	 * Return true if a given Data source exists.
 	 * 
@@ -85,14 +111,16 @@ public class BDBJEBase {
 	 * @return - Class<?> - loaded Class.
 	 * @throws ClassNotFoundException if class is not found.
 	 */
+	@SuppressWarnings("unchecked")
 	public Class<? extends Tuple> loadClass(String name) throws ClassNotFoundException {
 		return (Class<? extends Tuple>) environment.getClassLoader().forName(name);
 	}
 	
 	/**
-	 * Get 
-	 * @param name
-	 * @return
+	 * Given a Data (storage) name, obtain the tuple type name associated with it.
+	 * 
+	 * @param name - String - Data (storage) name
+	 * @return - String - name of tuple type class 
 	 */
 	public String getTupleTypeNameOf(String name) {
 		var definition = getCatalogEntry(name);
@@ -101,6 +129,13 @@ public class BDBJEBase {
 		return definition.typeName;
 	}
 	
+	/**
+	 * Given a Data (storage) name, obtain the tuple type associated with it.
+	 * 
+	 * @param name - String - Data (storage) name
+	 * @return - Class<?> - class of tuple type
+	 * @throws ClassNotFoundException - if tuple type class not found.
+	 */
 	public Class<?> getTupleTypeOf(String name) throws ClassNotFoundException {
 		return loadClass(getTupleTypeNameOf(name));
 	}
@@ -120,7 +155,9 @@ public class BDBJEBase {
 			environment.remove(name);
 		} catch (DatabaseException de) {
 		}
-		var database = environment.open(name, true);
+		// create storage (Berkeley Database)
+		environment.open(name, true).close();
+		// compile tuple type
 		var codeDir = environment.getCodeDir();
 		var tupleTypeGenerator = new TupleTypeGenerator(codeDir, name);
 		var compileResult = tupleTypeGenerator.compile();
@@ -132,8 +169,11 @@ public class BDBJEBase {
 		} catch (ClassNotFoundException e) {
 			throw new ExceptionFatal(Str.ing(ErrUnableToGenerateTupleType, name));
 		}
+		// put it in the catalog
 		updateCatalog(name, tupleType);
-		return new BDBJEData<>(this, database, tupleType, new LongBinding());
+		var dataSource = new BDBJEData<>(this, name);
+		dataSources.put(name, dataSource);
+		return dataSource;
 	}
 	
 	/**
@@ -143,16 +183,19 @@ public class BDBJEBase {
 	 * @return - BDBJEData
 	 */
 	public BDBJEData<?, ?> open(String name) {
-		Class<?> tupleType;
+		var dataSource = dataSources.get(name);
+		if (dataSource != null)
+			return dataSource;
+		// make sure it can be opened
 		try {
-			tupleType = getTupleTypeOf(name);
+			getTupleTypeOf(name);
 		} catch (ClassNotFoundException e) {
 			throw new ExceptionFatal(Str.ing(ErrUnableToLoadTupleClass, name));
 		}
-		// TODO - eliminate the following hack by generalising how BDB keys are specified
-		var binding = name.equals(catalogName) ? new StringBinding() : new LongBinding();
-		var database = environment.open(name, false);
-		return new BDBJEData<>(this, database, tupleType, binding);
+		environment.open(name, false).close();
+		dataSource = new BDBJEData<>(this, name);
+		dataSources.put(name, dataSource);
+		return dataSource;
 	}
 	
 	/**
@@ -170,13 +213,29 @@ public class BDBJEBase {
 		return (create && !exists(name)) ? create(name) : open(name);
 	}
 
-	void openAndRun(BDBJEData bdbjeData, Data.Access xaction) {
-		
-//		EntryBinding<V> valueBinding = new SerialBinding(bdbjeBase.getClassCatalog(), Tuple.class);
-//		data = new StoredSortedMap<K, V>(db, keyBinding, valueBinding, true);
-		
-		// TODO Auto-generated method stub
-		
+	/**
+	 * Open data storage and run a data access (update or retrieval) operation.
+	 * 
+	 * @param bdbjeData - BDBJEData - the data store
+	 * @param access - Data.Access - the operation, typically provided via a lambda expression.
+	 * @return 
+	 */
+	<T> T query(BDBJEData<?, ?> bdbjeData, Data.Access<T> access) {
+		var name = bdbjeData.getName();
+		// TODO - eliminate the following hack by generalising how BDB keys are specified
+		var keyBinding = name.equals(catalogName) ? new StringBinding() : new LongBinding();
+		@SuppressWarnings({ "unchecked", "rawtypes" })
+		var valueBinding = new SerialBinding(getClassCatalog(), Tuple.class);
+		Database db = null;
+		try {
+			db = environment.open(name,  false);
+			@SuppressWarnings("unchecked")
+			var data = new StoredSortedMap<>(db, keyBinding, valueBinding, true);
+			return access.go(data);
+		} finally {
+			if (db != null)
+				db.close();
+		}
 	}
 
 	/**
@@ -186,26 +245,16 @@ public class BDBJEBase {
 	 * @param newName - new name
 	 */
 	public void rename(String oldName, String newName) {
-		var catalogEntry = catalog.get(oldName);
+		var catalogEntry = getCatalogEntry(oldName);
 		if (catalogEntry == null)
 			return;
-		catalog.remove(oldName);
+		removeCatalogEntry(oldName);
 		environment.rename(oldName, newName);
-		catalog.put(newName, catalogEntry);
-	}
-	
-	/**
-	 * Close an open Data source.
-	 * 
-	 * @param table - BDBJEData
-	 */
-	public void close(BDBJEData<?, ?> table) {
-		if (table == null)
-			return;
-		try {
-			table.close();
-		} finally {
-			table = null;
+		updateCatalog(newName, catalogEntry);
+		var dataSource = dataSources.get(oldName);
+		if (dataSource != null) {
+			dataSources.remove(oldName);
+			dataSources.put(newName, dataSource);
 		}
 	}
 	
@@ -213,8 +262,11 @@ public class BDBJEBase {
 	 * Close the database.
 	 */
 	public void close() {
-		catalogData.close();
-		environment.close();
+		try {
+			environment.close();
+		} catch (Throwable t) {
+			System.out.println(Str.ing(ErrProblemClosingEnvironment, t.getMessage()));
+		}
 	}
 
 	public ClassCatalog getClassCatalog() {

@@ -20,6 +20,10 @@ public class BDBJEData<K extends Serializable, V extends Tuple> implements Data<
 		this.base = bdbjeBase;
 		this.name = name;
 	}
+
+	public String getName() {
+		return name;
+	}
 	
 	@SuppressWarnings("unchecked")
 	@Override
@@ -47,14 +51,17 @@ public class BDBJEData<K extends Serializable, V extends Tuple> implements Data<
 		}
 		try {
 			var newInstance = newTupleClass.getConstructor().newInstance();
-			base.transaction(() -> access(data -> data.forEach((key, value) -> {
-				try {
-					copyFrom.invoke(newInstance, value);
-				} catch (IllegalAccessException | IllegalArgumentException | InvocationTargetException e) {
-					throw new ExceptionFatal(Str.ing(ErrSchemaUpdateCopyFromFailure, e.getMessage()));						
-				}
-				data.put(key, (V)newInstance);
-			})));
+			base.transaction(() -> query(data -> {				
+				data.forEach((key, value) -> {
+					try {
+						copyFrom.invoke(newInstance, value);
+					} catch (IllegalAccessException | IllegalArgumentException | InvocationTargetException e) {
+						throw new ExceptionFatal(Str.ing(ErrSchemaUpdateCopyFromFailure, e.getMessage()));						
+					}
+					data.put(key, (V)newInstance);
+				});
+				return null;
+			}));
 		} catch (Exception e) {
 			throw new ExceptionFatal(Str.ing(ErrSchemaUpdateFailure, e.getMessage()));
 		}
@@ -161,8 +168,8 @@ public class BDBJEData<K extends Serializable, V extends Tuple> implements Data<
 	}
 
 	@Override
-	public void access(Access xaction) {
-		base.openAndRun(this, xaction);
+	public <T> T query(Access<T> xaction) {
+		return (T)base.query(this, xaction);
 	}
 	
 }

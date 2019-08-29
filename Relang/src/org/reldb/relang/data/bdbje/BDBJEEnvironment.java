@@ -153,7 +153,7 @@ public class BDBJEEnvironment implements Closeable {
 		
 		System.out.println(Str.ing(NoteOpened, homeDir));
 	}
-
+	
 	/** 
 	 * Begin a transaction.
 	 * 

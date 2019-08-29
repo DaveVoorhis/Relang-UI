@@ -60,8 +60,8 @@ public interface Data<K extends Serializable, V extends Tuple> {
 	public boolean isStrictlyReadonly();
 
 	@FunctionalInterface
-	public interface Access {
-		public abstract void go(Map map);
+	public interface Access<T> {
+		public abstract T go(@SuppressWarnings("rawtypes") Map map);
 	}
 
 	/**
@@ -69,5 +69,5 @@ public interface Data<K extends Serializable, V extends Tuple> {
 	 * 
 	 * @param xaction - Access - a lambda expression representing data retrieval or update.
 	 */
-	public void access(Access xaction);
+	public <T> T query(Access<T> xaction);
 }

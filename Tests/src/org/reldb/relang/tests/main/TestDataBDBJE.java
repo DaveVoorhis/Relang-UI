@@ -33,7 +33,7 @@ public class TestDataBDBJE {
 		base = new BDBJEBase(testDir, true);
 	}
 	
-	private static void showContainer(String prompt, Map<? extends Serializable, ? extends Serializable> container) {
+	private static Object showContainer(String prompt, Map<? extends Serializable, ? extends Serializable> container) {
 		if (verbose)
 			System.out.println(prompt);
 		container.forEach((key, value) -> {
@@ -43,6 +43,7 @@ public class TestDataBDBJE {
 		});
 		if (verbose)
 			System.out.println();
+		return null;
 	}
 	
 	@Test 
@@ -59,10 +60,10 @@ public class TestDataBDBJE {
 		 * var tuple = new testData();
 		 * tuple.col1 = "blah";
 		 * tuple.col2 = 3;
-		 * data.access(container -> container.put(Long.valueOf(1), tuple));
+		 * data.query(container -> container.put(Long.valueOf(1), tuple));
 		 * tuple.col1 = "zot";
 		 * tuple.col2 = 5;
-		 * data.access(container -> container.put(Long.valueOf(2), tuple));
+		 * data.query(container -> container.put(Long.valueOf(2), tuple));
 		 * 
 		 */
 		
@@ -74,20 +75,20 @@ public class TestDataBDBJE {
 		tupleType.getField("col1").set(tuple, "blah");
 		tupleType.getField("col2").set(tuple, 3);		
 		// insert instance into database
-		data.access(container -> container.put(Long.valueOf(1), tuple));			
+		data.query(container -> container.put(Long.valueOf(1), tuple));			
 		// initialise instance to something else
 		tupleType.getField("col1").set(tuple, "zot");
 		tupleType.getField("col2").set(tuple, 5);
 		// insert instance
-		data.access(container -> container.put(Long.valueOf(2), tuple));
+		data.query(container -> container.put(Long.valueOf(2), tuple));
 		// initialise instance to something else
 		tupleType.getField("col1").set(tuple, "zaz");
 		tupleType.getField("col2").set(tuple, 66);
 		// update instance
-		data.access(container -> container.put(Long.valueOf(2), tuple));
+		data.query(container -> container.put(Long.valueOf(2), tuple));
 		
 		// Iterate and display container contents
-		data.access(container -> showContainer("\n=== Container Contents Before Schema Change (should have col1 and col2) ===", container));
+		data.query(container -> showContainer("\n=== Container Contents Before Schema Change (should have col1 and col2) ===", container));
 		
 		// change schema
 		data.extend("col3", Double.class);
@@ -95,35 +96,35 @@ public class TestDataBDBJE {
 		
 		// get tuple type class and instance
 		final var tupleType2 = base.getTupleTypeOf(storageName1);
-		final var tuple2 = tupleType.getConstructor().newInstance();
+		final var tuple2 = tupleType2.getConstructor().newInstance();
 		// insert instance into database
 		tupleType2.getField("col1").set(tuple2, "blat");
 		tupleType2.getField("col3").set(tuple2, 2.7);
-		data.access(container -> container.put(Long.valueOf(3), tuple2));
+		data.query(container -> container.put(Long.valueOf(3), tuple2));
 		// update instance in database
 		tupleType2.getField("col1").set(tuple2, "zap");
 		tupleType2.getField("col3").set(tuple2, -33.4);
-		data.access(container -> container.put(Long.valueOf(3), tuple2));
+		data.query(container -> container.put(Long.valueOf(3), tuple2));
 		
 		// Iterate and display container contents
-		data.access(container -> showContainer("\n=== Container Contents After Schema Change (should have col1 and col3) ===", container));
+		data.query(container -> showContainer("\n=== Container Contents After Schema Change (should have col1 and col3) ===", container));
 		
 		// Rename container
 		data.renameAllTo(storageNameRenamed);
 		
 		// Iterate and display container contents
-		data.access(container -> showContainer("\n=== Container Contents After Schema Change (container renamed) ===", container));
+		data.query(container -> showContainer("\n=== Container Contents After Schema Change (container renamed) ===", container));
 		
 		// get tuple type class and instance
 		final var tupleType3 = base.getTupleTypeOf(storageNameRenamed);
-		final var tuple3 = tupleType.getConstructor().newInstance();
+		final var tuple3 = tupleType3.getConstructor().newInstance();
 		// insert instance into database
 		tupleType3.getField("col1").set(tuple3, "zip");
 		tupleType3.getField("col3").set(tuple3, 44.234);
-		data.access(container -> container.put(Long.valueOf(4), tuple3));
+		data.query(container -> container.put(Long.valueOf(4), tuple3));
 		
 		// Iterate and display container contents
-		data.access(container -> showContainer("\n=== Container Contents After Schema Change (added a tuple) ===", container));
+		data.query(container -> showContainer("\n=== Container Contents After Adding a Tuple ===", container));
 	}
 	
 	@Test
@@ -135,11 +136,12 @@ public class TestDataBDBJE {
 	public static void teardown() {
 		@SuppressWarnings("unchecked")
 		var catalog = (BDBJEData<String, CatalogEntry>)base.open(BDBJEBase.catalogName);
-		catalog.access(container -> {
+		catalog.query(container -> {
 			assertEquals(true, container.containsKey(storageNameRenamed));
 			assertEquals(true, container.containsKey(storageName2));
 			assertEquals(true, container.containsKey(BDBJEBase.catalogName));
 			showContainer("\n=== Catalog ===", container);
+			return null;
 		});
 	}
 
