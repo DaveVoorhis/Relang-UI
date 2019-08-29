@@ -171,13 +171,15 @@ public class Datasheet extends Composite {
 		catalogTree.removeAll();
 		var categoryData = new TreeItem(catalogTree, SWT.NONE);
 		categoryData.setText("Data");
-		try (BDBJEData<String, CatalogEntry> catalog = (BDBJEData<String, CatalogEntry>)base.open(BDBJEBase.catalogName)) {
-			// TODO - this should be the first to be replaced by a transactional tuple/row iterator mechanism
-			catalog.iterator().forEachRemaining(entry -> {
+		var catalogData = (BDBJEData<String, CatalogEntry>)base.open(BDBJEBase.catalogName);
+		catalogData.query(catalog -> {
+			catalog.values().forEach(value -> {
 				var item = new TreeItem(categoryData, SWT.NONE);
+				var entry = (CatalogEntry)value;
 				item.setText(entry.name);
 			});
-		}
+			return null;
+		});
 	}
 
 	public CTabFolder getTabFolder() {

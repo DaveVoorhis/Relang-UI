@@ -17,7 +17,6 @@ public class GridTab extends Tab {
 		setText(name);
 		grid = new GridPanel(getParent(), data);
 		setControl(grid);
-		addListener(SWT.Dispose, evt -> data.close());
 	}
 	
 	public void populateToolbar(ToolBar toolBar) {

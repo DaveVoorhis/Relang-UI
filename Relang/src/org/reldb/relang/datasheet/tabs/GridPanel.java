@@ -32,12 +32,12 @@ import org.reldb.relang.utilities.DialogBase;
 public class GridPanel extends Composite {
 
 	private Datagrid grid;
-	private Data<?> data;
+	private Data<?, ?> data;
 	
 	private Iterator<?> iterator = null;
 	private int iteratorIndex = -1;
 	
-	public GridPanel(Composite parent, Data<?> data) {
+	public GridPanel(Composite parent, Data<?, ?> data) {
 		super(parent, SWT.NONE);
 		this.data = data;
 		
