@@ -6,10 +6,12 @@ import org.reldb.relang.utilities.Directory;
 import static org.reldb.relang.strings.Strings.*;
 
 import java.io.File;
+import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import org.reldb.relang.compiler.DirClassLoader;
 import org.reldb.relang.compiler.ForeignCompilerJava;
@@ -31,6 +33,17 @@ public class TupleTypeGenerator {
 	private String oldTupleName;	
 	private HashMap<String, Class<?>> attributes = new HashMap<>();
 	private TupleTypeGenerator copyFrom = null;
+
+	/**
+	 * Given a Class used as a tuple type, return a stream of fields suitable for data. Exclude static fields, metadata, etc.
+	 * 
+	 * @param tupleClass - Class<?> - tuple type
+	 * @return Stream<Field> of FieldS.
+	 */
+	public static Stream<Field> getDataFields(Class<?> tupleClass) {
+		return Arrays.stream(tupleClass.getFields())
+				.filter(field -> !Modifier.isStatic(field.getModifiers()) && Modifier.isPublic(field.getModifiers()));
+	}
 	
 	public TupleTypeGenerator(String dir, String tupleName) {
 		this.dir = dir;
@@ -40,9 +53,7 @@ public class TupleTypeGenerator {
 		loader = new DirClassLoader(dir);
 		try {
 			var tupleClass = loader.forName(tupleName);
-			Arrays.stream(tupleClass.getFields())
-				.filter(field -> !Modifier.isStatic(field.getModifiers()) && Modifier.isPublic(field.getModifiers()))
-				.forEach(field -> attributes.put(field.getName(), field.getType()));
+			getDataFields(tupleClass).forEach(field -> attributes.put(field.getName(), field.getType()));
 			try {
 				var serialVersionUIDField = tupleClass.getDeclaredField("serialVersionUID");
 				serialValue = serialVersionUIDField.getLong(null);

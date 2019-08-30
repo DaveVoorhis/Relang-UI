@@ -14,6 +14,13 @@ public interface Data<K extends Serializable, V extends Tuple> {
 	 * @return - Class<T>
 	 */
 	public Class<V> getType();
+
+	/** 
+	 * Get the unique name of this Data source within whatever container (i.e., database) it resides.
+	 * 
+	 * @return - String - name.
+	 */
+	public String getName();
 	
 	/** True if attributes can be added. */
 	public boolean isExtendable();
@@ -57,17 +64,29 @@ public interface Data<K extends Serializable, V extends Tuple> {
 	public void changeType(String name, Class<? extends Serializable> type);
 	
 	/** True if this Data is read-only and will not accept data updates. */
-	public boolean isStrictlyReadonly();
+	public boolean isReadonly();
 
 	@FunctionalInterface
-	public interface Access<T> {
+	public interface Query<T> {
 		public abstract T go(@SuppressWarnings("rawtypes") Map map);
 	}
+	
+	/**
+	 * Access the underlying data container to retrieve data or perform an update and return a value of type T.
+	 * 
+	 * @param query - Query - a lambda expression representing data retrieval or update that returns a value.
+	 */
+	public <T> T query(Query<T> query);
 
+	@FunctionalInterface
+	public interface Access {
+		public abstract void go(@SuppressWarnings("rawtypes") Map map);
+	}
+	
 	/**
 	 * Access the underlying data container to retrieve data or perform an update.
 	 * 
 	 * @param xaction - Access - a lambda expression representing data retrieval or update.
 	 */
-	public <T> T query(Access<T> xaction);
+	public void access(Access access);
 }

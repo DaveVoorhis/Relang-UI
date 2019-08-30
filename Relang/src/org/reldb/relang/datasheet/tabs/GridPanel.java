@@ -1,9 +1,7 @@
 package org.reldb.relang.datasheet.tabs;
 
-import java.util.Arrays;
-import java.util.HashSet;
-import java.util.Iterator;
-import java.util.Vector;
+import java.lang.reflect.Constructor;
+import java.lang.reflect.InvocationTargetException;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -23,6 +21,8 @@ import org.reldb.relang.datagrid.GridWidgetInterface;
 import org.reldb.relang.datagrid.GridWidgetInterface.Notifier;
 import org.reldb.relang.datagrid.widgets.GridText;
 import org.reldb.relang.main.Main;
+import org.reldb.relang.tuples.Tuple;
+import org.reldb.relang.tuples.TupleTypeGenerator;
 import org.reldb.relang.utilities.DialogBase;
 
 /** A Sheet (controller?) connects a Data (model) to a Datagrid (viewer).
@@ -33,9 +33,6 @@ public class GridPanel extends Composite {
 
 	private Datagrid grid;
 	private Data<?, ?> data;
-	
-	private Iterator<?> iterator = null;
-	private int iteratorIndex = -1;
 	
 	public GridPanel(Composite parent, Data<?, ?> data) {
 		super(parent, SWT.NONE);
@@ -80,9 +77,8 @@ public class GridPanel extends Composite {
 		
 		grid.getGrid().setHeaderVisible(true);
 		
-		var type = data.getType();
-		var fieldArray = type.getFields();
-		var fields = Arrays.asList(fieldArray);
+		var tupleType = data.getType();
+		var fields = TupleTypeGenerator.getDataFields(tupleType).collect(Collectors.toList());
 		
 		int columnCount = fields.size();
 		for (int columnIndex = 0; columnIndex < columnCount; columnIndex++) {
@@ -107,57 +103,86 @@ public class GridPanel extends Composite {
 		grid.getGrid().setRowHeaderVisible(true);
 		grid.getGrid().setColumnScrolling(true);
 		grid.getGrid().setRowHeaderVisible(true);
-
-		// TODO - fix potential long vs int issue here
-//		long rowCount = data.getRowCount() + 1;
-//		grid.getGrid().setItemCount((int)rowCount);
-
-		Vector<Object> rowCache = new Vector<>();
+		
+		Integer rowCount = (Integer)data.query(container -> container.entrySet().size());
+		grid.getGrid().setItemCount(rowCount + (data.isReadonly() ? 0 : 1));
 		
 		grid.getGrid().addListener(SWT.SetData, setDataEvt -> {
 			GridItem row = (GridItem)setDataEvt.item;
 			int rowIndex = row.getRowIndex();
-
-			if (iterator == null)
-				iterator = data.iterator();
-
-			while (iteratorIndex < rowIndex && iterator.hasNext())
-				rowCache.set(iteratorIndex++, iterator.next());
 			
 			for (int columnIndex = 0; columnIndex < columnCount; columnIndex++) {
 				var editor = new GridEditor(grid.getGrid());
 				editor.grabHorizontal = true;
 				editor.grabVertical = true;
 				var text = new Text(grid.getGrid(), SWT.NONE);
-
-				try {
-					String valueText = fieldArray[columnIndex].get(rowCache.get(rowIndex)).toString();
-					text.setText(valueText);
-				} catch (IllegalArgumentException | IllegalAccessException e) {
-					text.setText("<???>");
-				}
 				
-				/*
-				if (rowIndex < data.getRowCount())
-					text.setText(data.getValue(columnIndex, rowIndex).toString());
-				*/
+				text.setEditable(!data.isReadonly());
+
+				// Horrible hack to deal with the fact that most containers are indexed
+				// by a row number but sys_Catalog is indexed by name. This really needs
+				// generalisation of keys.
+				// TODO - generalise Data keys
+				var field = fields.get(columnIndex);
+				if (data.getName().equals("sys_Catalog"))
+					text.setText((String)data.query(container -> {
+						try {
+							var entry = container.values().toArray()[rowIndex];
+							var fieldValue = field.get(entry);
+							return (fieldValue == null) ? "<null>" : fieldValue.toString();
+						} catch (IllegalArgumentException | IllegalAccessException e) {
+							System.out.println("GridPanel: exception in field " + field + ": " + e);
+							e.printStackTrace();
+							return "<???>";
+						}
+					}));	
+				else 
+					text.setText((String)data.query(container -> {
+						try {
+							if (rowIndex < container.size())
+								return field.get(container.get(rowIndex)).toString();
+							else
+								return "";
+						} catch (IllegalArgumentException | IllegalAccessException e) {
+							return "<???>";
+						}
+					}));
 				
 				var cell = new GridText(grid, text, rowIndex, columnIndex);
 				grid.setupControl(cell);
 				cell.setNotifier(new Notifier() {
+					@SuppressWarnings("unchecked")
 					@Override
 					public void changed(GridWidgetInterface gridWidget, Object newContent, GridWidgetInterface.SpecialInstructions specialInstruction) {
-						/*
-						long getRowCount = data.getRowCount();
-						data.setValue(gridWidget.getColumn(), gridWidget.getRow(), newContent);
-						if (getRowCount != data.getRowCount())
-							Main.addTask(() -> {
-								if (specialInstruction == GridWidgetInterface.SpecialInstructions.MOVE_DOWN)
-									reload(gridWidget.getRow() + 1, gridWidget.getColumn());
-								else
-									reload(gridWidget.getRow(), gridWidget.getColumn());
-							});
-						*/
+						data.access(container -> {
+							var field = fields.get(gridWidget.getColumn());							
+							if (gridWidget.getRow() < container.size()) {
+								var tuple = container.values().toArray()[rowIndex];
+								try {
+									field.set(tuple, newContent);
+								} catch (IllegalArgumentException | IllegalAccessException e) {
+									// TODO Auto-generated catch block
+									e.printStackTrace();
+								}
+							} else {
+								Constructor<? extends Tuple> constructor;
+								try {
+									constructor = tupleType.getConstructor();
+									var tuple = constructor.newInstance();
+									container.put((long)container.size(), tuple);
+									field.set(tuple, newContent);
+								} catch (NoSuchMethodException | SecurityException | InstantiationException | IllegalAccessException | IllegalArgumentException | InvocationTargetException e) {
+									// TODO Auto-generated catch block
+									e.printStackTrace();
+								}
+								Main.addTask(() -> {
+									if (specialInstruction == GridWidgetInterface.SpecialInstructions.MOVE_DOWN)
+										reload(gridWidget.getRow() + 1, gridWidget.getColumn());
+									else
+										reload(gridWidget.getRow(), gridWidget.getColumn());
+								});
+							}
+						});
 					}
 				});
 				editor.setEditor(text, row, columnIndex);

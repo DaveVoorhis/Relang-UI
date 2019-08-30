@@ -541,7 +541,11 @@ public class Main {
 		// Thunderbirds are go.
 		shell.open();
 		var baseDir = System.getProperty("user.home") + File.separator + "relangbase";
-		datasheets.openOrCreate(shell, baseDir, true);
+		try {
+			datasheets.openOrCreate(shell, baseDir, true);
+		} catch (com.sleepycat.je.EnvironmentLockedException ele) {
+			MessageDialog.openError(shell, "Database in Use", "The database at " + baseDir + " appears to already be in use.");
+		}
 		
 		while (display != null && !display.isDisposed()) {
 			try {

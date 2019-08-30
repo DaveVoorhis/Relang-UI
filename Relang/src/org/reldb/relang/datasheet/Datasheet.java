@@ -10,9 +10,11 @@ import org.reldb.relang.commands.CommandActivator;
 import org.reldb.relang.commands.Commands;
 import org.reldb.relang.commands.IconMenuItem;
 import org.reldb.relang.data.CatalogEntry;
+import org.reldb.relang.data.Data;
 import org.reldb.relang.data.bdbje.BDBJEBase;
 import org.reldb.relang.data.bdbje.BDBJEData;
 import org.reldb.relang.datasheet.tabs.GridTab;
+import org.reldb.relang.utilities.MessageDialog;
 import org.eclipse.swt.widgets.ToolBar;
 import org.eclipse.swt.custom.SashForm;
 import org.eclipse.swt.graphics.Point;
@@ -137,11 +139,7 @@ public class Datasheet extends Composite {
 				TreeItem items[] = catalogTree.getSelection();
 				for (TreeItem item: items)
 					item.setExpanded(!item.getExpanded());
-				TreeItem selection = getTreeSelection();
-				if (selection != null) {
-					tabFolder.setSelection(new GridTab(this, selection.getText(), false, SWT.CLOSE));
-					fireContentTabSelectionChange();
-				}
+				openTreeSelection();
 			}
 		});
 		
@@ -152,11 +150,7 @@ public class Datasheet extends Composite {
 				for (TreeItem item: items)
 					item.setExpanded(!item.getExpanded());
 			}
-			TreeItem selection = getTreeSelection();
-			if (selection != null) {
-				tabFolder.setSelection(new GridTab(this, selection.getText(), false, SWT.CLOSE));
-				fireContentTabSelectionChange();
-			}
+			openTreeSelection();
 		});
 	}
 
@@ -165,6 +159,30 @@ public class Datasheet extends Composite {
 		this.base = base;
 		updateCatalogTree();
 	}
+
+	private void openTab(String name, boolean create) {
+		var base = getBase();
+		Data<?, ?> data = null;
+		try {
+			data = base.open(name, create);
+		} catch (Throwable e) {
+			MessageDialog.openError(getShell(), "Problem Opening Tab", "Unable to open tab due to: " + e.getMessage());
+			return;
+		}
+		tabFolder.setSelection(new GridTab(this, data, SWT.CLOSE));
+		fireContentTabSelectionChange();		
+	}
+	
+	private void openTab(TreeItem selection) {
+		if (selection != null)
+			openTab(selection.getText(), false);
+	}
+	
+	private void openTreeSelection() {
+		var selection = getTreeSelection();
+		if (selection.getItems().length == 0)
+			openTab(selection);	
+	}
 	
 	@SuppressWarnings("unchecked")
 	public void updateCatalogTree() {
@@ -172,14 +190,11 @@ public class Datasheet extends Composite {
 		var categoryData = new TreeItem(catalogTree, SWT.NONE);
 		categoryData.setText("Data");
 		var catalogData = (BDBJEData<String, CatalogEntry>)base.open(BDBJEBase.catalogName);
-		catalogData.query(catalog -> {
-			catalog.values().forEach(value -> {
-				var item = new TreeItem(categoryData, SWT.NONE);
-				var entry = (CatalogEntry)value;
-				item.setText(entry.name);
-			});
-			return null;
-		});
+		catalogData.access(catalog -> catalog.values().forEach(value -> {
+			var item = new TreeItem(categoryData, SWT.NONE);
+			var entry = (CatalogEntry)value;
+			item.setText(entry.name);
+		}));
 	}
 
 	public CTabFolder getTabFolder() {
@@ -291,8 +306,7 @@ public class Datasheet extends Composite {
 	private void buildDatasheetToolbar() {
 		Commands.addCommandActivator(new CommandActivator(Commands.Do.NewGrid, datasheetToolbar, "newgrid", SWT.NONE, "New grid", e -> {
 			var newName = base.getNewName();
-			tabFolder.setSelection(new GridTab(this, newName, true, SWT.CLOSE));			
-			fireContentTabSelectionChange();
+			openTab(newName, true);
 			updateCatalogTree();
 		}));
 		

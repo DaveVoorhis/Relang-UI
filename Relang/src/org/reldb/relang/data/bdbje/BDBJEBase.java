@@ -43,8 +43,34 @@ public class BDBJEBase implements Closeable {
 	public BDBJEBase(String dir, boolean create) {
 		environment = new BDBJEEnvironment(dir, create);
 		environment.open(catalogName, true).close();
-		catalog = new BDBJEData<String, CatalogEntry>(this, catalogName);
+		catalog = new BDBJEData<String, CatalogEntry>(this, catalogName) {
+			@Override
+			public boolean isExtendable() {
+				return false;
+			}
+
+			@Override
+			public boolean isRemovable() {
+				return false;
+			}
+
+			@Override
+			public boolean isRenameable() {
+				return false;
+			}
+
+			@Override
+			public boolean isTypeChangeable() {
+				return false;
+			}
+			
+			@Override
+			public boolean isReadonly() {
+				return true;
+			}
+		};
 		updateCatalog(catalogName, CatalogEntry.class);
+		dataSources.put(catalogName, catalog);
 	}
 	
 	/**
@@ -214,13 +240,13 @@ public class BDBJEBase implements Closeable {
 	}
 
 	/**
-	 * Open data storage and run a data access (update or retrieval) operation.
+	 * Open data storage and run a data access (update or retrieval) operation that returns a value.
 	 * 
 	 * @param bdbjeData - BDBJEData - the data store
-	 * @param access - Data.Access - the operation, typically provided via a lambda expression.
+	 * @param query - Data.Query - the operation, typically provided via a lambda expression.
 	 * @return 
 	 */
-	<T> T query(BDBJEData<?, ?> bdbjeData, Data.Access<T> access) {
+	<T> T query(BDBJEData<?, ?> bdbjeData, Data.Query<T> query) {
 		var name = bdbjeData.getName();
 		// TODO - eliminate the following hack by generalising how BDB keys are specified
 		var keyBinding = name.equals(catalogName) ? new StringBinding() : new LongBinding();
@@ -231,13 +257,26 @@ public class BDBJEBase implements Closeable {
 			db = environment.open(name,  false);
 			@SuppressWarnings("unchecked")
 			var data = new StoredSortedMap<>(db, keyBinding, valueBinding, true);
-			return access.go(data);
+			return query.go(data);
 		} finally {
 			if (db != null)
 				db.close();
 		}
 	}
 
+	/**
+	 * Open data storage and run a data access (update or retrieval) operation.
+	 * 
+	 * @param bdbjeData - BDBJEData - the data store
+	 * @param access - Data.Access - the operation, typically provided via a lambda expression.
+	 */
+	void access(BDBJEData<?, ?> bdbjeData, Data.Access access) {
+		query(bdbjeData, action -> {
+			access.go(action);
+			return null;
+		});
+	}
+	
 	/**
 	 * Rename a Data source.
 	 * 

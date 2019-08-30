@@ -51,17 +51,14 @@ public class BDBJEData<K extends Serializable, V extends Tuple> implements Data<
 		}
 		try {
 			var newInstance = newTupleClass.getConstructor().newInstance();
-			base.transaction(() -> query(data -> {				
-				data.forEach((key, value) -> {
-					try {
-						copyFrom.invoke(newInstance, value);
-					} catch (IllegalAccessException | IllegalArgumentException | InvocationTargetException e) {
-						throw new ExceptionFatal(Str.ing(ErrSchemaUpdateCopyFromFailure, e.getMessage()));						
-					}
-					data.put(key, (V)newInstance);
-				});
-				return null;
-			}));
+			base.transaction(() -> access(data -> data.forEach((key, value) -> {
+				try {
+					copyFrom.invoke(newInstance, value);
+				} catch (IllegalAccessException | IllegalArgumentException | InvocationTargetException e) {
+					throw new ExceptionFatal(Str.ing(ErrSchemaUpdateCopyFromFailure, e.getMessage()));						
+				}
+				data.put(key, (V)newInstance);
+			})));
 		} catch (Exception e) {
 			throw new ExceptionFatal(Str.ing(ErrSchemaUpdateFailure, e.getMessage()));
 		}
@@ -163,13 +160,18 @@ public class BDBJEData<K extends Serializable, V extends Tuple> implements Data<
 	}
 	
 	@Override
-	public boolean isStrictlyReadonly() {
+	public boolean isReadonly() {
 		return false;
 	}
 
 	@Override
-	public <T> T query(Access<T> xaction) {
-		return (T)base.query(this, xaction);
+	public <T> T query(Query<T> query) {
+		return (T)base.query(this, query);
+	}
+
+	@Override
+	public void access(Access access) {
+		base.access(this, access);
 	}
 	
 }
