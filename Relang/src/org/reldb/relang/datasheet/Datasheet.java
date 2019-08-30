@@ -43,6 +43,7 @@ public class Datasheet extends Composite {
 	private CTabFolder tabFolder;
 	private CTabItem lastSelection;
 	private Tree catalogTree;
+	private TreeItem catalogTreeCategoryData;
 	
 	private CTabItem itemSelectedByMenu;
 	private int itemSelectedByMenuIndex;
@@ -88,6 +89,9 @@ public class Datasheet extends Composite {
 		catalogTree = new Tree(treeFolder, SWT.BORDER);
 		tbtmCatalog.setControl(catalogTree);
 		treeFolder.setSelection(tbtmCatalog);
+		
+		catalogTreeCategoryData = new TreeItem(catalogTree, SWT.NONE);
+		catalogTreeCategoryData.setText("Data");
 		
 		tabFolder = new CTabFolder(sashForm, SWT.BORDER);
 		tabFolder.setMaximizeVisible(true);
@@ -152,6 +156,27 @@ public class Datasheet extends Composite {
 			}
 			openTreeSelection();
 		});
+		
+		var menu = new Menu(catalogTree);
+		catalogTree.setMenu(menu);		
+		catalogTree.addListener(SWT.MenuDetect, evt -> {
+			var selection = getTreeSelection();
+			evt.doit = (selection.getItems().length == 0 && base.isRemovable(selection.getText()));
+		});
+		
+		var dropItem = new MenuItem(menu, SWT.PUSH);
+		dropItem.setText("Drop");
+		dropItem.addListener(SWT.Selection, evt2 -> {
+			var selection = getTreeSelection();
+			String name = selection.getText();
+			if (MessageDialog.openQuestion(getShell(), "Drop?", "Do you wish to permanently drop data source '" + name + "'?")) {
+				base.remove(name);
+				var tab = getTab(name);
+				if (tab != null)
+					tab.dispose();
+				updateCatalogTree();
+			}
+		});
 	}
 
 	public Datasheet(Shell newShell, BDBJEBase base) {
@@ -169,8 +194,9 @@ public class Datasheet extends Composite {
 			MessageDialog.openError(getShell(), "Problem Opening Tab", "Unable to open tab due to: " + e.getMessage());
 			return;
 		}
-		tabFolder.setSelection(new GridTab(this, data, SWT.CLOSE));
-		fireContentTabSelectionChange();		
+		var tab = new GridTab(getTabFolder(), data, SWT.CLOSE);
+		tabFolder.setSelection(tab);
+		fireContentTabSelectionChange();
 	}
 	
 	private void openTab(TreeItem selection) {
@@ -183,18 +209,48 @@ public class Datasheet extends Composite {
 		if (selection.getItems().length == 0)
 			openTab(selection);	
 	}
+
+	private TreeItem searchTree(TreeItem[] items, String text) {
+		for (var item: items) {
+			TreeItem found = searchTree(item, text);
+			if (found != null)
+				return found;
+		}
+		return null;		
+	}
+	
+	private TreeItem searchTree(TreeItem treeItem, String text) {
+		if (treeItem.getText().equals(text))
+			return treeItem;
+		return searchTree(treeItem.getItems(), text);
+	}
+	
+	private TreeItem searchTree(String text) {
+		return searchTree(catalogTree.getItems(), text);
+	}
 	
 	@SuppressWarnings("unchecked")
 	public void updateCatalogTree() {
-		catalogTree.removeAll();
-		var categoryData = new TreeItem(catalogTree, SWT.NONE);
-		categoryData.setText("Data");
+		boolean catalogIsOpen = catalogTreeCategoryData.getExpanded();
+		var topItem = catalogTree.getTopItem();
+		var topItemText = topItem.getText();
+		var selectedItem = getTreeSelection();
+		String selectedItemText = (selectedItem != null) ? selectedItem.getText() : null;
+		catalogTreeCategoryData.removeAll();
 		var catalogData = (BDBJEData<String, CatalogEntry>)base.open(BDBJEBase.catalogName);
 		catalogData.access(catalog -> catalog.values().forEach(value -> {
-			var item = new TreeItem(categoryData, SWT.NONE);
+			var item = new TreeItem(catalogTreeCategoryData, SWT.NONE);
 			var entry = (CatalogEntry)value;
 			item.setText(entry.name);
 		}));
+		var newTopItem = searchTree(topItemText);
+		catalogTree.setTopItem(newTopItem);
+		catalogTreeCategoryData.setExpanded(catalogIsOpen);
+		if (selectedItemText != null) {
+			var newSelectedItem = searchTree(selectedItemText);
+			if (newSelectedItem != null)
+				catalogTree.setSelection(newSelectedItem);
+		}
 	}
 
 	public CTabFolder getTabFolder() {
@@ -305,8 +361,7 @@ public class Datasheet extends Composite {
 	
 	private void buildDatasheetToolbar() {
 		Commands.addCommandActivator(new CommandActivator(Commands.Do.NewGrid, datasheetToolbar, "newgrid", SWT.NONE, "New grid", e -> {
-			var newName = base.getNewName();
-			openTab(newName, true);
+			openTab(base.getNewName(), true);
 			updateCatalogTree();
 		}));
 		

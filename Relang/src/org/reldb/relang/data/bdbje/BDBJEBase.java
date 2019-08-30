@@ -296,6 +296,36 @@ public class BDBJEBase implements Closeable {
 			dataSources.put(newName, dataSource);
 		}
 	}
+
+	/**
+	 * Return true if a Data source is removable.
+	 * 
+	 * @param name - String - name of Data source.
+	 * @return - boolean - true if Data source is removable via remove(String name).
+	 */
+	public boolean isRemovable(String name) {
+		if (name.equals(catalogName))
+			return false;
+		return (getCatalogEntry(name) != null);
+	}
+	
+	/**
+	 * Remove a Data source.
+	 * 
+	 * @param name - String - name of Data source.
+	 */
+	public void remove(String name) {
+		if (!isRemovable(name))
+			return;
+		removeCatalogEntry(name);
+		environment.remove(name);
+		var codeDir = environment.getCodeDir();
+		var tupleTypeGenerator = new TupleTypeGenerator(codeDir, name);
+		tupleTypeGenerator.destroy();
+		var dataSource = dataSources.get(name);
+		if (dataSource != null)
+			dataSources.remove(name);
+	}
 	
 	/**
 	 * Close the database.

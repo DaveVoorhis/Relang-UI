@@ -140,7 +140,7 @@ public class GridPanel extends Composite {
 					text.setText((String)data.query(container -> {
 						try {
 							if (rowIndex < container.size())
-								return field.get(container.get(rowIndex)).toString();
+								return field.get(container.get((long)rowIndex)).toString();
 							else
 								return "";
 						} catch (IllegalArgumentException | IllegalAccessException e) {
