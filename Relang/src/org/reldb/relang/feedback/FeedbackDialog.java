@@ -52,6 +52,7 @@ public abstract class FeedbackDialog extends Dialog {
 	}
 	
 	protected void open() {
+		report.setExpanded(true);
 		shlFeedback.open();
 		shlFeedback.layout();
 		Display display = getParent().getDisplay();
