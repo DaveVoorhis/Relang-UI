@@ -63,7 +63,7 @@ public class BDBJEData<K extends Serializable, V extends Tuple> implements Data<
 					newdata.put(key, (V)newInstance);
 				})));
 				base.remove(name);
-				base.rename(newTemporaryName, name);
+				newStorage.renameDataTo(name);
 			});
 		} catch (Exception e) {
 			throw new ExceptionFatal(Str.ing(ErrSchemaUpdateFailure, e.getMessage()));

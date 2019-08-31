@@ -270,8 +270,10 @@ public class BDBJEBase implements Closeable {
 		environment.rename(oldName, newName);
 		updateCatalog(newName, catalogEntry);
 		var dataSource = dataSources.get(oldName);
-		if (dataSource != null)
+		if (dataSource != null) {
 			dataSources.remove(oldName);
+			dataSources.put(newName, dataSource);
+		}
 	}
 
 	/**
