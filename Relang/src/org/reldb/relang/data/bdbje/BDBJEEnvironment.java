@@ -176,7 +176,7 @@ public class BDBJEEnvironment implements Closeable {
 		var runner = new TransactionRunner(dataEnv);
 		runner.run(worker);
 	}
-
+	
 	/** 
 	 * Delete all records from a named Berkeley DB "Database".
 	 * 

@@ -13,7 +13,6 @@ import com.sleepycat.bind.tuple.LongBinding;
 import com.sleepycat.bind.tuple.StringBinding;
 import com.sleepycat.collections.StoredSortedMap;
 import com.sleepycat.collections.TransactionWorker;
-import com.sleepycat.je.Database;
 import com.sleepycat.je.DatabaseException;
 
 import static org.reldb.relang.strings.Strings.*;
@@ -244,37 +243,17 @@ public class BDBJEBase implements Closeable {
 	 * 
 	 * @param bdbjeData - BDBJEData - the data store
 	 * @param query - Data.Query - the operation, typically provided via a lambda expression.
-	 * @return 
+	 * @return query result
 	 */
+	@SuppressWarnings({ "unchecked", "rawtypes" })
 	<T> T query(BDBJEData<?, ?> bdbjeData, Data.Query<T> query) {
 		var name = bdbjeData.getName();
 		// TODO - eliminate the following hack by generalising how BDB keys are specified
 		var keyBinding = name.equals(catalogName) ? new StringBinding() : new LongBinding();
-		@SuppressWarnings({ "unchecked", "rawtypes" })
 		var valueBinding = new SerialBinding(getClassCatalog(), Tuple.class);
-		Database db = null;
-		try {
-			db = environment.open(name,  false);
-			@SuppressWarnings("unchecked")
-			var data = new StoredSortedMap<>(db, keyBinding, valueBinding, true);
-			return query.go(data);
-		} finally {
-			if (db != null)
-				db.close();
+		try (var db = environment.open(name,  false)) {
+			return query.go(new StoredSortedMap<>(db, keyBinding, valueBinding, true));	
 		}
-	}
-
-	/**
-	 * Open data storage and run a data access (update or retrieval) operation.
-	 * 
-	 * @param bdbjeData - BDBJEData - the data store
-	 * @param access - Data.Access - the operation, typically provided via a lambda expression.
-	 */
-	void access(BDBJEData<?, ?> bdbjeData, Data.Access access) {
-		query(bdbjeData, action -> {
-			access.go(action);
-			return null;
-		});
 	}
 	
 	/**
@@ -291,10 +270,8 @@ public class BDBJEBase implements Closeable {
 		environment.rename(oldName, newName);
 		updateCatalog(newName, catalogEntry);
 		var dataSource = dataSources.get(oldName);
-		if (dataSource != null) {
+		if (dataSource != null)
 			dataSources.remove(oldName);
-			dataSources.put(newName, dataSource);
-		}
 	}
 
 	/**

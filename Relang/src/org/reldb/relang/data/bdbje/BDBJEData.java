@@ -50,15 +50,21 @@ public class BDBJEData<K extends Serializable, V extends Tuple> implements Data<
 			throw new ExceptionFatal(Str.ing(ErrUnableToLocateCopyFromMethod, newName));
 		}
 		try {
+			var newTemporaryName = newName;
+			var newStorage = base.create(newTemporaryName);
 			var newInstance = newTupleClass.getConstructor().newInstance();
-			base.transaction(() -> access(data -> data.forEach((key, value) -> {
-				try {
-					copyFrom.invoke(newInstance, value);
-				} catch (IllegalAccessException | IllegalArgumentException | InvocationTargetException e) {
-					throw new ExceptionFatal(Str.ing(ErrSchemaUpdateCopyFromFailure, e.getMessage()));						
-				}
-				data.put(key, (V)newInstance);
-			})));
+			base.transaction(() -> {
+				newStorage.access(newdata -> access(data -> data.forEach((key, value) -> {
+					try {
+						copyFrom.invoke(newInstance, value);
+					} catch (IllegalAccessException | IllegalArgumentException | InvocationTargetException e) {
+						throw new ExceptionFatal(Str.ing(ErrSchemaUpdateCopyFromFailure, e.getMessage()));						
+					}
+					newdata.put(key, (V)newInstance);
+				})));
+				base.remove(name);
+				base.rename(newTemporaryName, name);
+			});
 		} catch (Exception e) {
 			throw new ExceptionFatal(Str.ing(ErrSchemaUpdateFailure, e.getMessage()));
 		}
@@ -168,10 +174,13 @@ public class BDBJEData<K extends Serializable, V extends Tuple> implements Data<
 	public <T> T query(Query<T> query) {
 		return (T)base.query(this, query);
 	}
-
+	
 	@Override
 	public void access(Access access) {
-		base.access(this, access);
+		query(action -> {
+			access.go(action);
+			return null;
+		});
 	}
 	
 }
