@@ -415,6 +415,7 @@ public class Datasheet extends Composite {
 	private void closeAllTabs() {
 		while (tabFolder.getItemCount() > 0)
 			tabFolder.getItem(0).dispose();
+		fireContentTabSelectionChange();
 	}
 
 	private void closeAll() {
