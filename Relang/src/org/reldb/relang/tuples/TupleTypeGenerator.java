@@ -9,7 +9,7 @@ import java.io.File;
 import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;
 import java.util.Arrays;
-import java.util.HashMap;
+import java.util.LinkedList;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -31,7 +31,7 @@ public class TupleTypeGenerator {
 	private long serialValue = 0;
 	private DirClassLoader loader;
 	private String oldTupleName;	
-	private HashMap<String, Class<?>> attributes = new HashMap<>();
+	private LinkedList<Attribute> attributes = new LinkedList<>();
 	private TupleTypeGenerator copyFrom = null;
 
 	/**
@@ -53,7 +53,7 @@ public class TupleTypeGenerator {
 		loader = new DirClassLoader(dir);
 		try {
 			var tupleClass = loader.forName(tupleName);
-			getDataFields(tupleClass).forEach(field -> attributes.put(field.getName(), field.getType()));
+			getDataFields(tupleClass).forEach(field -> attributes.add(new Attribute(field.getName(), field.getType())));
 			try {
 				var serialVersionUIDField = tupleClass.getDeclaredField("serialVersionUID");
 				serialValue = serialVersionUIDField.getLong(null);
@@ -64,6 +64,33 @@ public class TupleTypeGenerator {
 		} catch (ClassNotFoundException e) {
 			existing = false;
 		}
+	}
+	
+	/**
+	 * Return the type of an attribute with a given name.
+	 * 
+	 * @param name - String - attribute name
+	 * @return - Class<?> - type of attribute or null if not found.
+	 */
+	public Class<?> typeOf(String name) {
+		for (var attribute: attributes)
+			if (attribute.name.equals(name))
+				return attribute.type;
+		return null;
+	}
+	
+	/**
+	 * Return the ordinal position of an attribute with a given name.
+	 * 
+	 * @param name - String - attribute name
+	 * @return - int - ordinal position of attribute; -1 if not found.
+	 */
+	public int positionOf(String name) {
+		for (int index = 0; index < attributes.size(); index++) {
+			if (attributes.get(index).name.equals(name))
+				return index;
+		}
+		return -1;
 	}
 	
 	/** Return true if this tuple definition already exists.
@@ -80,7 +107,9 @@ public class TupleTypeGenerator {
 	 * @param type - type (class) of new attribute
 	 */
 	public void addAttribute(String name, Class<?> type) {
-		attributes.put(name, type);
+		if (typeOf(name) != null)
+			throw new ExceptionFatal(Str.ing(ErrAttemptToAddDuplicateAttributeName, name));			
+		attributes.add(new Attribute(name, type));
 	}
 	
 	/** Remove the specified attribute. NOTE: Will not take effect until compile() has been invoked.
@@ -88,7 +117,10 @@ public class TupleTypeGenerator {
 	 * @param name - attribute to remove
 	 */
 	public void removeAttribute(String name) {
-		attributes.remove(name);
+		int position = positionOf(name);
+		if (position == -1)
+			throw new ExceptionFatal(Str.ing(ErrAttemptToRemoveNonexistentAttribute, name));
+		attributes.remove(position);
 	}
 
 	public Object renameAttribute(String oldName, String newName) {
@@ -121,7 +153,7 @@ public class TupleTypeGenerator {
 	@SuppressWarnings("unchecked")
 	public TupleTypeGenerator copyTo(String newName) {
 		var target = new TupleTypeGenerator(dir, newName);
-		target.attributes = (HashMap<String, Class<?>>)attributes.clone();
+		target.attributes = (LinkedList<Attribute>)attributes.clone();
 		target.serialValue = serialValue + 1;
 		target.copyFrom = this;
 		return target;
@@ -133,8 +165,8 @@ public class TupleTypeGenerator {
 		return
 			"\t/** Method to copy from specified tuple to this tuple.\n\t@param source - tuple to copy from */\n" +
 			"\tpublic void copyFrom(" + copyFrom.tupleName + " source) {\n" +
-				attributes.entrySet().stream().filter(copyFrom.attributes.entrySet()::contains)
-					.map(entry -> "\t\tthis." + entry.getKey() + " = source." + entry.getKey() + ";\n").collect(Collectors.joining()) +
+				attributes.stream().filter(entry -> copyFrom.typeOf(entry.name) != null)
+					.map(entry -> "\t\tthis." + entry.name + " = source." + entry.name + ";\n").collect(Collectors.joining()) +
 			"\t}\n";
 	}
 	
@@ -142,13 +174,13 @@ public class TupleTypeGenerator {
 		return 
 			tupleName 
 			+ " {" 
-			+ attributes.entrySet().stream().map(entry -> entry.getKey() + " = %s").collect(Collectors.joining(", ")) 
+			+ attributes.stream().map(entry -> entry.name + " = %s").collect(Collectors.joining(", ")) 
 			+ "}";
 	}
 	
 	private String getContentString() {
 		return
-			attributes.entrySet().stream().map(entry -> "this." + entry.getKey()).collect(Collectors.joining(", "));
+			attributes.stream().map(entry -> "this." + entry.name).collect(Collectors.joining(", "));
 	}
 
 	private String prefixIfPresent(String s, String prefix) {
@@ -194,9 +226,8 @@ public class TupleTypeGenerator {
 				"\t/** Version number */\n" +
 				"\tpublic static final long serialVersionUID = " + serialValue + ";\n" +
 				attributes
-					.entrySet()
 					.stream()
-					.map(entry -> "\t/** Field */\n\tpublic " + entry.getValue().getCanonicalName() + " " + entry.getKey() + ";\n")
+					.map(entry -> "\t/** Field */\n\tpublic " + entry.type.getCanonicalName() + " " + entry.name + ";\n")
 					.collect(Collectors.joining()) +
 				getCopyFromCode() +
 				getToStringCode() +

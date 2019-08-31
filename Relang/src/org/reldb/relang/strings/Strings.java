@@ -42,7 +42,9 @@ public class Strings {
 	public static final int ErrSavingJavaSource = Str.E("Unable to save Java source: %s.", ForeignCompilerJava.class.toString());
 	
 	public static final int ErrUnableToCreateOrOpenCodeDirectory = Str.E("Unable to create or open code directory %s.", TupleTypeGenerator.class.toString());
-
+	public static final int ErrAttemptToAddDuplicateAttributeName = Str.E("Attempt to add duplicate attribute %s.", TupleTypeGenerator.class.toString());
+	public static final int ErrAttemptToRemoveNonexistentAttribute = Str.E("Attempt to remove non-existent attribute %s.", TupleTypeGenerator.class.toString());
+	
 	public static final int ErrUnableToExtendTupleType = Str.E("Unable to extend tuple type %s:\n%s", BDBJEData.class.toString());
 	public static final int ErrUnableToRemoveInTupleType = Str.E("Unable to remove attribute in tuple type %s:\n%s", BDBJEData.class.toString());
 	public static final int ErrUnableToLoadTupleType = Str.E("Unable to load tuple type for %s.", BDBJEData.class.toString());	
