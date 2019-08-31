@@ -128,14 +128,8 @@ public class Datasheet extends Composite {
 		
 		catalogTree.addListener(SWT.Selection, evt -> {
 			TreeItem selection = getTreeSelection();
-			if (selection != null) {
-				String name = selection.getText();
-				CTabItem tab = getTab(name);
-				if (tab != null) {
-					getTabFolder().setSelection(tab);
-					fireContentTabSelectionChange();
-				}
-			}
+			if (selection != null)
+				selectTab(selection.getText());
 		});
 		
 		catalogTree.addListener(SWT.KeyUp, evt -> {
@@ -186,6 +180,8 @@ public class Datasheet extends Composite {
 	}
 
 	private void openTab(String name, boolean create) {
+		if (!create && selectTab(name))
+			return;
 		var base = getBase();
 		Data<?, ?> data = null;
 		try {
@@ -336,6 +332,16 @@ public class Datasheet extends Composite {
 		fireContentTabSelectionChange();
 	}
 
+	private boolean selectTab(String name) {
+		CTabItem tab = getTab(name);
+		if (tab != null) {
+			getTabFolder().setSelection(tab);
+			fireContentTabSelectionChange();
+			return true;
+		}
+		return false;
+	}
+	
 	private CTabItem getTab(String name) {
 		for (CTabItem tab: tabFolder.getItems())
 			if (tab.getText().equals(name))
