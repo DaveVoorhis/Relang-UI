@@ -9,7 +9,6 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
-import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.Queue;
 import java.util.concurrent.Semaphore;
@@ -361,13 +360,6 @@ public class Main {
 		shell.setImage(IconLoader.loadIcon("RelangIcon"));
 		shell.setImages(loadIcons(Display.getCurrent()));
 		shell.setText(Version.getAppID());
-		shell.addListener(SWT.Dispose, evt -> {
-			// shut down application if number of visible shells is 1 or less.
-			if (Arrays.stream(Display.getCurrent().getShells()).filter(sh -> sh.getVisible()).count() <= 1) {
-				LogWin.remove();
-				quit();
-			}
-		});
 		return shell;
 	}
 
@@ -489,6 +481,10 @@ public class Main {
 		}
 		
 		shell = createShell();
+		shell.addListener(SWT.Dispose, evt -> {
+			LogWin.remove();
+			quit();
+		});
 
 		LogWin.install(createShell());
 		
