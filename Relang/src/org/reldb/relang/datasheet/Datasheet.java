@@ -190,9 +190,8 @@ public class Datasheet extends Composite {
 			MessageDialog.openError(getShell(), "Problem Opening Tab", "Unable to open tab due to: " + e.getMessage());
 			return;
 		}
-		var tab = new GridTab(getTabFolder(), data, SWT.CLOSE);
-		tabFolder.setSelection(tab);
-		fireContentTabSelectionChange();
+		var tab = new GridTab(tabFolder, data, SWT.CLOSE);
+		selectTab(tab);
 	}
 	
 	private void openTab(TreeItem selection) {
@@ -302,7 +301,7 @@ public class Datasheet extends Composite {
 			var closers = new Vector<CTabItem>();
 			for (int i = itemSelectedByMenuIndex + 1; i<tabFolder.getItemCount(); i++)
 				closers.add(tabFolder.getItem(i));
-			tabFolder.setSelection(itemSelectedByMenuIndex);
+			selectTab(itemSelectedByMenuIndex);
 			for (CTabItem close: closers)
 				close.dispose();
 		}
@@ -313,14 +312,14 @@ public class Datasheet extends Composite {
 			var closers = new Vector<CTabItem>();
 			for (int i=0; i<itemSelectedByMenuIndex; i++)
 				closers.add(tabFolder.getItem(i));
-			tabFolder.setSelection(itemSelectedByMenuIndex);
+			selectTab(itemSelectedByMenuIndex);
 			for (CTabItem close: closers)
 				close.dispose();
 		}
 	}
 
 	private void closeOtherTabs() {
-		tabFolder.setSelection(itemSelectedByMenuIndex);
+		selectTab(itemSelectedByMenuIndex);
 		for (CTabItem tab: tabFolder.getItems())
 			if (tab != itemSelectedByMenu)
 				tab.dispose();
@@ -332,11 +331,20 @@ public class Datasheet extends Composite {
 		fireContentTabSelectionChange();
 	}
 
+	private void selectTab(CTabItem tab) {
+		tabFolder.setSelection(tab);
+		fireContentTabSelectionChange();		
+	}
+	
+	private void selectTab(int tabIndex) {
+		tabFolder.setSelection(tabIndex);
+		fireContentTabSelectionChange();
+	}
+	
 	private boolean selectTab(String name) {
 		CTabItem tab = getTab(name);
 		if (tab != null) {
-			getTabFolder().setSelection(tab);
-			fireContentTabSelectionChange();
+			selectTab(tab);
 			return true;
 		}
 		return false;
