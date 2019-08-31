@@ -104,7 +104,7 @@ public class BDBJEData<K extends Serializable, V extends Tuple> implements Data<
 	}
 	
 	private void changeSchema(Action tupleTypeAction) {
-		changeSchema(tupleTypeAction, tupleTypeGenerator -> name + (tupleTypeGenerator.getSerial() + 1));
+		changeSchema(tupleTypeAction, tupleTypeGenerator -> name + "_" + (tupleTypeGenerator.getSerial() + 1));
 	}
 
 	/** Rename this data store; do not rename associated tuple type. */
