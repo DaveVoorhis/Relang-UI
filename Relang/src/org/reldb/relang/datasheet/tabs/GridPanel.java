@@ -129,19 +129,19 @@ public class GridPanel extends Composite {
 						try {
 							var entry = container.values().toArray()[rowIndex];
 							var fieldValue = field.get(entry);
-							return (fieldValue == null) ? "<null>" : fieldValue.toString();
+							return (fieldValue == null) ? "" : fieldValue.toString();
 						} catch (IllegalArgumentException | IllegalAccessException e) {
-							System.out.println("GridPanel: exception in field " + field + ": " + e);
-							e.printStackTrace();
 							return "<???>";
 						}
 					}));	
 				else 
 					text.setText((String)data.query(container -> {
 						try {
-							if (rowIndex < container.size())
-								return field.get(container.get((long)rowIndex)).toString();
-							else
+							if (rowIndex < container.size()) {
+								var entry = container.get((long)rowIndex);
+								var fieldValue = field.get(entry);
+								return (fieldValue == null) ? "" : fieldValue.toString();
+							} else
 								return "";
 						} catch (IllegalArgumentException | IllegalAccessException e) {
 							return "<???>";
@@ -155,11 +155,12 @@ public class GridPanel extends Composite {
 					@Override
 					public void changed(GridWidgetInterface gridWidget, Object newContent, GridWidgetInterface.SpecialInstructions specialInstruction) {
 						data.access(container -> {
-							var field = fields.get(gridWidget.getColumn());							
+							var field = fields.get(gridWidget.getColumn());
 							if (gridWidget.getRow() < container.size()) {
 								var tuple = container.values().toArray()[rowIndex];
 								try {
 									field.set(tuple, newContent);
+									container.put((long)gridWidget.getRow(), tuple);
 								} catch (IllegalArgumentException | IllegalAccessException e) {
 									// TODO Auto-generated catch block
 									e.printStackTrace();
@@ -169,8 +170,8 @@ public class GridPanel extends Composite {
 								try {
 									constructor = tupleType.getConstructor();
 									var tuple = constructor.newInstance();
-									container.put((long)container.size(), tuple);
 									field.set(tuple, newContent);
+									container.put((long)container.size(), tuple);
 								} catch (NoSuchMethodException | SecurityException | InstantiationException | IllegalAccessException | IllegalArgumentException | InvocationTargetException e) {
 									// TODO Auto-generated catch block
 									e.printStackTrace();
