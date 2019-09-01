@@ -25,8 +25,8 @@ public abstract class DialogBase<T> extends Dialog {
 	public T open() {
 		Shell parent = getParent();
 		shell = new Shell(parent, shellStyle);
-		shell.setText(getText());
 		create(shell);
+		shell.setText(getText());
 		shell.open();
 		Display display = parent.getDisplay();
 		while (!shell.isDisposed()) {

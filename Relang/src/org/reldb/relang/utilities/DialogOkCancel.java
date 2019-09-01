@@ -6,6 +6,7 @@ import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.FormData;
+import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.layout.FormAttachment;
 
 public abstract class DialogOkCancel<T> extends DialogBase<T> {
@@ -69,6 +70,8 @@ public abstract class DialogOkCancel<T> extends DialogBase<T> {
 		btnOk.setText("Ok");
 		btnOk.addListener(SWT.Selection, evt -> close(ok()));
 		
+		shell.setDefaultButton(btnOk);
+		
 		var contentPanel = new Composite(shell, SWT.NONE);
 		var fd_contentPanel = new FormData();
 		fd_contentPanel.top = new FormAttachment(0, 10);
@@ -76,6 +79,7 @@ public abstract class DialogOkCancel<T> extends DialogBase<T> {
 		fd_contentPanel.right = new FormAttachment(100, -10);
 		fd_contentPanel.bottom = new FormAttachment(btnCancel, -10, SWT.TOP);
 		contentPanel.setLayoutData(fd_contentPanel);
+		contentPanel.setLayout(new FillLayout());
 		createContent(contentPanel);
 	}
 	
