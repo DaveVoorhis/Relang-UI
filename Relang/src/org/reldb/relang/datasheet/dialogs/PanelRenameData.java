@@ -8,7 +8,7 @@ import org.eclipse.swt.layout.FormData;
 import org.eclipse.swt.layout.FormAttachment;
 import org.eclipse.swt.widgets.Text;
 
-public class RenameData extends Composite {
+public class PanelRenameData extends Composite {
 	public Text textNewName;
 	
 	/**
@@ -16,7 +16,7 @@ public class RenameData extends Composite {
 	 * @param parent
 	 * @param style
 	 */
-	public RenameData(Composite parent, int style) {
+	public PanelRenameData(Composite parent, int style) {
 		super(parent, style);
 		setLayout(new FormLayout());
 		

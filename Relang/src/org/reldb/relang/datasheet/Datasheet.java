@@ -13,7 +13,8 @@ import org.reldb.relang.data.CatalogEntry;
 import org.reldb.relang.data.Data;
 import org.reldb.relang.data.bdbje.BDBJEBase;
 import org.reldb.relang.data.bdbje.BDBJEData;
-import org.reldb.relang.datasheet.dialogs.RenameData;
+import org.reldb.relang.datasheet.dialogs.DialogRenameData;
+import org.reldb.relang.datasheet.dialogs.PanelRenameData;
 import org.reldb.relang.datasheet.tabs.GridTab;
 import org.reldb.relang.utilities.DialogOkCancel;
 import org.reldb.relang.utilities.MessageDialog;
@@ -160,9 +161,9 @@ public class Datasheet extends Composite {
 		catalogTree.setMenu(menu);		
 		catalogTree.addListener(SWT.MenuDetect, evt -> {
 			var selection = getTreeSelection();
-			evt.doit = (selection.getItems().length == 0);
-			dropItem.setEnabled(base.isRemovable(selection.getText()));
-			renameItem.setEnabled(base.isRenameable(selection.getText()));
+			evt.doit = (selection != null && selection.getItems().length == 0);
+			dropItem.setEnabled(selection != null && base.isRemovable(selection.getText()));
+			renameItem.setEnabled(selection != null && base.isRenameable(selection.getText()));
 		});
 		
 		dropItem = new MenuItem(menu, SWT.PUSH);
@@ -188,23 +189,16 @@ public class Datasheet extends Composite {
 			if (selection == null)
 				return;
 			final String name = selection.getText();
-			var renameDialog = new DialogOkCancel<String>(getShell()) {
-				RenameData renameData;
-				@Override
-				protected void createContent(Composite content) {
-					setText("Rename");
-					renameData = new RenameData(content, SWT.NONE);
-					renameData.textNewName.setText(name);
-					content.pack();
-				}
-				@Override
-				protected String ok() {
-					return renameData.textNewName.getText();
-				}
-			};
+			var renameDialog = new DialogRenameData(getShell(), name);
 			String newName = renameDialog.open();
-			if (newName != null) {
-				System.out.println("Datasheet: Rename item " + name + " to " + newName);
+			if (newName != null && newName.length() > 0 && !newName.equals(name)) {
+				System.out.println("Datasheet: rename " + name + " to " + newName);
+				base.rename(name, newName);
+				var tab = getTab(name);
+				if (tab != null)
+					tab.setText(newName);
+				updateCatalogTree();
+				setTreeSelection(newName);
 			}
 		});
 	}
@@ -237,8 +231,11 @@ public class Datasheet extends Composite {
 	
 	private void openTreeSelection() {
 		var selection = getTreeSelection();
-		if (selection.getItems().length == 0)
-			openTab(selection);	
+		if (selection != null) {
+			var items = selection.getItems();
+			if (items == null || items.length == 0)
+				openTab(selection);
+		}
 	}
 
 	private TreeItem searchTree(TreeItem[] items, String text) {
@@ -258,6 +255,12 @@ public class Datasheet extends Composite {
 	
 	private TreeItem searchTree(String text) {
 		return searchTree(catalogTree.getItems(), text);
+	}
+
+	private void setTreeSelection(String name) {
+		var foundItem = searchTree(name);
+		if (foundItem != null)
+			catalogTree.setSelection(foundItem);
 	}
 	
 	@SuppressWarnings("unchecked")
