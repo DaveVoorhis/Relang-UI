@@ -14,9 +14,7 @@ import org.reldb.relang.data.Data;
 import org.reldb.relang.data.bdbje.BDBJEBase;
 import org.reldb.relang.data.bdbje.BDBJEData;
 import org.reldb.relang.datasheet.dialogs.DialogRenameData;
-import org.reldb.relang.datasheet.dialogs.PanelRenameData;
 import org.reldb.relang.datasheet.tabs.GridTab;
-import org.reldb.relang.utilities.DialogOkCancel;
 import org.reldb.relang.utilities.MessageDialog;
 import org.eclipse.swt.widgets.ToolBar;
 import org.eclipse.swt.custom.SashForm;
@@ -192,8 +190,12 @@ public class Datasheet extends Composite {
 			var renameDialog = new DialogRenameData(getShell(), name);
 			String newName = renameDialog.open();
 			if (newName != null && newName.length() > 0 && !newName.equals(name)) {
-				System.out.println("Datasheet: rename " + name + " to " + newName);
-				base.rename(name, newName);
+				try {
+					base.rename(name, newName);
+				} catch (Throwable e) {
+					MessageDialog.openError(getShell(), "Unable to Rename", "Unable to rename: " + e.getMessage());
+					return;
+				}
 				var tab = getTab(name);
 				if (tab != null)
 					tab.setText(newName);

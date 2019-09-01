@@ -266,6 +266,8 @@ public class BDBJEBase implements Closeable {
 		var catalogEntry = getCatalogEntry(oldName);
 		if (catalogEntry == null)
 			return;
+		if (getCatalogEntry(newName) != null)
+			throw new ExceptionFatal(Str.ing(ErrNameAlreadyInUse, newName));
 		removeCatalogEntry(oldName);
 		environment.rename(oldName, newName);
 		updateCatalog(newName, new CatalogEntry(newName, catalogEntry.typeName, catalogEntry.metadata));
