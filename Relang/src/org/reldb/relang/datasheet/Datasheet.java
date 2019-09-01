@@ -13,7 +13,9 @@ import org.reldb.relang.data.CatalogEntry;
 import org.reldb.relang.data.Data;
 import org.reldb.relang.data.bdbje.BDBJEBase;
 import org.reldb.relang.data.bdbje.BDBJEData;
+import org.reldb.relang.datasheet.dialogs.RenameData;
 import org.reldb.relang.datasheet.tabs.GridTab;
+import org.reldb.relang.utilities.DialogOkCancel;
 import org.reldb.relang.utilities.MessageDialog;
 import org.eclipse.swt.widgets.ToolBar;
 import org.eclipse.swt.custom.SashForm;
@@ -47,6 +49,9 @@ public class Datasheet extends Composite {
 	
 	private CTabItem itemSelectedByMenu;
 	private int itemSelectedByMenuIndex;
+	
+	private MenuItem renameItem;
+	private MenuItem dropItem;
 	
 	/**
 	 * @wbp.parser.constructor
@@ -155,13 +160,17 @@ public class Datasheet extends Composite {
 		catalogTree.setMenu(menu);		
 		catalogTree.addListener(SWT.MenuDetect, evt -> {
 			var selection = getTreeSelection();
-			evt.doit = (selection.getItems().length == 0 && base.isRemovable(selection.getText()));
+			evt.doit = (selection.getItems().length == 0);
+			dropItem.setEnabled(base.isRemovable(selection.getText()));
+			renameItem.setEnabled(base.isRenameable(selection.getText()));
 		});
 		
-		var dropItem = new MenuItem(menu, SWT.PUSH);
+		dropItem = new MenuItem(menu, SWT.PUSH);
 		dropItem.setText("Drop");
-		dropItem.addListener(SWT.Selection, evt2 -> {
+		dropItem.addListener(SWT.Selection, evt -> {
 			var selection = getTreeSelection();
+			if (selection == null)
+				return;
 			String name = selection.getText();
 			if (MessageDialog.openQuestion(getShell(), "Drop?", "Do you wish to permanently drop data source '" + name + "'?")) {
 				base.remove(name);
@@ -169,6 +178,33 @@ public class Datasheet extends Composite {
 				if (tab != null)
 					tab.dispose();
 				updateCatalogTree();
+			}
+		});
+		
+		renameItem = new MenuItem(menu, SWT.PUSH);
+		renameItem.setText("Rename");
+		renameItem.addListener(SWT.Selection, evt -> {
+			var selection = getTreeSelection();
+			if (selection == null)
+				return;
+			final String name = selection.getText();
+			var renameDialog = new DialogOkCancel<String>(getShell()) {
+				RenameData renameData;
+				@Override
+				protected void createContent(Composite content) {
+					setText("Rename");
+					renameData = new RenameData(content, SWT.NONE);
+					renameData.textNewName.setText(name);
+					content.pack();
+				}
+				@Override
+				protected String ok() {
+					return renameData.textNewName.getText();
+				}
+			};
+			String newName = renameDialog.open();
+			if (newName != null) {
+				System.out.println("Datasheet: Rename item " + name + " to " + newName);
 			}
 		});
 	}

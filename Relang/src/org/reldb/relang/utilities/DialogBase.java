@@ -5,23 +5,26 @@ import org.eclipse.swt.widgets.Dialog;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Shell;
 
-public abstract class DialogBase extends Dialog {
-	private Object result;
-	private Shell shell;
+public abstract class DialogBase<T> extends Dialog {
+	protected T result;
+	protected Shell shell;
 	
-	public DialogBase(Shell parent, int style) {
-		super(parent, style);
+	private int shellStyle;
+	
+	public DialogBase(Shell parent, int shellStyle) {
+		super(parent, SWT.NONE);
+		this.shellStyle = shellStyle;
+	}
+	
+	public DialogBase(Shell parent) {
+		this(parent, SWT.DIALOG_TRIM | SWT.RESIZE | SWT.APPLICATION_MODAL);
 	}
 
-	public abstract void create(Shell shell);
+	protected abstract void create(Shell shell);
 	
-	public Shell getContent() {
-		return shell;
-	}
-	
-	public Object open() {
+	public T open() {
 		Shell parent = getParent();
-		shell = new Shell(parent, SWT.DIALOG_TRIM | SWT.APPLICATION_MODAL);
+		shell = new Shell(parent, shellStyle);
 		shell.setText(getText());
 		create(shell);
 		shell.open();

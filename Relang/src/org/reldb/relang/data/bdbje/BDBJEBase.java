@@ -305,6 +305,11 @@ public class BDBJEBase implements Closeable {
 		if (dataSource != null)
 			dataSources.remove(name);
 	}
+
+	public boolean isRenameable(String text) {
+		// TODO Auto-generated method stub
+		return true;
+	}
 	
 	/**
 	 * Close the database.
