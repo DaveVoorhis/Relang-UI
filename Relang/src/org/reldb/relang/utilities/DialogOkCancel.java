@@ -70,8 +70,6 @@ public abstract class DialogOkCancel<T> extends DialogBase<T> {
 		btnOk.setText("Ok");
 		btnOk.addListener(SWT.Selection, evt -> close(ok()));
 		
-		shell.setDefaultButton(btnOk);
-		
 		var contentPanel = new Composite(shell, SWT.NONE);
 		var fd_contentPanel = new FormData();
 		fd_contentPanel.top = new FormAttachment(0, 10);
@@ -81,6 +79,8 @@ public abstract class DialogOkCancel<T> extends DialogBase<T> {
 		contentPanel.setLayoutData(fd_contentPanel);
 		contentPanel.setLayout(new FillLayout());
 		createContent(contentPanel);
+		
+		shell.setDefaultButton(btnOk);
 	}
 	
 }
