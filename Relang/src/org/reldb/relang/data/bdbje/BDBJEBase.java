@@ -273,6 +273,7 @@ public class BDBJEBase implements Closeable {
 		updateCatalog(newName, new CatalogEntry(newName, catalogEntry.typeName, catalogEntry.metadata));
 		var dataSource = dataSources.get(oldName);
 		if (dataSource != null) {
+			dataSource.setName(newName);
 			dataSources.remove(oldName);
 			dataSources.put(newName, dataSource);
 		}

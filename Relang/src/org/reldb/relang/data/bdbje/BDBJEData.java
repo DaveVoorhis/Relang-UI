@@ -20,10 +20,6 @@ public class BDBJEData<K extends Serializable, V extends Tuple> implements Data<
 		this.base = bdbjeBase;
 		this.name = name;
 	}
-
-	public String getName() {
-		return name;
-	}
 	
 	@SuppressWarnings("unchecked")
 	@Override
@@ -123,6 +119,16 @@ public class BDBJEData<K extends Serializable, V extends Tuple> implements Data<
 	public void renameAllTo(String newName) {
 		changeSchema((Renamer)tupleTypeGenerator -> newName);
 		renameDataTo(newName);
+	}
+
+	@Override
+	public String getName() {
+		return name;
+	}
+
+	@Override
+	public void setName(String newName) {
+		name = newName;
 	}
 	
 	@Override

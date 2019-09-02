@@ -7,7 +7,7 @@ import org.reldb.relang.tuples.Tuple;
 
 /** A wrapper around a container to make it visible to, and possibly modifiable by, a Datasheet's GridPanel. */
 public interface Data<K extends Serializable, V extends Tuple> {
-	
+		
 	/**
 	 * Get the type contained by the container.
 	 * 
@@ -21,6 +21,13 @@ public interface Data<K extends Serializable, V extends Tuple> {
 	 * @return - String - name.
 	 */
 	public String getName();
+	
+	/**
+	 * Set the unique name of this Data source within whatever container (i.e., database) it resides.
+	 * 
+	 * @param name - String - new name.
+	 */
+	public void setName(String name);
 	
 	/** True if attributes can be added. */
 	public boolean isExtendable();
