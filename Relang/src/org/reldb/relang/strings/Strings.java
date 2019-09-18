@@ -34,6 +34,7 @@ public class Strings {
 	public static final int ErrUnableToGenerateTupleType = Str.E("Unable to create tuple type %s.", BDBJEBase.class.toString());
 	public static final int ErrUnableToGenerateTupleType2 = Str.E("Unable to create tuple type %s:\n%s", BDBJEBase.class.toString());
 	public static final int ErrUnableToLoadTupleClass = Str.E("Unable to load tuple type class for %s.", BDBJEBase.class.toString());
+	public static final int ErrDatabaseNotFound = Str.E("BDBJEBase: Possible damaged database? Berkeley database not found due to: %s", BDBJEBase.class.toString());
 	public static final int ErrProblemClosingEnvironment = Str.E("Problem closing environment: %s.", BDBJEBase.class.toString());
 	public static final int ErrNameAlreadyInUse = Str.E("Name '%s' is already in use.", BDBJEBase.class.toString());
 	

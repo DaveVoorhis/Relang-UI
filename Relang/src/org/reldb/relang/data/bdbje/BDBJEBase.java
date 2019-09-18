@@ -14,6 +14,7 @@ import com.sleepycat.bind.tuple.StringBinding;
 import com.sleepycat.collections.StoredSortedMap;
 import com.sleepycat.collections.TransactionWorker;
 import com.sleepycat.je.DatabaseException;
+import com.sleepycat.je.DatabaseNotFoundException;
 
 import static org.reldb.relang.strings.Strings.*;
 
@@ -286,9 +287,7 @@ public class BDBJEBase implements Closeable {
 	 * @return - boolean - true if Data source is removable via remove(String name).
 	 */
 	public boolean isRemovable(String name) {
-		if (name.equals(catalogName))
-			return false;
-		return (getCatalogEntry(name) != null);
+		return !name.equals(catalogName);
 	}
 	
 	/**
@@ -300,7 +299,11 @@ public class BDBJEBase implements Closeable {
 		if (!isRemovable(name))
 			return;
 		removeCatalogEntry(name);
-		environment.remove(name);
+		try {
+			environment.remove(name);
+		} catch (DatabaseNotFoundException dnfe) {
+			System.out.println(Str.ing(ErrDatabaseNotFound, dnfe.getMessage()));
+		}
 		var codeDir = environment.getCodeDir();
 		var tupleTypeGenerator = new TupleTypeGenerator(codeDir, name);
 		tupleTypeGenerator.destroy();
