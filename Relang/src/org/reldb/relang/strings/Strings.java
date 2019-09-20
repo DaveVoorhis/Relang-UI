@@ -37,6 +37,7 @@ public class Strings {
 	public static final int ErrDatabaseNotFound = Str.E("BDBJEBase: Possible damaged database? Berkeley database not found due to: %s", BDBJEBase.class.toString());
 	public static final int ErrProblemClosingEnvironment = Str.E("Problem closing environment: %s.", BDBJEBase.class.toString());
 	public static final int ErrNameAlreadyInUse = Str.E("Name '%s' is already in use.", BDBJEBase.class.toString());
+	public static final int ErrUnableToRemoveCatalogEntry = Str.E("Unable to remove catalog entry '%s'", BDBJEBase.class.toString());
 	
 	public static final int ErrFileNotFound1 = Str.E("File %s not found for %s.", DirClassLoader.class.toString()); 
 	public static final int ErrReading = Str.E("Error reading %s: %s.", DirClassLoader.class.toString()); 

@@ -274,10 +274,9 @@ public class Datasheet extends Composite {
 		String selectedItemText = (selectedItem != null) ? selectedItem.getText() : null;
 		catalogTreeCategoryData.removeAll();
 		var catalogData = (BDBJEData<String, CatalogEntry>)base.open(BDBJEBase.catalogName);
-		catalogData.access(catalog -> catalog.values().forEach(value -> {
+		catalogData.access(catalog -> catalog.forEach((key, value) -> {
 			var item = new TreeItem(catalogTreeCategoryData, SWT.NONE);
-			var entry = (CatalogEntry)value;
-			item.setText(entry.name);
+			item.setText(key.toString());
 		}));
 		var newTopItem = searchTree(topItemText);
 		catalogTree.setTopItem(newTopItem);

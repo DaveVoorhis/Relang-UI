@@ -103,7 +103,8 @@ public class BDBJEBase implements Closeable {
 	}
 
 	void removeCatalogEntry(String name) {
-		query(catalog, catalog -> catalog.remove(name));
+		if (query(catalog, catalog -> catalog.remove(name)) == null)
+			System.out.println(Str.ing(ErrUnableToRemoveCatalogEntry, name));
 	}
 	
 	/**
