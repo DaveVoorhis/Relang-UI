@@ -6,7 +6,6 @@
 			<attribute name="module" value="true"/>
 		</attributes>
 	</classpathentry>
-	<classpathentry kind="lib" path="/_Deploy/lib/jdt/ecj-4.12.jar"/>
 	<classpathentry kind="lib" path="/_Deploy/lib/misc/apiguardian-api-1.0.0.jar"/>
 	<classpathentry kind="lib" path="/_Deploy/lib/misc/commons-cli-1.4.jar"/>
 	<classpathentry kind="lib" path="/_Deploy/lib/misc/commons-codec-1.12.jar"/>
@@ -34,7 +33,8 @@
 	<classpathentry kind="lib" path="/_Deploy/lib/misc/xmlbeans-3.0.1.jar"/>
 	<classpathentry kind="lib" path="/_Deploy/lib/swt/macos_64/swt_reldb.jar"/>
 	<classpathentry kind="lib" path="/_Deploy/lib/swt/macos_64/swt.jar"/>
-	<classpathentry kind="lib" path="/_Deploy/lib/nebula/org.eclipse.nebula.widgets.grid_1.1.0.201906101644.jar"/>
 	<classpathentry kind="lib" path="/_Deploy/lib/je/je-7.5.11.jar"/>
+	<classpathentry kind="lib" path="/_Deploy/lib/nebula/org.eclipse.nebula.widgets.grid_1.1.0.201909261809.jar"/>
+	<classpathentry kind="lib" path="/_Deploy/lib/jdt/ecj-4.13.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>
