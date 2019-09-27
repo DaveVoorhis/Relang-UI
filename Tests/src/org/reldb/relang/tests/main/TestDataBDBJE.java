@@ -45,6 +45,7 @@ public class TestDataBDBJE {
 			System.out.println();
 	}
 	
+	@SuppressWarnings("unchecked")
 	@Test 
 	public void testData01() throws ClassNotFoundException, NoSuchMethodException, SecurityException, IllegalArgumentException, IllegalAccessException, NoSuchFieldException, InstantiationException, InvocationTargetException {
 		var data = base.create(storageName1);
@@ -128,12 +129,12 @@ public class TestDataBDBJE {
 	
 	@Test
 	public void testData02() {
-		var gridData = base.create(storageName2);
+		base.create(storageName2);
 	}
 	
+	@SuppressWarnings("unchecked")
 	@AfterClass
 	public static void teardown() {
-		@SuppressWarnings("unchecked")
 		var catalog = (BDBJEData<String, CatalogEntry>)base.open(BDBJEBase.catalogName);
 		catalog.access(container -> {
 			assertEquals(true, container.containsKey(storageNameRenamed));
