@@ -1,14 +1,16 @@
 #!/bin/sh
 
-javaversion=jdk-12.0.1
-
 MODULES=makejre.reldb
 
-JLINK=/Library/Java/JavaVirtualMachines/$javaversion.jdk/Contents/Home/bin/jlink
+JAVA_VERSION=jdk-13
 
-MODS_MACOS=~/Documents/OpenJDKs/osx/$javaversion.jdk/Contents/Home/jmods
-MODS_LINUX=~/Documents/OpenJDKs/linux/$javaversion/jmods
-MODS_WINDOWS=~/Documents/OpenJDKs/windows/$javaversion/jmods
+JLINK=/Library/Java/JavaVirtualMachines/$JAVA_VERSION.jdk/Contents/Home/bin/jlink
+
+MODS_MACOS=~/Documents/OpenJDKs/osx/$JAVA_VERSION.jdk/Contents/Home/jmods
+MODS_LINUX=~/Documents/OpenJDKs/linux/$JAVA_VERSION/jmods
+MODS_WINDOWS=~/Documents/OpenJDKs/windows/$JAVA_VERSION/jmods
+
+OPTIONS="--strip-debug --compress=2 --no-header-files --no-man-pages"
 
 echo 'Obtaining JREs...'
 
@@ -26,13 +28,13 @@ mkdir MacOS
 mkdir Windows
 
 echo '  Building for Linux...'
-$JLINK --module-path $MODS_LINUX:out --add-modules $MODULES --strip-debug --compress=2 --output Linux/jre
+$JLINK --module-path $MODS_LINUX:out --add-modules $MODULES $OPTIONS --output Linux/jre
 
 echo '  Building for MacOS...'
-$JLINK --module-path $MODS_MACOS:out --add-modules $MODULES --strip-debug --compress=2 --output MacOS/jre
+$JLINK --module-path $MODS_MACOS:out --add-modules $MODULES $OPTIONS --output MacOS/jre
 
 echo '  Building for Windows...'
-$JLINK --module-path $MODS_WINDOWS:out --add-modules $MODULES --strip-debug --compress=2 --output Windows/jre
+$JLINK --module-path $MODS_WINDOWS:out --add-modules $MODULES $OPTIONS --output Windows/jre
 
 rm -rf out
 
