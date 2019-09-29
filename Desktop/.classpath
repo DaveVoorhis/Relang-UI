@@ -6,7 +6,6 @@
 			<attribute name="module" value="true"/>
 		</attributes>
 	</classpathentry>
-	<classpathentry kind="con" path="org.eclipse.jdt.junit.JUNIT_CONTAINER/5"/>
 	<classpathentry kind="lib" path="/_Deploy/lib/misc/apiguardian-api-1.0.0.jar"/>
 	<classpathentry kind="lib" path="/_Deploy/lib/misc/commons-cli-1.4.jar"/>
 	<classpathentry kind="lib" path="/_Deploy/lib/misc/commons-codec-1.12.jar"/>
@@ -32,11 +31,10 @@
 	<classpathentry kind="lib" path="/_Deploy/lib/misc/poi-ooxml-schemas-4.0.0.jar"/>
 	<classpathentry kind="lib" path="/_Deploy/lib/misc/postgresql-42.2.6.jar"/>
 	<classpathentry kind="lib" path="/_Deploy/lib/misc/xmlbeans-3.0.1.jar"/>
-	<classpathentry kind="lib" path="/_Deploy/lib/relang/Relang.jar" sourcepath="/Relang"/>
 	<classpathentry kind="lib" path="/_Deploy/lib/swt/macos_64/swt_reldb.jar"/>
 	<classpathentry kind="lib" path="/_Deploy/lib/swt/macos_64/swt.jar"/>
 	<classpathentry kind="lib" path="/_Deploy/lib/je/je-7.5.11.jar"/>
+	<classpathentry kind="lib" path="/_Deploy/lib/nebula/org.eclipse.nebula.widgets.grid_1.1.0.201909261809.jar"/>
 	<classpathentry kind="lib" path="/_Deploy/lib/jdt/ecj-4.13.jar"/>
-	<classpathentry combineaccessrules="false" kind="src" path="/Core"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>
