@@ -17,8 +17,8 @@ ant -S
 popd
 cp ../swtNative/swt_win/lib/* ../_Deploy/lib/swt/win_64
 
-echo 'Build Relang'
-pushd ../Relang
+echo 'Build Relang Core'
+pushd ../Core
 ant -S
 popd
-cp ../Relang/lib/* ../_Deploy/lib/relang
+cp ../Core/lib/* ../_Deploy/lib/relang
