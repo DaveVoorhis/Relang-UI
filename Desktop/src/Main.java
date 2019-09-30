@@ -1,7 +1,7 @@
 import org.reldb.relang.core.utilities.MessageDialog;
 import org.reldb.relang.core.main.Launcher;
 
-public class Relang {
+public class Main {
 	public static void main(String args[]) {
 		try {
 			Launcher.launch(args);
