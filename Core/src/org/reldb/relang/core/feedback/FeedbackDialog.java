@@ -15,6 +15,7 @@ import org.eclipse.swt.widgets.TreeItem;
 import org.reldb.relang.core.utilities.MessageDialog;
 
 public abstract class FeedbackDialog extends Dialog {
+	private static final long serialVersionUID = 1L;
 
 	protected Shell shlFeedback;
 	

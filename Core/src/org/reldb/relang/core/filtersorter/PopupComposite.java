@@ -29,7 +29,8 @@ import org.eclipse.swt.widgets.*;
  * 
  */
 public class PopupComposite extends Composite {
-	
+	private static final long serialVersionUID = 1L;
+
 	/**
 	 * Style of the shell that will house the composite
 	 */ 
@@ -162,6 +163,8 @@ public class PopupComposite extends Composite {
 	}
 	
 	private final class ActivationListener extends ShellAdapter {
+		private static final long serialVersionUID = 1L;
+
 		@Override
 		public void shellDeactivated(ShellEvent e) {
 			hide();

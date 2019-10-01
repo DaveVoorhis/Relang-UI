@@ -33,7 +33,7 @@ import org.reldb.relang.core.feedback.SuggestionboxDialog;
 import org.reldb.relang.core.log.LogWin;
 import org.reldb.relang.core.preferences.Preferences;
 import org.reldb.relang.core.updates.UpdatesCheckDialog;
-import org.reldb.relang.core.utilities.IconLoader;
+import org.reldb.relang.platform.IconLoader;
 import org.reldb.relang.core.utilities.MessageDialog;
 import org.reldb.relang.core.utilities.PlatformDetect;
 import org.reldb.relang.core.version.Version;

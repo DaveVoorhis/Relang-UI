@@ -12,12 +12,14 @@ import org.eclipse.swt.widgets.ProgressBar;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.TreeItem;
-import org.reldb.relang.core.utilities.IconLoader;
+import org.reldb.relang.platform.IconLoader;
 import org.reldb.relang.core.version.Version;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.layout.GridData;
 
 public class CrashDialog extends FeedbackDialog {
+	private static final long serialVersionUID = 1L;
+	
 	private Text textWhatHappened;
 	private Text textEmailAddress;
 

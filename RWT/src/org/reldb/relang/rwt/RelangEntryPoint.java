@@ -4,7 +4,6 @@ import org.eclipse.rap.rwt.application.AbstractEntryPoint;
 import org.eclipse.rap.rwt.client.service.ExitConfirmation;
 import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.widgets.Composite;
-import org.reldb.relang.core.main.Launcher;
 
 public class RelangEntryPoint extends AbstractEntryPoint {
 	private static final long serialVersionUID = 1L;

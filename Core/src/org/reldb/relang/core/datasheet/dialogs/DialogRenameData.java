@@ -6,6 +6,8 @@ import org.eclipse.swt.widgets.Shell;
 import org.reldb.relang.core.utilities.DialogOkCancel;
 
 public class DialogRenameData extends DialogOkCancel<String> {
+	private static final long serialVersionUID = 1L;
+
 	private PanelRenameData renameData;
 	private String name;
 	

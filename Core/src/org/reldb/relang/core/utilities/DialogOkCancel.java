@@ -10,6 +10,7 @@ import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.layout.FormAttachment;
 
 public abstract class DialogOkCancel<T> extends DialogBase<T> {
+	private static final long serialVersionUID = 1L;
 
 	/**
 	 * Create the dialog.

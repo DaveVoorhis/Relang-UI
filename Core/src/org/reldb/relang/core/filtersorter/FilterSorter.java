@@ -9,9 +9,10 @@ import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.ToolBar;
 import org.eclipse.swt.widgets.ToolItem;
-import org.reldb.relang.core.utilities.IconLoader;
+import org.reldb.relang.platform.IconLoader;
 
 public class FilterSorter extends Composite {
+	private static final long serialVersionUID = 1L;
 
 	@FunctionalInterface
 	public interface FilterSorterUpdate {

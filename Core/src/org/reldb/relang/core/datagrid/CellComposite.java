@@ -3,7 +3,8 @@ package org.reldb.relang.core.datagrid;
 import org.eclipse.swt.widgets.Composite;
 
 public abstract class CellComposite extends Composite implements GridWidgetInterface {
-
+	private static final long serialVersionUID = 1L;
+	
 	private int rowNumber;
 	private int columnNumber;
 	private Notifier notifier;

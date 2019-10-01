@@ -12,7 +12,7 @@ import org.eclipse.swt.widgets.MenuItem;
 import org.eclipse.swt.widgets.ToolBar;
 import org.eclipse.swt.widgets.ToolItem;
 import org.reldb.relang.core.commands.Commands.Do;
-import org.reldb.relang.core.utilities.IconLoader;
+import org.reldb.relang.platform.IconLoader;
 
 /*
  * A combination of a ToolItem for display on a ToolBar, and an optional reference to a MenuItem.
@@ -23,6 +23,7 @@ import org.reldb.relang.core.utilities.IconLoader;
  * 
  */
 public class CommandActivator extends ToolItem {
+	private static final long serialVersionUID = 1L;
 	
 	private MenuItem menuItem;
 	private String iconName;

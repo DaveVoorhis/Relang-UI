@@ -10,7 +10,8 @@ import org.eclipse.swt.widgets.ToolBar;
 import org.eclipse.swt.widgets.ToolItem;
 
 public class SearchAdvanced extends Composite implements Searcher {
-	
+	private static final long serialVersionUID = 1L;
+
 	private static final String emptyFilterPrompt = "Click here to set filter criteria.";
 	
 	private FilterSorter filterSorter;

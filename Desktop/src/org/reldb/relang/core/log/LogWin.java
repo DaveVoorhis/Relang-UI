@@ -19,7 +19,7 @@ import org.eclipse.swt.layout.FormAttachment;
 import org.eclipse.swt.widgets.ToolItem;
 import org.reldb.relang.core.main.Loading;
 import org.reldb.relang.core.preferences.Preferences;
-import org.reldb.relang.core.utilities.IconLoader;
+import org.reldb.relang.platform.IconLoader;
 import org.eclipse.swt.custom.StyleRange;
 import org.eclipse.swt.custom.StyledText;
 import org.eclipse.swt.graphics.Color;

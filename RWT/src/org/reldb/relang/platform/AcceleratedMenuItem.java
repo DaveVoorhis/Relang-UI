@@ -1,10 +1,11 @@
-package org.reldb.relang.core.commands;
+package org.reldb.relang.platform;
 
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.*;
 
 public class AcceleratedMenuItem extends IconMenuItem {
-	
+	private static final long serialVersionUID = 1L;
+
 	/** MenuItem with text, accelerator, image, style and Listener. */
 	public AcceleratedMenuItem(Menu parentMenu, String text, int accelerator, String imageName, int style, Listener listener) {
 		super(parentMenu, text, imageName, style, listener);
@@ -35,6 +36,10 @@ public class AcceleratedMenuItem extends IconMenuItem {
 	public boolean canExecute() {
 		return true;
 	}
-		
+
+	public void setToolTipText(String toolTipText) {
+		// No-op in RWT
+	}
+	
 	public void checkSubclass() {}
 }

@@ -9,6 +9,8 @@ import org.eclipse.swt.layout.FormAttachment;
 import org.eclipse.swt.widgets.Text;
 
 public class PanelRenameData extends Composite {
+	private static final long serialVersionUID = 1L;
+	
 	public Text textNewName;
 	
 	/**

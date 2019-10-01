@@ -4,7 +4,7 @@ import org.eclipse.swt.widgets.Shell;
 import org.eclipse.wb.swt.SWTResourceManager;
 import org.reldb.relang.core.updates.UpdatesCheck.SendStatus;
 import org.reldb.relang.core.utilities.FontSize;
-import org.reldb.relang.core.utilities.IconLoader;
+import org.reldb.relang.platform.IconLoader;
 import org.reldb.relang.core.utilities.MessageDialog;
 import org.eclipse.swt.graphics.Cursor;
 import org.eclipse.swt.layout.FormLayout;

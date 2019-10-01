@@ -10,7 +10,8 @@ import org.eclipse.swt.widgets.ToolBar;
 import org.eclipse.swt.widgets.ToolItem;
 
 public class Sorter extends Composite {
-	
+	private static final long serialVersionUID = 1L;
+
 	private static final String emptySortPrompt = "Click here to set sort order.";
 	
 	private FilterSorter filterSorter;

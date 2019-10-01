@@ -6,6 +6,8 @@ import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Shell;
 
 public abstract class DialogBase<T> extends Dialog {
+	private static final long serialVersionUID = 1L;
+
 	protected T result;
 	protected Shell shell;
 	

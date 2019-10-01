@@ -4,10 +4,11 @@ import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
-import org.reldb.relang.core.utilities.IconLoader;
+import org.reldb.relang.platform.IconLoader;
 
 public class SortOrderPicker extends Composite {
-	
+	private static final long serialVersionUID = 1L;
+
 	private String state = "";
 	
 	private Button ascending;

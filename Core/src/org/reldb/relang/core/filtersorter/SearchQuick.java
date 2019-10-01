@@ -1,28 +1,23 @@
 package org.reldb.relang.core.filtersorter;
 
-import java.util.regex.Pattern;
-
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.custom.StyledText;
-import org.eclipse.swt.layout.GridData;
-import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
-import org.eclipse.swt.widgets.ToolBar;
-import org.eclipse.swt.widgets.ToolItem;
-import org.eclipse.wb.swt.SWTResourceManager;
 
 public class SearchQuick extends Composite implements Searcher {
+	private static final long serialVersionUID = 1L;
 	
+	/*
 	private StyledText findText;
 	private boolean wholeWordSearch = false;
 	private boolean caseSensitiveSearch = false;
 	private boolean regexSearch = false;
 	
 	private FilterSorter filterSorter;
-	
+	*/
+
 	public SearchQuick(FilterSorter filterSorter, Composite contentPanel) {
 		super(contentPanel, SWT.NONE);
-		
+	/*	
 		this.filterSorter = filterSorter;
 		
 		GridLayout layout = new GridLayout(2, false);
@@ -85,9 +80,11 @@ public class SearchQuick extends Composite implements Searcher {
 		clear.setText("Clear");
 		
 		toolBar.setLayoutData(new GridData(SWT.RIGHT, SWT.CENTER, false, false, 1, 1));
+		*/
 	}
 	
 	public String getQuery() {
+		/*
 		String needle = findText.getText().trim();
 		if (needle.length() == 0)
 			return "";
@@ -102,26 +99,33 @@ public class SearchQuick extends Composite implements Searcher {
 		}
 		// TODO - fix
 //		return " WHERE SEARCH(TUP {*}, \"" + StringUtils.quote(regex) + "\")";
+		 * 
+		 */
 		return null;
 	}
 
 	public String getState() {
-		return findText.getText();
+		// return findText.getText();
+		return "";
 	}
 
 	public void ok() {
 		fireUpdateIfSearch();
 	}
 
+	/*
 	private void fireUpdate() {
 		findText.setForeground(SWTResourceManager.getColor(SWT.COLOR_BLACK));
 		findText.setBackground(null);
-		filterSorter.refresh();		
+		filterSorter.refresh();
 	}
+	*/
 	
 	private void fireUpdateIfSearch() {
+		/*
 		if (findText.getText().trim().length() > 0)
 			fireUpdate();
+		*/
 	}
 	
 }
