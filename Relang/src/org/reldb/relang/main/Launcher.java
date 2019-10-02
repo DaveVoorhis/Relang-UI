@@ -1,4 +1,4 @@
-package org.reldb.relang.core.main;
+package org.reldb.relang.main;
 
 import java.awt.Color;
 import java.awt.Graphics2D;
@@ -22,8 +22,8 @@ import org.eclipse.swt.events.MenuEvent;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.widgets.*;
 import org.eclipse.wb.swt.SWTResourceManager;
-import org.reldb.relang.core.about.AboutDialog;
-import org.reldb.relang.core.commands.AcceleratedMenuItem;
+import org.reldb.relang.about.AboutDialog;
+import org.reldb.relang.commands.AcceleratedMenuItem;
 import org.reldb.relang.core.commands.Commands;
 import org.reldb.relang.core.data.bdbje.BDBJEEnvironment;
 import org.reldb.relang.core.datasheet.Datasheets;

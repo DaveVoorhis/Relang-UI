@@ -1,4 +1,4 @@
-package org.reldb.relang.core.main;
+package org.reldb.relang.main;
 
 import java.util.ArrayList;
 
