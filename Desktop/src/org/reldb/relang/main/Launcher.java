@@ -23,21 +23,20 @@ import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.widgets.*;
 import org.eclipse.wb.swt.SWTResourceManager;
 import org.reldb.relang.about.AboutDialog;
-import org.reldb.relang.commands.AcceleratedMenuItem;
-import org.reldb.relang.core.commands.Commands;
 import org.reldb.relang.core.data.bdbje.BDBJEEnvironment;
-import org.reldb.relang.core.datasheet.Datasheets;
-import org.reldb.relang.core.feedback.BugReportDialog;
-import org.reldb.relang.core.feedback.CrashDialog;
-import org.reldb.relang.core.feedback.SuggestionboxDialog;
 import org.reldb.relang.core.log.LogWin;
+import org.reldb.relang.core.main.Loading;
 import org.reldb.relang.core.preferences.Preferences;
 import org.reldb.relang.core.updates.UpdatesCheckDialog;
+import org.reldb.relang.platform.AcceleratedMenuItem;
 import org.reldb.relang.platform.IconLoader;
+import org.reldb.swt.os_specific.OSSpecific;
 import org.reldb.relang.core.utilities.MessageDialog;
 import org.reldb.relang.core.utilities.PlatformDetect;
 import org.reldb.relang.core.version.Version;
-import org.reldb.swt.os_specific.OSSpecific;
+import org.reldb.relang.feedback.BugReportDialog;
+import org.reldb.relang.feedback.CrashDialog;
+import org.reldb.relang.feedback.SuggestionboxDialog;
 
 public class Launcher {
 
@@ -555,62 +554,6 @@ public class Launcher {
 				t.printStackTrace();
 				CrashDialog.launch(t, shell);
 			}
-		}
-	}
-
-	/** RWT (Web) launcher. */
-	public static void launch(Composite parent) {
-		/*
-		OSSpecific.launch(Version.getAppName(),
-			event -> quit(),
-			event -> new AboutDialog(shell).open(),
-			event -> new Preferences(shell).show()
-		);
-		*/
-		
-		Thread.setDefaultUncaughtExceptionHandler(new Thread.UncaughtExceptionHandler() {
-			private int failureCount = 0;
-
-			public void uncaughtException(Thread t, Throwable e) {
-				if (failureCount > 1) {
-					System.err
-							.println("SYSTEM ERROR!  It's gotten even worse.  This is a last-ditch attempt to escape.");
-					failureCount++;
-					Thread.setDefaultUncaughtExceptionHandler(null);
-					System.exit(1);
-					return;
-				}
-				if (failureCount > 0) {
-					System.err.println(
-							"SYSTEM ERROR!  Things have gone so horribly wrong that we can't recover or even pop up a message.  I hope someone sees this...\nShutting down now, if we can.");
-					failureCount++;
-					System.exit(1);
-					return;
-				}
-				failureCount++;
-				if (e instanceof OutOfMemoryError) {
-					System.err.println("Out of memory!");
-					e.printStackTrace();
-					MessageDialog.openError(shell, "OUT OF MEMORY", "Out of memory!  Shutting down NOW!");
-					shell.dispose();
-				} else {
-					System.err.println("Unknown error: " + t);
-					e.printStackTrace();
-					MessageDialog.openError(shell, "Unexpected Error", e.toString());
-					shell.dispose();
-				}
-				System.exit(1);
-			}
-		});
-		
-		datasheets = new Datasheets();
-		
-		// Thunderbirds are go.
-		var baseDir = System.getProperty("user.home") + File.separator + "relangbase";
-		try {
-			datasheets.openOrCreate(parent.getShell(), baseDir, true);
-		} catch (com.sleepycat.je.EnvironmentLockedException ele) {
-			MessageDialog.openError(parent.getShell(), "Database in Use", "The database at " + baseDir + " appears to already be in use.");
 		}
 	}
 	

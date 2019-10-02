@@ -21,8 +21,8 @@ public class AboutDialog extends Dialog {
 	 * @param parent
 	 * @param style
 	 */
-	public AboutDialog(Shell parent, int style) {
-		super(parent, style);
+	public AboutDialog(Shell parent) {
+		super(parent, SWT.NONE);
 	}
 
 	/**
