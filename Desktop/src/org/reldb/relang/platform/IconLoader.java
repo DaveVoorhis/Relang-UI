@@ -5,7 +5,6 @@ import org.eclipse.swt.graphics.ImageData;
 import org.eclipse.swt.graphics.ImageDataProvider;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.wb.swt.SWTResourceManager;
-import org.reldb.relang.core.version.Version;
 
 public class IconLoader {
 	
@@ -26,26 +25,26 @@ public class IconLoader {
 		return new Image(Display.getCurrent(), (ImageDataProvider)zoom -> {
 			switch (zoom) {
 			case 200:
-				Image imgRaw = SWTResourceManager.getImageOrNull(Version.getResourceDirectory() + name + "@2x.png");
+				Image imgRaw = SWTResourceManager.getImageOrNull(ResourceLocator.getResourceDirectory() + name + "@2x.png");
 				if (imgRaw == null) {
-					imgRaw = SWTResourceManager.getImageOrNull(Version.getResourceDirectory() + name + ".png");
+					imgRaw = SWTResourceManager.getImageOrNull(ResourceLocator.getResourceDirectory() + name + ".png");
 					if (imgRaw == null)
-						imgRaw = SWTResourceManager.getImage(Version.getResourceDirectory() + "noimage@2x.png");
+						imgRaw = SWTResourceManager.getImage(ResourceLocator.getResourceDirectory() + "noimage@2x.png");
 				}
 				return imgRaw.getImageData();
 			default:
-				imgRaw = SWTResourceManager.getImageOrNull(Version.getResourceDirectory() + name + ".png");
+				imgRaw = SWTResourceManager.getImageOrNull(ResourceLocator.getResourceDirectory() + name + ".png");
 				if (imgRaw == null)
-					imgRaw = SWTResourceManager.getImage(Version.getResourceDirectory() + "noimage.png");
+					imgRaw = SWTResourceManager.getImage(ResourceLocator.getResourceDirectory() + "noimage.png");
 				return imgRaw.getImageData();
 			}
 		});
 	}
 	
 	public static Image loadIconLarge(String name) {
-		Image imgBig = SWTResourceManager.getImageOrNull(Version.getResourceDirectory() + name + "@2x.png");
+		Image imgBig = SWTResourceManager.getImageOrNull(ResourceLocator.getResourceDirectory() + name + "@2x.png");
 		if (imgBig == null)
-			return SWTResourceManager.getImage(Version.getResourceDirectory() + name + ".png");
+			return SWTResourceManager.getImage(ResourceLocator.getResourceDirectory() + name + ".png");
 		return imgBig;
 	}
 }

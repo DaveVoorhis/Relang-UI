@@ -46,5 +46,6 @@
 	<classpathentry kind="lib" path="tomcat/tomcat-embed-el.jar"/>
 	<classpathentry kind="lib" path="tomcat/tomcat-embed-jasper.jar"/>
 	<classpathentry kind="lib" path="tomcat/tomcat-embed-websocket.jar"/>
+	<classpathentry combineaccessrules="false" kind="src" path="/Core"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>

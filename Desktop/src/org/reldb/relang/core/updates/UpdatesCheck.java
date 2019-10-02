@@ -17,7 +17,6 @@ import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.ProgressBar;
-import org.reldb.relang.core.version.Version;
 
 /** Check for updates. */
 public class UpdatesCheck {
@@ -30,16 +29,23 @@ public class UpdatesCheck {
 
 	private SendWorker sendWorker = null;
 	private Object sendWorkerMutex = Integer.valueOf(0);
+	
+	private String updateURL;
+	private float versionNumber;
 
-	public UpdatesCheck(Button btnSend, Label lblProgress, ProgressBar progressBar) {
+	public UpdatesCheck(Button btnSend, Label lblProgress, ProgressBar progressBar, String updateURL, float versionNumber) {
 		this.display = lblProgress.getDisplay();
 		this.btnGo = btnSend;
 		this.lblProgress = lblProgress;
 		this.progressBar = progressBar;
+		this.updateURL = updateURL;
+		this.versionNumber = versionNumber;
 	}
 
-	public UpdatesCheck(Display display) {
+	public UpdatesCheck(Display display, String updateURL, float versionNumber) {
 		this.display = display;
+		this.updateURL = updateURL;
+		this.versionNumber = versionNumber;
 	}
 
 	protected void initialiseProgress(String msg, int steps) {
@@ -136,10 +142,10 @@ public class UpdatesCheck {
 
 			HttpClient client = HttpClientBuilder.create().build();
 			try {
-				HttpPost httppost = new HttpPost(Version.getUpdateURL());
+				HttpPost httppost = new HttpPost(updateURL);
 
 				List<NameValuePair> formparams = new ArrayList<NameValuePair>();
-				formparams.add(new BasicNameValuePair("RelangVersion", Double.toString(Version.getVersionNumber())));
+				formparams.add(new BasicNameValuePair("RelangVersion", Float.toString(versionNumber)));
 				formparams.add(new BasicNameValuePair("OSName", System.getProperty("os.name")));
 				formparams.add(new BasicNameValuePair("OSVersion", System.getProperty("os.version")));
 				formparams.add(new BasicNameValuePair("OSArch", System.getProperty("os.arch")));

@@ -18,12 +18,10 @@ import org.eclipse.swt.layout.FormData;
 import org.eclipse.swt.layout.FormAttachment;
 import org.eclipse.swt.widgets.ToolItem;
 import org.reldb.relang.core.main.Loading;
-import org.reldb.relang.core.preferences.Preferences;
 import org.reldb.relang.platform.IconLoader;
 import org.eclipse.swt.custom.StyleRange;
 import org.eclipse.swt.custom.StyledText;
 import org.eclipse.swt.graphics.Color;
-import org.eclipse.swt.graphics.Rectangle;
 
 public class LogWin {
 
@@ -62,8 +60,6 @@ public class LogWin {
 
 	private FileDialog saveTextDialog;
 
-	private static final String rectPrefName = "logwin.rect";
-
 	protected LogWin() {
 		messageQueue = new LinkedBlockingQueue<Message>();
 		
@@ -77,9 +73,6 @@ public class LogWin {
 			evt.doit = false;
 			shell.setVisible(false);
 		});
-
-		shell.addListener(SWT.Move, e -> Preferences.setPreference(rectPrefName, shell.getBounds()));
-		shell.addListener(SWT.Resize, e -> Preferences.setPreference(rectPrefName, shell.getBounds()));
 
 		red = new Color(shell.getDisplay(), 200, 0, 0);
 		black = new Color(shell.getDisplay(), 0, 0, 0);
@@ -188,11 +181,6 @@ public class LogWin {
 	public static void open() {
 		if (shell.isVisible())
 			return;
-
-		Rectangle rect = Preferences.getPreferenceRectangle(rectPrefName);
-		if (rect.height > 0 && rect.width > 0)
-			shell.setBounds(rect);
-
 		shell.open();
 		shell.layout();
 	}

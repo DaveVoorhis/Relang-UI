@@ -1,21 +1,17 @@
 package org.reldb.relang.platform;
 
 import org.eclipse.swt.graphics.Image;
-import org.eclipse.swt.graphics.ImageData;
-import org.eclipse.swt.graphics.ImageDataProvider;
-import org.eclipse.swt.widgets.Display;
 import org.eclipse.wb.swt.SWTResourceManager;
-import org.reldb.relang.core.version.Version;
 
 public class IconLoader {	
 	public static Image loadIcon(String name) {
-		return SWTResourceManager.getImage(Version.getResourceDirectory() + name + ".png");		
+		return SWTResourceManager.getImage(ResourceLocator.getResourceDirectory() + name + ".png");		
 	}
 	
 	public static Image loadIconLarge(String name) {
-		Image imgBig = SWTResourceManager.getImageOrNull(Version.getResourceDirectory() + name + "@2x.png");
+		Image imgBig = SWTResourceManager.getImageOrNull(ResourceLocator.getResourceDirectory() + name + "@2x.png");
 		if (imgBig == null)
-			return SWTResourceManager.getImage(Version.getResourceDirectory() + name + ".png");
+			return SWTResourceManager.getImage(ResourceLocator.getResourceDirectory() + name + ".png");
 		return imgBig;
 	}
 }
