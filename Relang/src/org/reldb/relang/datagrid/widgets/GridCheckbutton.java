@@ -9,6 +9,7 @@ import org.eclipse.swt.widgets.Text;
 import org.reldb.relang.datagrid.CellComposite;
 import org.reldb.relang.datagrid.Datagrid;
 import org.reldb.relang.datagrid.GridWidgetInterface;
+import org.reldb.relang.platform.TraversalHandler;
 
 public class GridCheckbutton extends CellComposite {
 
@@ -48,27 +49,30 @@ public class GridCheckbutton extends CellComposite {
 		});
 		text.addListener(SWT.Traverse, evt -> {
 			// redefine standard key traversal
-			switch (evt.detail) {
-			case SWT.TRAVERSE_TAB_NEXT:
+			switch (TraversalHandler.getTraversal(evt.detail)) {
+			case Next:
 				grid.traverseNext();
 				evt.doit = false;
 				break;
-			case SWT.TRAVERSE_ARROW_NEXT:
+			case Down:
 				grid.traverseDown();
 				evt.doit = false;
 				break;
-			case SWT.TRAVERSE_TAB_PREVIOUS:
+			case Previous:
 				grid.traversePrevious();
 				evt.doit = false;
 				break;
-			case SWT.TRAVERSE_ARROW_PREVIOUS:
+			case Up:
 				grid.traverseUp();
 				evt.doit = false;
 				break;
-			case SWT.TRAVERSE_RETURN:
-				grid.traverseDown();
-				evt.doit = false;
-				break;
+			case None:
+				if (evt.detail == SWT.TRAVERSE_RETURN) {
+					grid.traverseDown();
+					evt.doit = false;
+					break;
+				}
+				break;			
 			}
 		});
 	}
