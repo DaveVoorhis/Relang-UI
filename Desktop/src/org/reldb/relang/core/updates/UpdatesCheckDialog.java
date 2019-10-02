@@ -3,9 +3,10 @@ package org.reldb.relang.core.updates;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.wb.swt.SWTResourceManager;
 import org.reldb.relang.core.updates.UpdatesCheck.SendStatus;
-import org.reldb.relang.core.utilities.FontSize;
+import org.reldb.relang.platform.FontSize;
 import org.reldb.relang.platform.IconLoader;
 import org.reldb.relang.core.utilities.MessageDialog;
+import org.reldb.relang.core.version.Version;
 import org.eclipse.swt.graphics.Cursor;
 import org.eclipse.swt.layout.FormLayout;
 import org.eclipse.swt.widgets.Label;
@@ -44,7 +45,7 @@ public class UpdatesCheckDialog extends Dialog {
 		super(parent, SWT.NONE);
 		setText("Check for Updates");
 		shlUpdatesCheck = createContents();
-		checker = new UpdatesCheck(btnGo, lblProgress, progressBar) {
+		checker = new UpdatesCheck(btnGo, lblProgress, progressBar, Version.getUpdateURL(), Version.getVersionNumber()) {
 			@Override
 			public void completed(SendStatus sendStatus) {
 				UpdatesCheckDialog.this.completed(sendStatus);

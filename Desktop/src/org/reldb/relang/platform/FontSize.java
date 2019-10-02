@@ -1,4 +1,4 @@
-package org.reldb.relang.utilities;
+package org.reldb.relang.platform;
 
 import org.eclipse.swt.graphics.Font;
 import org.eclipse.swt.graphics.FontData;
