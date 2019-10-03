@@ -1,6 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <classpath>
 	<classpathentry kind="src" path="src"/>
+	<classpathentry combineaccessrules="false" kind="src" path="/Core"/>
+	<classpathentry combineaccessrules="false" kind="src" path="/Desktop"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER">
 		<attributes>
 			<attribute name="module" value="true"/>
@@ -34,8 +36,7 @@
 	<classpathentry kind="lib" path="/_Deploy/lib/je/je-7.5.11.jar"/>
 	<classpathentry kind="lib" path="/_Deploy/lib/nebula/org.eclipse.nebula.widgets.grid_1.1.0.201909261809.jar"/>
 	<classpathentry kind="lib" path="/_Deploy/lib/jdt/ecj-4.13.jar"/>
-	<classpathentry kind="lib" path="/RWT/WebContent/WEB-INF/lib/org.eclipse.rap.rwt_3.10.0.20190819-1509.jar"/>
-	<classpathentry combineaccessrules="false" kind="src" path="/RWT"/>
-	<classpathentry combineaccessrules="false" kind="src" path="/Core"/>
+	<classpathentry kind="lib" path="/_Deploy/lib/swt/macos_64/swt_reldb.jar"/>
+	<classpathentry kind="lib" path="/_Deploy/lib/swt/macos_64/swt.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>
