@@ -46,8 +46,8 @@
 	<classpathentry kind="lib" path="tomcat/tomcat-embed-jasper.jar"/>
 	<classpathentry kind="lib" path="tomcat/tomcat-embed-websocket.jar"/>
 	<classpathentry kind="lib" path="/_Deploy/lib/nebula/org.eclipse.nebula.widgets.grid_1.1.0.201910030714.jar"/>
-	<classpathentry combineaccessrules="false" kind="src" path="/Core"/>
-	<classpathentry combineaccessrules="false" kind="src" path="/Relang"/>
-	<classpathentry combineaccessrules="false" kind="src" path="/RWT"/>
+	<classpathentry combineaccessrules="false" kind="src" path="/dEngine"/>
+	<classpathentry combineaccessrules="false" kind="src" path="/dBrowser"/>
+	<classpathentry combineaccessrules="false" kind="src" path="/platformWeb"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>
