@@ -5,7 +5,7 @@ import org.eclipse.rap.rwt.application.AbstractEntryPoint;
 import org.eclipse.rap.rwt.client.service.ExitConfirmation;
 import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.widgets.Composite;
-import org.reldb.relang.main.Launcher;
+import org.reldb.relang.launcher.Launcher;
 
 public class RelangEntryPoint extends AbstractEntryPoint {
 	private static final long serialVersionUID = 1L;
@@ -24,6 +24,7 @@ public class RelangEntryPoint extends AbstractEntryPoint {
 		clear();	
 		RWT.getUISession().addUISessionListener(sessionEvent -> System.out.println("Session " + sessionEvent.toString() + " closing."));
 		Launcher.launch(parent);
+		
 		parent.layout();
     }
 

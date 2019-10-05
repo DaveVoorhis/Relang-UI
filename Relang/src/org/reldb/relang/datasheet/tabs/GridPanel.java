@@ -23,7 +23,7 @@ import org.reldb.relang.datagrid.Datagrid;
 import org.reldb.relang.datagrid.GridWidgetInterface;
 import org.reldb.relang.datagrid.GridWidgetInterface.Notifier;
 import org.reldb.relang.datagrid.widgets.GridText;
-import org.reldb.relang.main.Launcher;
+import org.reldb.relang.launcher.Launcher;
 
 /** A Sheet (controller?) connects a Data (model) to a Datagrid (viewer).
  * 

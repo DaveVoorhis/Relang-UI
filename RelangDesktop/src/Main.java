@@ -1,5 +1,5 @@
 import org.reldb.relang.core.utilities.MessageDialog;
-import org.reldb.relang.main.Launcher;
+import org.reldb.relang.launcher.Launcher;
 
 public class Main {
 	public static void main(String args[]) {

@@ -1,4 +1,4 @@
-package org.reldb.relang.main;
+package org.reldb.relang.launcher;
 
 import java.awt.Color;
 import java.awt.Graphics2D;
@@ -439,7 +439,7 @@ public class Launcher {
 		final Display display = new Display();
 		
 		OpenDocumentEventProcessor openDocProcessor = new OpenDocumentEventProcessor();
-		display.addListener(SWT.OpenDocument, openDocProcessor);
+//		display.addListener(SWT.OpenDocument, openDocProcessor);
 		
 		openDocProcessor.addFilesToOpen(args);		
 
@@ -557,6 +557,91 @@ public class Launcher {
 				CrashDialog.launch(t, shell);
 			}
 		}
+	}
+
+	/** RWT (Web) launcher. */
+	public static void launch(Composite parent) {
+		
+		Display.setAppName(Version.getAppName());
+		Display.setAppVersion(Version.getAppID());
+		
+/*		
+		shell = (Shell) parent;
+		
+		Display.setAppName(Version.getAppName());
+		Display.setAppVersion(Version.getAppID());
+		
+		OSSpecific.launch(Version.getAppName(),
+			event -> quit(),
+			event -> new AboutDialog(shell).open(),
+			event -> new Preferences(shell).show()
+		);
+		
+		shell.addListener(SWT.Dispose, evt -> {
+			quit();
+		});
+		
+		Loading.start();
+		
+		Thread.setDefaultUncaughtExceptionHandler(new Thread.UncaughtExceptionHandler() {
+			private int failureCount = 0;
+
+			public void uncaughtException(Thread t, Throwable e) {
+				if (failureCount > 1) {
+					System.err
+							.println("SYSTEM ERROR!  It's gotten even worse.  This is a last-ditch attempt to escape.");
+					failureCount++;
+					Thread.setDefaultUncaughtExceptionHandler(null);
+					System.exit(1);
+					return;
+				}
+				if (failureCount > 0) {
+					System.err.println(
+							"SYSTEM ERROR!  Things have gone so horribly wrong that we can't recover or even pop up a message.  I hope someone sees this...\nShutting down now, if we can.");
+					failureCount++;
+					System.exit(1);
+					return;
+				}
+				failureCount++;
+				if (e instanceof OutOfMemoryError) {
+					System.err.println("Out of memory!");
+					e.printStackTrace();
+					MessageDialog.openError(shell, "OUT OF MEMORY", "Out of memory!  Shutting down NOW!");
+					shell.dispose();
+				} else {
+					System.err.println("Unknown error: " + t);
+					e.printStackTrace();
+					MessageDialog.openError(shell, "Unexpected Error", e.toString());
+					shell.dispose();
+				}
+				System.exit(1);
+			}
+		});
+		
+		datasheets = new Datasheets();
+		
+		// Thunderbirds are go.
+		var baseDir = System.getProperty("user.home") + File.separator + "relangbase";
+		try {
+			datasheets.openOrCreate(shell, baseDir, true);
+		} catch (com.sleepycat.je.EnvironmentLockedException ele) {
+			MessageDialog.openError(shell, "Database in Use", "The database at " + baseDir + " appears to already be in use.");
+		}
+
+		Display display = shell.getDisplay(); 
+		while (display != null && !display.isDisposed()) {
+			try {
+				if (display != null && !display.readAndDispatch()) {
+					doWaitingTasks();
+					display.sleep();
+				}
+			} catch (Throwable t) {
+				System.out.println(Version.getAppName() + ": Exception: " + t);
+				t.printStackTrace();
+				CrashDialog.launch(t, shell);
+			}
+		}
+		*/
 	}
 	
 }

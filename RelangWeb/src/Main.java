@@ -41,6 +41,12 @@ public class Main {
         File additionWebInfClasses = new File("bin");
         WebResourceRoot resources = new StandardRoot(ctx);
         resources.addPreResources(new DirResourceSet(resources, "/WEB-INF/classes", additionWebInfClasses.getAbsolutePath(), "/"));
+        
+        File additionWebInfClasses2 = new File("../../Relang/bin");
+        WebResourceRoot resources2 = new StandardRoot(ctx);
+        resources2.addPreResources(new DirResourceSet(resources2, "/WEB-INF/classes", additionWebInfClasses2.getAbsolutePath(), "/"));
+        
+        
         ctx.setResources(resources);
         
         try {
