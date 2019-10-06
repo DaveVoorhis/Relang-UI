@@ -6,8 +6,7 @@ import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.Shell;
-
-import org.reldb.relang.utilities.MessageDialog;
+import org.reldb.relang.core.utilities.MessageDialog;
 
 public class TestMessageDialog {
 
