@@ -1,4 +1,5 @@
 #!/bin/sh
+
 echo 'Build swt_linux'
 pushd ../swtNative/swt_linux
 ant -S
@@ -17,8 +18,38 @@ ant -S
 popd
 cp ../swtNative/swt_win/lib/* ../_Deploy/lib/swt/win_64
 
-echo 'Build Relang Core'
-pushd ../Core
+echo 'Build RelangWeb'
+pushd ../RelangWeb
 ant -S
 popd
-cp ../Core/lib/* ../_Deploy/lib/relang
+cp ../RelangWeb/lib/* ../_Deploy/lib/relang
+
+echo 'Build RelangDesktop'
+pushd ../RelangDesktop
+ant -S
+popd
+cp ../RelangDesktop/lib/* ../_Deploy/lib/relang
+
+echo 'Build platformWeb'
+pushd ../platformWeb
+ant -S
+popd
+cp ../platformWeb/lib/* ../_Deploy/lib/relang
+
+echo 'Build platformDesktop'
+pushd ../platformDesktop
+ant -S
+popd
+cp ../platformDesktop/lib/* ../_Deploy/lib/relang
+
+echo 'Build dEngine'
+pushd ../dEngine
+ant -S
+popd
+cp ../dEngine/lib/* ../_Deploy/lib/relang
+
+echo 'Build dBrowser'
+pushd ../dBrowser
+ant -S
+popd
+cp ../dBrowser/lib/* ../_Deploy/lib/relang
