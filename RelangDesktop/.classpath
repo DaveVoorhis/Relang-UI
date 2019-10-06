@@ -36,8 +36,8 @@
 	<classpathentry kind="lib" path="/_Deploy/lib/misc/poi-ooxml-schemas-4.0.0.jar"/>
 	<classpathentry kind="lib" path="/_Deploy/lib/misc/postgresql-42.2.6.jar"/>
 	<classpathentry kind="lib" path="/_Deploy/lib/misc/xmlbeans-3.0.1.jar"/>
-	<classpathentry kind="lib" path="/_Deploy/lib/nebula/org.eclipse.nebula.widgets.grid_1.1.0.201910030714.jar"/>
 	<classpathentry kind="lib" path="/_Deploy/lib/swt/macos_64/swt_reldb.jar"/>
 	<classpathentry kind="lib" path="/_Deploy/lib/swt/macos_64/swt.jar"/>
+	<classpathentry kind="lib" path="/_Deploy/lib/grid/desktop/org.eclipse.nebula.widgets.grid_1.1.0.201910030714.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>

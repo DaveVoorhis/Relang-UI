@@ -3,8 +3,8 @@ package org.reldb.relang.datagrid;
 import java.util.HashMap;
 
 import org.eclipse.nebula.widgets.grid.Grid;
-import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.widgets.Composite;
+import org.reldb.relang.platform.GridHelper;
 
 public class Datagrid {
 	
@@ -22,10 +22,7 @@ public class Datagrid {
 	}
 	
 	public void focusOnCell(int rowNumber, int columnNumber) {
-		grid.setFocusColumn(grid.getColumn(columnNumber));
-		var gridItem = grid.getItem(rowNumber);
-		grid.setFocusItem(gridItem);
-		grid.setCellSelection(new Point(columnNumber, rowNumber));
+		GridHelper.setFocusItem(grid, rowNumber, columnNumber);
 		var row = controls.get(rowNumber);
 		if (row != null) {
 			var control = row.get(columnNumber);

@@ -1,4 +1,4 @@
-<project name="RelangWeb" basedir="." default="main">
+<project name="RelangWeb" basedir="." default="assemble">
 
     <property name="src.dir"     value="src"/>
     <property name="bin.dir"     value="bin"/>
@@ -15,6 +15,20 @@
         <javac srcdir="${src.dir}" destdir="${bin.dir}" includeantruntime="false"/>
     </target>
 
+	<target name="assemble" depends="compile">
+		<copy todir="WebContent/WEB-INF/lib" flatten="true">
+			  <fileset dir="../_Deploy/lib/jdt"/>
+			  <fileset dir="../_Deploy/lib/je"/>
+			  <fileset dir="../_Deploy/lib/misc"/>
+			  <fileset dir="../_Deploy/lib/grid/web"/>
+			  <fileset dir="../_Deploy/lib/rwt"/>
+		</copy>
+		<copy file="../_Deploy/lib/relang/dBrowser.jar" todir="WebContent/WEB-INF/lib"/>
+		<copy file="../_Deploy/lib/relang/dEngine.jar" todir="WebContent/WEB-INF/lib"/>
+		<copy file="../_Deploy/lib/relang/platformWeb.jar" todir="WebContent/WEB-INF/lib"/>
+		<copy file="../_Deploy/lib/relang/RelangWeb.jar" todir="WebContent/WEB-INF/lib"/>
+	</target>
+	
     <target name="jar" depends="compile">
         <mkdir dir="${lib.dir}"/>
         <jar destfile="${lib.dir}/${ant.project.name}.jar" basedir="${bin.dir}">

@@ -24,6 +24,7 @@ import org.reldb.relang.datagrid.GridWidgetInterface;
 import org.reldb.relang.datagrid.GridWidgetInterface.Notifier;
 import org.reldb.relang.datagrid.widgets.GridText;
 import org.reldb.relang.launcher.Launcher;
+import org.reldb.relang.platform.GridHelper;
 
 /** A Sheet (controller?) connects a Data (model) to a Datagrid (viewer).
  * 
@@ -97,19 +98,16 @@ public class GridPanel extends Composite {
 		if (data.isExtendable())
 			addColumnAdderColumn();
 		
-		grid.getGrid().setLinesVisible(true);
-		grid.getGrid().setCellSelectionEnabled(true);
-		grid.getGrid().setRowsResizeable(true);
-		grid.getGrid().setRowHeaderVisible(true);
-		grid.getGrid().setColumnScrolling(true);
-		grid.getGrid().setRowHeaderVisible(true);
+		GridHelper.setupGrid(grid.getGrid());
 		
 		Integer rowCount = (Integer)data.query(container -> container.entrySet().size());
 		grid.getGrid().setItemCount(rowCount + (data.isReadonly() ? 0 : 1));
 		
 		grid.getGrid().addListener(SWT.SetData, setDataEvt -> {
 			GridItem row = (GridItem)setDataEvt.item;
-			int rowIndex = row.getRowIndex();
+		//	int rowIndex = GridHelper.getRowIndex(row);
+			
+			int rowIndex = setDataEvt.index;
 			
 			for (int columnIndex = 0; columnIndex < columnCount; columnIndex++) {
 				var editor = new GridEditor(grid.getGrid());

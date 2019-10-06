@@ -35,17 +35,12 @@ public class Main {
 		var location = new File(webappDirLocation).getAbsolutePath();
         StandardContext ctx = (StandardContext) tomcat.addWebapp("", location);
         System.out.println("Configuring with basedir: " + location);
-
+        
         // Alternative location for "WEB-INF/classes" during development. 
         // Servlet 3.0 annotation will work
-        File additionWebInfClasses = new File("bin");
         WebResourceRoot resources = new StandardRoot(ctx);
+        File additionWebInfClasses = new File("bin");
         resources.addPreResources(new DirResourceSet(resources, "/WEB-INF/classes", additionWebInfClasses.getAbsolutePath(), "/"));
-        
-        File additionWebInfClasses2 = new File("../../Relang/bin");
-        WebResourceRoot resources2 = new StandardRoot(ctx);
-        resources2.addPreResources(new DirResourceSet(resources2, "/WEB-INF/classes", additionWebInfClasses2.getAbsolutePath(), "/"));
-        
         
         ctx.setResources(resources);
         

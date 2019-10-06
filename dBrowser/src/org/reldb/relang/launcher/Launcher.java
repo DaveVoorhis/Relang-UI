@@ -565,7 +565,6 @@ public class Launcher {
 		Display.setAppName(Version.getAppName());
 		Display.setAppVersion(Version.getAppID());
 		
-/*		
 		shell = (Shell) parent;
 		
 		Display.setAppName(Version.getAppName());
@@ -628,20 +627,9 @@ public class Launcher {
 			MessageDialog.openError(shell, "Database in Use", "The database at " + baseDir + " appears to already be in use.");
 		}
 
-		Display display = shell.getDisplay(); 
-		while (display != null && !display.isDisposed()) {
-			try {
-				if (display != null && !display.readAndDispatch()) {
-					doWaitingTasks();
-					display.sleep();
-				}
-			} catch (Throwable t) {
-				System.out.println(Version.getAppName() + ": Exception: " + t);
-				t.printStackTrace();
-				CrashDialog.launch(t, shell);
-			}
-		}
-		*/
+		var background = new Thread(() -> doWaitingTasks());
+		background.setDaemon(true);
+		background.start();
 	}
 	
 }
