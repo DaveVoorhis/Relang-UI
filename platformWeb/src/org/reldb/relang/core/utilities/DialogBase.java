@@ -2,7 +2,6 @@ package org.reldb.relang.core.utilities;
 
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Dialog;
-import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Shell;
 
 public abstract class DialogBase<T> extends Dialog {
@@ -30,11 +29,7 @@ public abstract class DialogBase<T> extends Dialog {
 		create(shell);
 		shell.setText(getText());
 		shell.open();
-		Display display = parent.getDisplay();
-		while (!shell.isDisposed()) {
-			if (!display.readAndDispatch())
-				display.sleep();
-		}
+		open(dlg -> {});
 		return result;
 	}
 }
