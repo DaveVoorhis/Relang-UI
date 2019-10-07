@@ -1,4 +1,4 @@
-package org.reldb.relang.core.utilities;
+package org.reldb.relang.platform;
 
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.MessageBox;

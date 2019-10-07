@@ -6,7 +6,7 @@ import org.eclipse.swt.widgets.DirectoryDialog;
 import org.eclipse.swt.widgets.Shell;
 import org.reldb.relang.core.data.bdbje.BDBJEBase;
 import org.reldb.relang.core.data.bdbje.BDBJEEnvironment;
-import org.reldb.relang.core.utilities.MessageDialog;
+import org.reldb.relang.platform.MessageDialog;
 
 public class Datasheets {
 
