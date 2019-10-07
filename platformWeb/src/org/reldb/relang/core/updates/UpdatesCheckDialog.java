@@ -30,8 +30,6 @@ public class UpdatesCheckDialog extends Dialog {
 	private Button btnGo;
 	private ProgressBar progressBar;
 
-	private Shell shlUpdatesCheck;
-
 	private UpdatesCheck checker;
 
 	/**
@@ -43,7 +41,7 @@ public class UpdatesCheckDialog extends Dialog {
 	public UpdatesCheckDialog(Shell parent, int style) {
 		super(parent, SWT.NONE);
 		setText("Check for Updates");
-		shlUpdatesCheck = createContents();
+		shell = createContents();
 		checker = new UpdatesCheck(btnGo, lblProgress, progressBar, Version.getUpdateURL(), Version.getVersionNumber()) {
 			@Override
 			public void completed(SendStatus sendStatus) {
@@ -94,8 +92,8 @@ public class UpdatesCheckDialog extends Dialog {
 	}
 
 	protected void open() {
-		shlUpdatesCheck.open();
-		shlUpdatesCheck.layout();
+		shell.open();
+		shell.layout();
 		open(dlg -> {});
 	}
 
@@ -127,12 +125,12 @@ public class UpdatesCheckDialog extends Dialog {
 	}
 
 	protected void quit() {
-		shlUpdatesCheck.dispose();
+		shell.dispose();
 	}
 
 	/** Create contents of the dialog. */
 	protected Shell createContents() {
-		Shell shell = new Shell(getParent(), SWT.DIALOG_TRIM | SWT.RESIZE | SWT.APPLICATION_MODAL);
+		shell = new Shell(getParent(), SWT.DIALOG_TRIM | SWT.RESIZE | SWT.APPLICATION_MODAL);
 		shell.setSize(600, 250);
 		shell.setText(getText());
 		shell.setLayout(new FormLayout());

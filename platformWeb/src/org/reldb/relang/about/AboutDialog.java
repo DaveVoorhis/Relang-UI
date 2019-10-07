@@ -11,8 +11,6 @@ import org.reldb.relang.platform.IconLoader;
 
 public class AboutDialog extends Dialog {
 	private static final long serialVersionUID = 1L;
-	
-	protected Shell shell;
 
 	/**
 	 * Create the dialog.
