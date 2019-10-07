@@ -12,8 +12,6 @@ import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Text;
 
 public class SearchAdvancedQueryBuilder extends Composite {
-	private static final long serialVersionUID = 1L;
-	
 	private static final String[] queryOperationDisplay = new String[] {"=", "≠", "<", ">", "≤", "≥", "contains", "starts with", "doesn’t contain"};
 	private static final String[] queryOperationCode = new String[] {"=", "!=", "<", ">", "<=", ">=", "INDEX_OF(%s, %p) >= 0", "STARTS_WITH(%s, %p)", "INDEX_OF(%s, %p) < 0"}; 
 	

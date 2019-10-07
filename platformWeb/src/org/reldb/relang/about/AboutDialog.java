@@ -1,7 +1,6 @@
 package org.reldb.relang.about;
 
 import org.eclipse.swt.widgets.Dialog;
-import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Button;
@@ -13,7 +12,6 @@ import org.reldb.relang.platform.IconLoader;
 public class AboutDialog extends Dialog {
 	private static final long serialVersionUID = 1L;
 	
-	protected Object result;
 	protected Shell shell;
 
 	/**
@@ -29,17 +27,10 @@ public class AboutDialog extends Dialog {
 	 * Open the dialog.
 	 * @return the result
 	 */
-	public Object open() {
+	public void open() {
 		createContents();
-		shell.open();
 		shell.layout();
-		Display display = getParent().getDisplay();
-		while (!shell.isDisposed()) {
-			if (!display.readAndDispatch()) {
-				display.sleep();
-			}
-		}
-		return result;
+		open(dlg -> {});
 	}
 
 	/**

@@ -12,8 +12,6 @@ import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Text;
 
 public class SearchAdvancedPanel extends Composite {
-	private static final long serialVersionUID = 1L;
-	
 	private SearchAdvancedQueryBuilder filterPanel;
 	private Text manualFilter;
 	private boolean isManualOverride = false;

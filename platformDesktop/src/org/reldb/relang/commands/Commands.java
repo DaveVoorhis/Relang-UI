@@ -64,7 +64,6 @@ public class Commands {
 	public static void linkCommand(Do command, AcceleratedMenuItem menuItem) {
 		menuDoMapping.put(command, menuItem);
 		menuItem.getParent().addMenuListener(new MenuAdapter() {
-			private static final long serialVersionUID = 1L;
 			@Override
 			public void menuShown(MenuEvent arg0) {
 				CommandActivator activator = getCommandActivator(command);

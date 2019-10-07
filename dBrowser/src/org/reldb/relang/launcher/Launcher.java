@@ -619,6 +619,11 @@ public class Launcher {
 		
 		datasheets = new Datasheets();
 		
+		createMenuBar(shell);
+		shell.setImage(IconLoader.loadIcon("RelangIcon"));
+		shell.setImages(loadIcons(Display.getCurrent()));
+		shell.setText(Version.getAppID());
+		
 		// Thunderbirds are go.
 		var baseDir = System.getProperty("user.home") + File.separator + "relangbase";
 		try {
@@ -627,7 +632,14 @@ public class Launcher {
 			MessageDialog.openError(shell, "Database in Use", "The database at " + baseDir + " appears to already be in use.");
 		}
 
-		var background = new Thread(() -> doWaitingTasks());
+		// Background task processor.
+		var background = new Thread(() -> {
+			 doWaitingTasks();
+			 try {
+				Thread.sleep(500);
+			} catch (InterruptedException e1) {
+			}
+		});
 		background.setDaemon(true);
 		background.start();
 	}

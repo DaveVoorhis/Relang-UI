@@ -7,8 +7,6 @@ import org.eclipse.swt.widgets.Composite;
 import org.reldb.relang.platform.IconLoader;
 
 public class SortOrderPicker extends Composite {
-	private static final long serialVersionUID = 1L;
-
 	private String state = "";
 	
 	private Button ascending;

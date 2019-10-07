@@ -7,8 +7,6 @@ import org.eclipse.swt.widgets.MenuItem;
 
 // A MenuItem with an optional icon that can change size in response to change in Preferences.
 public class IconMenuItem extends MenuItem {
-	private static final long serialVersionUID = 1L;
-	
 	private String imageName;
 	
 	public IconMenuItem(Menu parentMenu, String text, String imageName, int style, Listener listener) {

@@ -4,7 +4,6 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 
 import org.eclipse.swt.widgets.Dialog;
-import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.SWT;
@@ -56,12 +55,7 @@ public abstract class FeedbackDialog extends Dialog {
 		report.setExpanded(true);
 		shlFeedback.open();
 		shlFeedback.layout();
-		Display display = getParent().getDisplay();
-		while (!shlFeedback.isDisposed()) {
-			if (!display.readAndDispatch()) {
-				display.sleep();
-			}
-		}		
+		open(dlg -> {});
 	}
 	
 	protected static String getCurrentTimeStamp() {

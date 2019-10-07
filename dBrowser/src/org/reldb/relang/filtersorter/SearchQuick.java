@@ -4,8 +4,6 @@ import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Composite;
 
 public class SearchQuick extends Composite implements Searcher {
-	private static final long serialVersionUID = 1L;
-	
 	/*
 	private StyledText findText;
 	private boolean wholeWordSearch = false;

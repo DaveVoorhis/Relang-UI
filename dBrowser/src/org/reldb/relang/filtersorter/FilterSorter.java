@@ -12,8 +12,6 @@ import org.eclipse.swt.widgets.ToolItem;
 import org.reldb.relang.platform.IconLoader;
 
 public class FilterSorter extends Composite {
-	private static final long serialVersionUID = 1L;
-
 	@FunctionalInterface
 	public interface FilterSorterUpdate {
 		public void update(FilterSorter originator);

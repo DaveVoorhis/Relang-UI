@@ -23,13 +23,16 @@ public abstract class DialogBase<T> extends Dialog {
 
 	protected abstract void create(Shell shell);
 	
-	public T open() {
+	/** This is invoked with the dialog closes, and may be overridden to receive result. */
+	protected void closed(T result) {
+	}
+	
+	public void open() {
 		Shell parent = getParent();
 		shell = new Shell(parent, shellStyle);
 		create(shell);
 		shell.setText(getText());
 		shell.open();
-		open(dlg -> {});
-		return result;
+		open(dlg -> closed(result));
 	}
 }

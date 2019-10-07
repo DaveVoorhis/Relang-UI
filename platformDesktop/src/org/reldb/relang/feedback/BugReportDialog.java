@@ -18,8 +18,6 @@ import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.layout.GridData;
 
 public class BugReportDialog extends FeedbackDialog {
-	private static final long serialVersionUID = 1L;
-
 	private Text textWhatHappened;
 	private Text textEmailAddress;
 	

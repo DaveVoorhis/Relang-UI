@@ -4,8 +4,6 @@ import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.*;
 
 public class AcceleratedMenuItem extends IconMenuItem {
-	private static final long serialVersionUID = 1L;
-
 	/** MenuItem with text, accelerator, image, style and Listener. */
 	public AcceleratedMenuItem(Menu parentMenu, String text, int accelerator, String imageName, int style, Listener listener) {
 		super(parentMenu, text, imageName, style, listener);

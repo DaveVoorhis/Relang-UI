@@ -23,8 +23,6 @@ import org.reldb.relang.platform.IconLoader;
  * 
  */
 public class CommandActivator extends ToolItem {
-	private static final long serialVersionUID = 1L;
-	
 	private MenuItem menuItem;
 	private String iconName;
 	private Do command;

@@ -13,8 +13,6 @@ import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Label;
 
 public class SorterPanel extends Composite {
-	private static final long serialVersionUID = 1L;
-	
 	private Vector<Label> labelAttributes;
 	private Vector<SortOrderPicker> orderAttributes;
 

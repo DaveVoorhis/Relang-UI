@@ -16,12 +16,12 @@ import org.eclipse.swt.widgets.ProgressBar;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Dialog;
-import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.layout.GridData;
 
 public class UpdatesCheckDialog extends Dialog {
-
+	private static final long serialVersionUID = 1L;
+	
 	private Label lblNewUpdatesAvailable;
 	private Label lblNewUpdateURL;
 	private Label lblInstructions;
@@ -96,12 +96,7 @@ public class UpdatesCheckDialog extends Dialog {
 	protected void open() {
 		shlUpdatesCheck.open();
 		shlUpdatesCheck.layout();
-		Display display = getParent().getDisplay();
-		while (!shlUpdatesCheck.isDisposed()) {
-			if (!display.readAndDispatch()) {
-				display.sleep();
-			}
-		}
+		open(dlg -> {});
 	}
 
 	/**

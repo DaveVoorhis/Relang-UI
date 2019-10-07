@@ -11,9 +11,6 @@ import org.reldb.relang.core.version.Version;
 import org.reldb.relang.platform.IconLoader;
 
 public class AboutDialog extends Dialog {
-	private static final long serialVersionUID = 1L;
-	
-	protected Object result;
 	protected Shell shell;
 
 	/**
@@ -29,7 +26,7 @@ public class AboutDialog extends Dialog {
 	 * Open the dialog.
 	 * @return the result
 	 */
-	public Object open() {
+	public void open() {
 		createContents();
 		shell.open();
 		shell.layout();
@@ -39,7 +36,6 @@ public class AboutDialog extends Dialog {
 				display.sleep();
 			}
 		}
-		return result;
 	}
 
 	/**

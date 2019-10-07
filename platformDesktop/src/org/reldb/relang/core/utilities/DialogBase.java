@@ -6,7 +6,6 @@ import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Shell;
 
 public abstract class DialogBase<T> extends Dialog {
-	private static final long serialVersionUID = 1L;
 
 	protected T result;
 	protected Shell shell;
@@ -24,7 +23,11 @@ public abstract class DialogBase<T> extends Dialog {
 
 	protected abstract void create(Shell shell);
 	
-	public T open() {
+	/** This is invoked with the dialog closes, and may be overridden to receive result. */
+	protected void closed(T result) {
+	}
+	
+	public void open() {
 		Shell parent = getParent();
 		shell = new Shell(parent, shellStyle);
 		create(shell);
@@ -35,6 +38,6 @@ public abstract class DialogBase<T> extends Dialog {
 			if (!display.readAndDispatch())
 				display.sleep();
 		}
-		return result;
+		closed(result);
 	}
 }
