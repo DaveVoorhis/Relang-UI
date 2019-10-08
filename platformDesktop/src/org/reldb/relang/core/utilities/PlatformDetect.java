@@ -124,5 +124,10 @@ public class PlatformDetect {
 		return SWT.getPlatform();
 	}
 	
+	/** True only if running in Web platform. */
+	public static boolean isWeb() {
+		return SWT.getPlatform().equals("rap");
+	}
+	
 }
 

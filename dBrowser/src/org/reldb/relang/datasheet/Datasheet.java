@@ -189,6 +189,7 @@ public class Datasheet extends Composite {
 			final String name = selection.getText();
 			var renameDialog = new DialogRenameData(getShell(), name) {
 				public void closed(String newName) {
+					System.out.println("Datasheet: rename to " + newName);
 					if (newName != null && newName.length() > 0 && !newName.equals(name)) {
 						try {
 							base.rename(name, newName);

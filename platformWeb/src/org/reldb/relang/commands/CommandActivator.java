@@ -71,7 +71,7 @@ public class CommandActivator extends ToolItem {
 			stateTimer.schedule(new TimerTask() {
 				@Override
 				public void run() {
-					if (isDisposed()) {
+					if (isDisposed() || getDisplay().isDisposed()) {
 						stateTimer.cancel();
 						hidden();
 					} else

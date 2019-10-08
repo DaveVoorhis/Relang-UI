@@ -32,6 +32,7 @@ import org.reldb.relang.core.updates.UpdatesCheckDialog;
 import org.reldb.relang.platform.AcceleratedMenuItem;
 import org.reldb.relang.platform.IconLoader;
 import org.reldb.relang.platform.MessageDialog;
+import org.reldb.relang.platform.Platform;
 import org.reldb.swt.os_specific.OSSpecific;
 import org.reldb.relang.core.utilities.PlatformDetect;
 import org.reldb.relang.core.version.Version;
@@ -54,26 +55,26 @@ public class Launcher {
 	private static Datasheets datasheets;
 	
 	private static synchronized void quit() {
-		Display display = Display.getCurrent();
-		if (display != null) {
-			Shell[] shells = display.getShells();
-			try {
-			for (Shell shell: shells)
-				if (!shell.isDisposed())
-					shell.close();
-			} catch (Throwable t) {
-				System.out.println("Error trying to close shells: " + t);
-				t.printStackTrace();
-			}
-			if (!display.isDisposed())
-				try {
-					display.dispose();
-				} catch (Throwable t) {}
-		}
+		System.out.println("Shutting down...");
 		try {
+			Display display = Display.getCurrent();
+			if (display != null) {
+				Shell[] shells = display.getShells();
+				try {
+				for (Shell shell: shells)
+					if (!shell.isDisposed())
+						shell.close();
+				} catch (Throwable t) {
+					System.out.println("Launcher: Error trying to close shells: " + t);
+					t.printStackTrace();
+				}
+			}
 			SWTResourceManager.dispose();
+			System.out.println("Shutdown.");
+			Platform.exit(0); 
 		} catch (Throwable t) {
-			System.out.println("Error trying to free resources: " + t);
+			System.out.println("Launcher: Error trying to free resources: " + t);
+			t.printStackTrace();
 		}
 	}
 	
@@ -337,7 +338,7 @@ public class Launcher {
 
 		// Populate the menu bar once if this is a screen menu bar.
 		// Otherwise, we need to make a new menu bar for each shell.
-		if (!createdScreenBar || !hasAppMenuBar) {			
+		if (!createdScreenBar || !hasAppMenuBar) {
 			createFileMenu(bar);
 			createEditMenu(bar);
 			createDataMenu(bar);
@@ -439,7 +440,7 @@ public class Launcher {
 		final Display display = new Display();
 		
 		OpenDocumentEventProcessor openDocProcessor = new OpenDocumentEventProcessor();
-//		display.addListener(SWT.OpenDocument, openDocProcessor);
+		display.addListener(SWT.OpenDocument, openDocProcessor);
 		
 		openDocProcessor.addFilesToOpen(args);		
 
@@ -561,9 +562,10 @@ public class Launcher {
 
 	/** RWT (Web) launcher. */
 	public static void launch(Composite parent) {
-		
 		Display.setAppName(Version.getAppName());
 		Display.setAppVersion(Version.getAppID());
+		
+		System.out.println("Platform is: " + SWT.getPlatform());
 		
 		shell = (Shell) parent;
 		
@@ -577,52 +579,23 @@ public class Launcher {
 		);
 		
 		shell.addListener(SWT.Dispose, evt -> {
+			shutdownBackgroundRunner();
+			LogWin.remove();
 			quit();
 		});
 		
 		Loading.start();
 		
-		Thread.setDefaultUncaughtExceptionHandler(new Thread.UncaughtExceptionHandler() {
-			private int failureCount = 0;
-
-			public void uncaughtException(Thread t, Throwable e) {
-				if (failureCount > 1) {
-					System.err
-							.println("SYSTEM ERROR!  It's gotten even worse.  This is a last-ditch attempt to escape.");
-					failureCount++;
-					Thread.setDefaultUncaughtExceptionHandler(null);
-					System.exit(1);
-					return;
-				}
-				if (failureCount > 0) {
-					System.err.println(
-							"SYSTEM ERROR!  Things have gone so horribly wrong that we can't recover or even pop up a message.  I hope someone sees this...\nShutting down now, if we can.");
-					failureCount++;
-					System.exit(1);
-					return;
-				}
-				failureCount++;
-				if (e instanceof OutOfMemoryError) {
-					System.err.println("Out of memory!");
-					e.printStackTrace();
-					MessageDialog.openError(shell, "OUT OF MEMORY", "Out of memory!  Shutting down NOW!");
-					shell.dispose();
-				} else {
-					System.err.println("Unknown error: " + t);
-					e.printStackTrace();
-					MessageDialog.openError(shell, "Unexpected Error", e.toString());
-					shell.dispose();
-				}
-				System.exit(1);
-			}
-		});
-		
+		LogWin.install(createShell());
+				
 		datasheets = new Datasheets();
 		
 		createMenuBar(shell);
 		shell.setImage(IconLoader.loadIcon("RelangIcon"));
 		shell.setImages(loadIcons(Display.getCurrent()));
 		shell.setText(Version.getAppID());
+
+		startBackgroundRunner();
 		
 		// Thunderbirds are go.
 		var baseDir = System.getProperty("user.home") + File.separator + "relangbase";
@@ -631,17 +604,30 @@ public class Launcher {
 		} catch (com.sleepycat.je.EnvironmentLockedException ele) {
 			MessageDialog.openError(shell, "Database in Use", "The database at " + baseDir + " appears to already be in use.");
 		}
+	}
 
+	private static boolean backgroundRunnerRunning = false;
+	
+	private static void startBackgroundRunner() {
 		// Background task processor.
 		var background = new Thread(() -> {
-			 doWaitingTasks();
-			 try {
-				Thread.sleep(500);
-			} catch (InterruptedException e1) {
-			}
+			 backgroundRunnerRunning = true;
+			 while (backgroundRunnerRunning) {
+				 doWaitingTasks();
+				 try {
+					 Thread.sleep(500);
+				 } catch (InterruptedException e1) {}
+			 }
 		});
 		background.setDaemon(true);
 		background.start();
+	}
+
+	private static void shutdownBackgroundRunner() {
+		backgroundRunnerRunning = false;
+		try {
+			Thread.sleep(500);
+		} catch (InterruptedException e1) {}
 	}
 	
 }
