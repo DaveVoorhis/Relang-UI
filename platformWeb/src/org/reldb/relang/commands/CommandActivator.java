@@ -110,9 +110,23 @@ public class CommandActivator extends ToolItem {
         Class<?>toolItemClass = getClass().getSuperclass().getSuperclass().getSuperclass();	// i.e., Widget class
         Method method;
 		try {
-			method = toolItemClass.getDeclaredMethod("sendSelectionEvent", int.class, Event.class, boolean.class);
+			/*
+			System.out.println("CommandActivator: toolItemClass is " + toolItemClass.getName());
+			var methods = toolItemClass.getDeclaredMethods();
+			for (var meth: methods) {
+				System.out.print("  method " + meth.getName() + " ");
+				var parms = meth.getParameters();
+				for (var parm: parms)
+					System.out.print(parm + " ");
+				System.out.println();
+			}
+			*/
+			method = toolItemClass.getDeclaredMethod("sendEvent", Event.class);
 	        method.setAccessible(true);
-	        method.invoke(this, SWT.Selection, new Event(), false);
+	        var event = new Event();
+	        event.item = menuItem;
+	        event.detail = SWT.Selection;
+	        method.invoke(this, event);
 		} catch (NoSuchMethodException | SecurityException | IllegalAccessException | IllegalArgumentException | InvocationTargetException e) {
 			e.printStackTrace();
 		}

@@ -78,13 +78,7 @@ public class Launcher {
 		}
 	}
 	
-	static void createFileMenu(Menu bar) {	
-		MenuItem fileItem = new MenuItem(bar, SWT.CASCADE);			
-		fileItem.setText("File");
-		
-		Menu menu = new Menu(fileItem);
-		fileItem.setMenu(menu);
-
+	private static void addCoreFileMenuItems(Menu menu) {
 		new AcceleratedMenuItem(menu, "&New datasheet\tCtrl-N", SWT.MOD1 | 'N', "add-new-document", event -> {
 			addRecentlyUsedDatasheetItem(datasheets.create(createShell()));
 		});
@@ -115,6 +109,17 @@ public class Launcher {
 				}
 			}
 		});
+	}
+	
+	static void createFileMenu(Menu bar) {	
+		MenuItem fileItem = new MenuItem(bar, SWT.CASCADE);			
+		fileItem.setText("File");
+		
+		Menu menu = new Menu(fileItem);
+		fileItem.setMenu(menu);
+
+		if (!PlatformDetect.isWeb())
+			addCoreFileMenuItems(menu);
 		
 		OSSpecific.addFileMenuItems(menu);
 	}
@@ -564,8 +569,6 @@ public class Launcher {
 	public static void launch(Composite parent) {
 		Display.setAppName(Version.getAppName());
 		Display.setAppVersion(Version.getAppID());
-		
-		System.out.println("Platform is: " + SWT.getPlatform());
 		
 		shell = (Shell) parent;
 		
