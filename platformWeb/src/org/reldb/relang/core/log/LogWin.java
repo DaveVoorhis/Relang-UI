@@ -18,7 +18,6 @@ import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.FormData;
 import org.eclipse.swt.layout.FormAttachment;
 import org.eclipse.swt.widgets.ToolItem;
-import org.reldb.relang.core.main.Loading;
 import org.reldb.relang.platform.IconLoader;
 import org.eclipse.swt.graphics.Color;
 
@@ -219,7 +218,6 @@ public class LogWin {
 
 		class LogMessages implements Logger {
 			public void log(String s) {
-				Loading.action(s);
 				window.output(s, window.black);
 			}
 		};

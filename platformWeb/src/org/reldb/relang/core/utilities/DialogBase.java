@@ -8,7 +8,6 @@ public abstract class DialogBase<T> extends Dialog {
 	private static final long serialVersionUID = 1L;
 
 	protected T result;
-	
 	private int shellStyle;
 	
 	public DialogBase(Shell parent, int shellStyle) {

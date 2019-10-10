@@ -26,7 +26,6 @@ import org.reldb.relang.about.AboutDialog;
 import org.reldb.relang.commands.Commands;
 import org.reldb.relang.core.data.bdbje.BDBJEEnvironment;
 import org.reldb.relang.core.log.LogWin;
-import org.reldb.relang.core.main.Loading;
 import org.reldb.relang.core.preferences.Preferences;
 import org.reldb.relang.core.updates.UpdatesCheckDialog;
 import org.reldb.relang.platform.AcceleratedMenuItem;
@@ -475,10 +474,6 @@ public class Launcher {
 				gc.setColor(Color.green);
 				(new Thread(() -> {
 					while (SplashScreen.getSplashScreen() != null) {
-						int percent = Loading.getPercentageOfExpectedMessages();
-						int drawExtent = Math.min(barWidth * percent / 100, barWidth);
-						gc.fillRect(progressBarRect.x, progressBarRect.y, drawExtent, barHeight);
-						splash.update();					
 						try {
 							Thread.sleep(250);
 						} catch (InterruptedException e) {
@@ -495,8 +490,6 @@ public class Launcher {
 		});
 
 		LogWin.install(createShell());
-		
-		Loading.start();
 		
 		Thread.setDefaultUncaughtExceptionHandler(new Thread.UncaughtExceptionHandler() {
 			private int failureCount = 0;
@@ -586,8 +579,6 @@ public class Launcher {
 			LogWin.remove();
 			quit();
 		});
-		
-		Loading.start();
 		
 		LogWin.install(createShell());
 				

@@ -1,15 +1,15 @@
 package org.reldb.relang.about;
 
-import org.eclipse.swt.widgets.Dialog;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.wb.swt.SWTResourceManager;
+import org.reldb.relang.core.utilities.DialogBase;
 import org.reldb.relang.core.version.Version;
 import org.reldb.relang.platform.IconLoader;
 
-public class AboutDialog extends Dialog {
+public class AboutDialog extends DialogBase<String> {
 	private static final long serialVersionUID = 1L;
 
 	/**
@@ -18,24 +18,13 @@ public class AboutDialog extends Dialog {
 	 * @param style
 	 */
 	public AboutDialog(Shell parent) {
-		super(parent, SWT.NONE);
-	}
-
-	/**
-	 * Open the dialog.
-	 * @return the result
-	 */
-	public void open() {
-		createContents();
-		shell.layout();
-		open(dlg -> {});
+		super(parent, SWT.DIALOG_TRIM | SWT.APPLICATION_MODAL);
 	}
 
 	/**
 	 * Create contents of the dialog.
 	 */
-	private void createContents() {
-		shell = new Shell(getParent(), SWT.APPLICATION_MODAL);
+	protected void create(Shell shell) {
 		shell.setSize(450, 300);
 		shell.setText(getText());
 		
@@ -52,6 +41,7 @@ public class AboutDialog extends Dialog {
 		lblNewTitle.setFont(SWTResourceManager.getFont(".AppleSystemUIFont", 16, SWT.NORMAL));
 		lblNewTitle.setBounds(48, 10, 392, 32);
 		lblNewTitle.setText(Version.getAppName() + " " + Version.getAppSubtitle());
-
+		
+		shell.layout();
 	}
 }
