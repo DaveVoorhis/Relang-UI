@@ -1,7 +1,5 @@
 package org.reldb.relang.commands;
 
-import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Method;
 import java.util.Timer;
 import java.util.TimerTask;
 
@@ -23,11 +21,12 @@ import org.reldb.relang.platform.IconLoader;
  * 
  */
 public class CommandActivator extends ToolItem {
+	private Do command;
+    private ToolBar toolbar;
 	private MenuItem menuItem;
 	private String iconName;
-	private Do command;
+	private Listener listener;
     private boolean visible = false;
-    private ToolBar toolbar;
 
     private Timer stateTimer = new Timer();
     
@@ -58,6 +57,7 @@ public class CommandActivator extends ToolItem {
 		this.command = command;
 		this.toolbar = toolBar;
 		this.iconName = iconName;
+		this.listener = listener;
 		setToolTipText(tooltipText);
 		if (iconName != null)
 			setImage(IconLoader.loadIcon(iconName));
@@ -104,16 +104,11 @@ public class CommandActivator extends ToolItem {
 	}
 
 	public void click() {
-		// cheat to invoke sendSelectionEvent(), which is private
-        Class<?>toolItemClass = getClass().getSuperclass().getSuperclass().getSuperclass();	// i.e., Widget class
-        Method method;
-		try {
-			method = toolItemClass.getDeclaredMethod("sendSelectionEvent", int.class, Event.class, boolean.class);
-	        method.setAccessible(true);
-	        method.invoke(this, SWT.Selection, new Event(), false);
-		} catch (NoSuchMethodException | SecurityException | IllegalAccessException | IllegalArgumentException | InvocationTargetException e) {
-			e.printStackTrace();
-		}
+		var event = new Event();
+		if (listener != null)
+			listener.handleEvent(event);
+		if (((getStyle() & SWT.CHECK) != 0) || ((getStyle() & SWT.RADIO) != 0))
+			setSelection(!getSelection());
 	}
 	
 	public boolean isVisible() {
