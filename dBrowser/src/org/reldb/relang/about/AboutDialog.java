@@ -10,7 +10,6 @@ import org.reldb.relang.core.version.Version;
 import org.reldb.relang.platform.IconLoader;
 
 public class AboutDialog extends DialogBase<String> {
-	private static final long serialVersionUID = 1L;
 
 	/**
 	 * Create the dialog.
