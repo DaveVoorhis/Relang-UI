@@ -18,12 +18,12 @@ import org.eclipse.swt.widgets.Text;
 import org.reldb.relang.core.data.Data;
 import org.reldb.relang.core.tuples.Tuple;
 import org.reldb.relang.core.tuples.TupleTypeGenerator;
-import org.reldb.relang.core.utilities.DialogBase;
 import org.reldb.relang.datagrid.Datagrid;
 import org.reldb.relang.datagrid.GridWidgetInterface;
 import org.reldb.relang.datagrid.GridWidgetInterface.Notifier;
 import org.reldb.relang.datagrid.widgets.GridText;
 import org.reldb.relang.launcher.Launcher;
+import org.reldb.relang.platform.DialogBase;
 import org.reldb.relang.platform.GridHelper;
 
 /** A Sheet (controller?) connects a Data (model) to a Datagrid (viewer).

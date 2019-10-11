@@ -1,6 +1,7 @@
 package org.reldb.relang.core.utilities;
 
 import org.eclipse.swt.widgets.Shell;
+import org.reldb.relang.platform.DialogBase;
 import org.eclipse.swt.layout.FormLayout;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;

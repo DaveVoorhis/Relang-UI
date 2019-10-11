@@ -1,4 +1,4 @@
-package org.reldb.relang.feedback;
+package org.reldb.relang.platform;
 
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
@@ -47,7 +47,7 @@ public class Feedback {
 		progressBar.setSelection(step);
 	}
 
-	protected void resetProgress() {
+	public void resetProgress() {
 		updateProgress("Ready...", 0);
 		lblProgress.setEnabled(false);
 		progressBar.setEnabled(false);

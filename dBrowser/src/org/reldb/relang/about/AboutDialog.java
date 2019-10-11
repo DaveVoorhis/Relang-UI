@@ -5,8 +5,8 @@ import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.wb.swt.SWTResourceManager;
-import org.reldb.relang.core.utilities.DialogBase;
 import org.reldb.relang.core.version.Version;
+import org.reldb.relang.platform.DialogBase;
 import org.reldb.relang.platform.IconLoader;
 
 public class AboutDialog extends DialogBase<String> {
