@@ -43,7 +43,7 @@ import org.reldb.relang.feedback.SuggestionboxDialog;
 public class Launcher {
 
 	// Set to true to enable a Tools menu item to deliberately cause a crash for testing exception handling.
-	static final boolean showKaboomMenuItem = false;
+	static final boolean showKaboomMenuItem = true;
 	
 	static boolean createdScreenBar = false;
 	

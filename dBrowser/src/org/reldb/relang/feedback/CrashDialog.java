@@ -29,8 +29,9 @@ public class CrashDialog extends FeedbackDialog {
 	 * @param style
 	 */
 	public CrashDialog(Shell parent, Throwable exception) {
-		super(parent, SWT.NONE, "Crash Report");
+		super(parent);
 		this.exception = exception;
+		setText("Crash Report");
 	}
 
 	/** Launch the dialog. */
@@ -168,7 +169,20 @@ public class CrashDialog extends FeedbackDialog {
 		lblProgress.setEnabled(false);
 		progressBar.setEnabled(false);
 		
+		report = newTreeItem(treeDetails, "Details");
+		phoneHome = new Feedback(btnSend, lblProgress, progressBar) {
+		    public void completed(SendStatus sendStatus) {	
+		    	CrashDialog.this.completed(sendStatus);
+		    }
+			public void quit() {
+				CrashDialog.this.quit();
+			}
+		};
+		phoneHome.resetProgress();
+		
 		putClientInfoInTree(Version.getVersion());
 		putExceptionInTree(exception);
+		
+		report.setExpanded(true);
 	}
 }

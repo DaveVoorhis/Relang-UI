@@ -21,21 +21,16 @@ public abstract class DialogBase<T> extends Dialog {
 		this(parent, SWT.DIALOG_TRIM | SWT.RESIZE | SWT.APPLICATION_MODAL);
 	}
 
+	/** This is invoked to configure the shell. */
 	protected abstract void create(Shell shell);
 	
 	/** This is invoked with the dialog closes, and may be overridden to receive result. */
-	protected void closed(T result) {
-	}
-	
-	/** This is invoked immediately after the shell has been created via create(Shell). */
-	protected void shellInit(Shell shell) {
-	}
+	protected void closed(T result) {}
 	
 	public void open() {
 		Shell parent = getParent();
 		shell = new Shell(parent, shellStyle);
 		create(shell);
-		shellInit(shell);
 		shell.setText(getText());
 		shell.open();
 		Display display = parent.getDisplay();

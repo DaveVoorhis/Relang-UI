@@ -3,7 +3,6 @@ package org.reldb.relang.feedback;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
-import org.eclipse.swt.widgets.Dialog;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.SWT;
@@ -11,13 +10,10 @@ import org.eclipse.swt.widgets.Tree;
 import org.eclipse.swt.widgets.ProgressBar;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.TreeItem;
+import org.reldb.relang.core.utilities.DialogBase;
 import org.reldb.relang.platform.MessageDialog;
 
-public abstract class FeedbackDialog extends Dialog {
-	private static final long serialVersionUID = 1L;
-
-	protected Shell shlFeedback;
-	
+public abstract class FeedbackDialog extends DialogBase<String> {
 	protected Label lblProgress;
 	protected ProgressBar progressBar;
 	
@@ -26,36 +22,17 @@ public abstract class FeedbackDialog extends Dialog {
 	
 	protected Tree treeDetails;
 	
-	private TreeItem report;
+	protected TreeItem report;
 	
-	private Feedback phoneHome;
+	protected Feedback phoneHome;
 		
 	/**
 	 * Create the dialog.
 	 * @param parent
 	 * @param style
 	 */
-	public FeedbackDialog(Shell parent, int style, String title) {
-		super(parent, style);
-		setText(title);
-		shlFeedback = createContents();
-		phoneHome = new Feedback(btnSend, lblProgress, progressBar) {
-		    public void completed(SendStatus sendStatus) {	
-		    	FeedbackDialog.this.completed(sendStatus);
-		    }
-			public void quit() {
-				FeedbackDialog.this.quit();
-			}
-		};
-		report = newTreeItem(treeDetails, "Details");
-		phoneHome.resetProgress();
-	}
-	
-	protected void open() {
-		report.setExpanded(true);
-		shlFeedback.open();
-		shlFeedback.layout();
-		open(dlg -> {});
+	public FeedbackDialog(Shell parent) {
+		super(parent);
 	}
 	
 	protected static String getCurrentTimeStamp() {
@@ -74,7 +51,7 @@ public abstract class FeedbackDialog extends Dialog {
 		return item;
 	}
 	
-	private TreeItem newTreeItem(Tree parent, String text) {
+	protected TreeItem newTreeItem(Tree parent, String text) {
 		TreeItem item = new TreeItem(parent, SWT.None);
 		setupTreeItem(item, text);
 		return item;
@@ -174,8 +151,6 @@ public abstract class FeedbackDialog extends Dialog {
 	}
 
 	protected abstract FeedbackInfo getFeedbackInfo();
-
-	protected abstract Shell createContents();
 	
 	protected void doSend() {
 		phoneHome.doSend(getFeedbackInfo().toString());
@@ -186,6 +161,6 @@ public abstract class FeedbackDialog extends Dialog {
 	}
 	
 	protected void quit() {
-		shlFeedback.dispose();
+		shell.dispose();
 	}
 }
