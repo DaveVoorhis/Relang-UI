@@ -5,7 +5,7 @@ import org.eclipse.swt.graphics.ImageData;
 import org.eclipse.swt.graphics.ImageDataProvider;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.wb.swt.SWTResourceManager;
-import org.reldb.relang.core.version.Version;
+import org.reldb.relang.version.Version;
 
 public class IconLoader {
 	

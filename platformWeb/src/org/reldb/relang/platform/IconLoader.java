@@ -2,7 +2,7 @@ package org.reldb.relang.platform;
 
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.wb.swt.SWTResourceManager;
-import org.reldb.relang.core.version.Version;
+import org.reldb.relang.version.Version;
 
 public class IconLoader {	
 	public static Image loadIcon(String name) {

@@ -4,8 +4,8 @@ import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.widgets.DirectoryDialog;
 import org.eclipse.swt.widgets.Shell;
-import org.reldb.relang.core.data.bdbje.BDBJEBase;
-import org.reldb.relang.core.data.bdbje.BDBJEEnvironment;
+import org.reldb.relang.dengine.data.bdbje.BDBJEBase;
+import org.reldb.relang.dengine.data.bdbje.BDBJEEnvironment;
 import org.reldb.relang.platform.MessageDialog;
 
 public class Datasheets {

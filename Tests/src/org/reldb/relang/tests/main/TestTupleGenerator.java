@@ -7,9 +7,9 @@ import java.io.IOException;
 import java.lang.reflect.Field;
 
 import org.junit.Test;
-import org.reldb.relang.core.compiler.DirClassLoader;
-import org.reldb.relang.core.tuples.TupleTypeGenerator;
-import org.reldb.relang.core.utilities.Directory;
+import org.reldb.relang.dengine.compiler.DirClassLoader;
+import org.reldb.relang.dengine.tuples.TupleTypeGenerator;
+import org.reldb.relang.dengine.utilities.Directory;
 
 public class TestTupleGenerator {
 	

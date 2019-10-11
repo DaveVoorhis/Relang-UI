@@ -3,7 +3,7 @@ package org.reldb.relang.datasheet.dialogs;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Shell;
-import org.reldb.relang.core.utilities.DialogOkCancel;
+import org.reldb.relang.utilities.DialogOkCancel;
 
 public class DialogRenameData extends DialogOkCancel<String> {
 

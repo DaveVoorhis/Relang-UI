@@ -1,5 +1,8 @@
 #!/bin/sh
 
+echo 'Clean'
+rm lib/relang/*
+
 echo 'Build swt_linux'
 pushd ../swtNative/swt_linux
 ant -S
@@ -50,7 +53,8 @@ cp ../dBrowser/lib/* ../_Deploy/lib/relang
 
 echo 'Build RelangWeb'
 pushd ../RelangWeb
+rm WebContent/WEB-INF/lib/*
 ant -S
 popd
-cp ../RelangWeb/lib/* ../_Deploy/lib/relang
+
 

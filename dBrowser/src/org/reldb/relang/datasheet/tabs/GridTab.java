@@ -4,8 +4,8 @@ import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.CTabFolder;
 import org.eclipse.swt.widgets.ToolBar;
 import org.eclipse.swt.widgets.ToolItem;
-import org.reldb.relang.core.data.Data;
 import org.reldb.relang.datasheet.Tab;
+import org.reldb.relang.dengine.data.Data;
 
 public class GridTab extends Tab {
 

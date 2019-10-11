@@ -9,10 +9,10 @@ import java.util.Map;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
-import org.reldb.relang.core.data.CatalogEntry;
-import org.reldb.relang.core.data.bdbje.BDBJEBase;
-import org.reldb.relang.core.data.bdbje.BDBJEData;
-import org.reldb.relang.core.data.bdbje.BDBJEEnvironment;
+import org.reldb.relang.dengine.data.CatalogEntry;
+import org.reldb.relang.dengine.data.bdbje.BDBJEBase;
+import org.reldb.relang.dengine.data.bdbje.BDBJEData;
+import org.reldb.relang.dengine.data.bdbje.BDBJEEnvironment;
 
 public class TestDataBDBJE {
 	

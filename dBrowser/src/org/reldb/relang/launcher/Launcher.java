@@ -24,21 +24,21 @@ import org.eclipse.swt.widgets.*;
 import org.eclipse.wb.swt.SWTResourceManager;
 import org.reldb.relang.about.AboutDialog;
 import org.reldb.relang.commands.Commands;
-import org.reldb.relang.core.data.bdbje.BDBJEEnvironment;
-import org.reldb.relang.core.log.LogWin;
-import org.reldb.relang.core.preferences.Preferences;
-import org.reldb.relang.core.updates.UpdatesCheckDialog;
 import org.reldb.relang.platform.AcceleratedMenuItem;
 import org.reldb.relang.platform.IconLoader;
 import org.reldb.relang.platform.MessageDialog;
 import org.reldb.relang.platform.Platform;
+import org.reldb.relang.preferences.Preferences;
+import org.reldb.relang.updates.UpdatesCheckDialog;
+import org.reldb.relang.utilities.PlatformDetect;
+import org.reldb.relang.version.Version;
 import org.reldb.swt.os_specific.OSSpecific;
-import org.reldb.relang.core.utilities.PlatformDetect;
-import org.reldb.relang.core.version.Version;
 import org.reldb.relang.datasheet.Datasheets;
+import org.reldb.relang.dengine.data.bdbje.BDBJEEnvironment;
 import org.reldb.relang.feedback.BugReportDialog;
 import org.reldb.relang.feedback.CrashDialog;
 import org.reldb.relang.feedback.SuggestionboxDialog;
+import org.reldb.relang.log.LogWin;
 
 public class Launcher {
 

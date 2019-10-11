@@ -16,7 +16,7 @@ import org.apache.http.message.BasicNameValuePair;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.ProgressBar;
-import org.reldb.relang.core.version.Version;
+import org.reldb.relang.version.Version;
 
 /** Send a message back home. */
 public class Feedback {

@@ -26,7 +26,6 @@
 		<copy file="../_Deploy/lib/relang/dBrowser.jar" todir="WebContent/WEB-INF/lib"/>
 		<copy file="../_Deploy/lib/relang/dEngine.jar" todir="WebContent/WEB-INF/lib"/>
 		<copy file="../_Deploy/lib/relang/platformWeb.jar" todir="WebContent/WEB-INF/lib"/>
-		<copy file="../_Deploy/lib/relang/RelangWeb.jar" todir="WebContent/WEB-INF/lib"/>
 	</target>
 	
     <target name="jar" depends="compile">
