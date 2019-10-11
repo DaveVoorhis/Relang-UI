@@ -28,7 +28,6 @@ public class BugReportDialog extends FeedbackDialog {
 	 */
 	public BugReportDialog(Shell parent, int style) {
 		super(parent, SWT.NONE, "Bug Report");
-		putClientInfoInTree(Version.getVersion());
 	}
 	
 	/**
@@ -53,10 +52,8 @@ public class BugReportDialog extends FeedbackDialog {
 	}
 
 	/** Create contents of the dialog. */
-	protected Shell createContents() {
-		Shell shlBugReport = new Shell(getParent(), SWT.DIALOG_TRIM | SWT.RESIZE | SWT.APPLICATION_MODAL);
+	protected void create(Shell shlBugReport) {
 		shlBugReport.setSize(700, 500);
-		shlBugReport.setText(getText());
 		shlBugReport.setLayout(new FormLayout());
 		
 		Composite panelIntro = new Composite(shlBugReport, SWT.NONE);
@@ -169,6 +166,6 @@ public class BugReportDialog extends FeedbackDialog {
 		lblProgress.setEnabled(false);
 		progressBar.setEnabled(false);
 		
-		return shlBugReport;
+		putClientInfoInTree(Version.getVersion());
 	}
 }

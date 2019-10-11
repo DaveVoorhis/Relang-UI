@@ -27,10 +27,15 @@ public abstract class DialogBase<T> extends Dialog {
 	protected void closed(T result) {
 	}
 	
+	/** This is invoked immediately after the shell has been created via create(Shell). */
+	protected void shellInit(Shell shell) {
+	}
+	
 	public void open() {
 		Shell parent = getParent();
 		shell = new Shell(parent, shellStyle);
 		create(shell);
+		shellInit(shell);
 		shell.setText(getText());
 		shell.open();
 		Display display = parent.getDisplay();

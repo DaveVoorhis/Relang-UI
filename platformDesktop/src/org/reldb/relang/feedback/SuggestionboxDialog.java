@@ -29,7 +29,6 @@ public class SuggestionboxDialog extends FeedbackDialog {
 	 */
 	public SuggestionboxDialog(Shell parent, int style) {
 		super(parent, SWT.NONE, "Feedback and Suggestions");
-		putClientInfoInTree(Version.getVersion());
 	}
 
 	/**
@@ -55,10 +54,8 @@ public class SuggestionboxDialog extends FeedbackDialog {
 	}
 
 	/** Create contents of the dialog. */
-	protected Shell createContents() {
-		Shell shlBugReport = new Shell(getParent(), SWT.DIALOG_TRIM | SWT.RESIZE | SWT.APPLICATION_MODAL);
+	protected void create(Shell shlBugReport) {
 		shlBugReport.setSize(700, 500);
-		shlBugReport.setText(getText());
 		shlBugReport.setLayout(new FormLayout());
 
 		Composite panelIntro = new Composite(shlBugReport, SWT.NONE);
@@ -172,7 +169,7 @@ public class SuggestionboxDialog extends FeedbackDialog {
 
 		lblProgress.setEnabled(false);
 		progressBar.setEnabled(false);
-
-		return shlBugReport;
+		
+		putClientInfoInTree(Version.getVersion());
 	}
 }

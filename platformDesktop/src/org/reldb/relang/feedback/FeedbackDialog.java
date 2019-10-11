@@ -3,8 +3,6 @@ package org.reldb.relang.feedback;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
-import org.eclipse.swt.widgets.Dialog;
-import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.SWT;
@@ -12,11 +10,10 @@ import org.eclipse.swt.widgets.Tree;
 import org.eclipse.swt.widgets.ProgressBar;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.TreeItem;
+import org.reldb.relang.core.utilities.DialogBase;
 import org.reldb.relang.platform.MessageDialog;
 
-public abstract class FeedbackDialog extends Dialog {
-	protected Shell shlFeedback;
-	
+public abstract class FeedbackDialog extends DialogBase<String> {
 	protected Label lblProgress;
 	protected ProgressBar progressBar;
 	
@@ -36,8 +33,6 @@ public abstract class FeedbackDialog extends Dialog {
 	 */
 	public FeedbackDialog(Shell parent, int style, String title) {
 		super(parent, style);
-		setText(title);
-		shlFeedback = createContents();
 		phoneHome = new Feedback(btnSend, lblProgress, progressBar) {
 		    public void completed(SendStatus sendStatus) {	
 		    	FeedbackDialog.this.completed(sendStatus);
@@ -46,20 +41,13 @@ public abstract class FeedbackDialog extends Dialog {
 				FeedbackDialog.this.quit();
 			}
 		};
-		report = newTreeItem(treeDetails, "Details");
-		phoneHome.resetProgress();
 	}
-	
-	protected void open() {
+
+	@Override
+	protected void shellInit(Shell shell) {
+		report = newTreeItem(treeDetails, "Details");
 		report.setExpanded(true);
-		shlFeedback.open();
-		shlFeedback.layout();
-		Display display = getParent().getDisplay();
-		while (!shlFeedback.isDisposed()) {
-			if (!display.readAndDispatch()) {
-				display.sleep();
-			}
-		}		
+		phoneHome.resetProgress();
 	}
 	
 	protected static String getCurrentTimeStamp() {
@@ -178,8 +166,6 @@ public abstract class FeedbackDialog extends Dialog {
 	}
 
 	protected abstract FeedbackInfo getFeedbackInfo();
-
-	protected abstract Shell createContents();
 	
 	protected void doSend() {
 		phoneHome.doSend(getFeedbackInfo().toString());
@@ -190,6 +176,6 @@ public abstract class FeedbackDialog extends Dialog {
 	}
 	
 	protected void quit() {
-		shlFeedback.dispose();
+		shell.dispose();
 	}
 }

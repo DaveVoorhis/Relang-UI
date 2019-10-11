@@ -20,6 +20,7 @@ import org.eclipse.swt.layout.GridData;
 public class CrashDialog extends FeedbackDialog {
 	private Text textWhatHappened;
 	private Text textEmailAddress;
+	private Throwable exception;
 
 	/**
 	 * Create the dialog.
@@ -27,10 +28,9 @@ public class CrashDialog extends FeedbackDialog {
 	 * @param parent
 	 * @param style
 	 */
-	public CrashDialog(Shell parent, Throwable t) {
+	public CrashDialog(Shell parent, Throwable exception) {
 		super(parent, SWT.NONE, "Crash Report");
-		putClientInfoInTree(Version.getVersion());
-		putExceptionInTree(t);
+		this.exception = exception;
 	}
 
 	/** Launch the dialog. */
@@ -52,10 +52,8 @@ public class CrashDialog extends FeedbackDialog {
 	}
 
 	/** Create contents of the dialog. */
-	protected Shell createContents() {
-		Shell shlCrashNotification = new Shell(getParent(), SWT.DIALOG_TRIM | SWT.RESIZE | SWT.APPLICATION_MODAL);
+	protected void create(Shell shlCrashNotification) {
 		shlCrashNotification.setSize(700, 500);
-		shlCrashNotification.setText(getText());
 		shlCrashNotification.setLayout(new FormLayout());
 
 		Composite panelIntro = new Composite(shlCrashNotification, SWT.NONE);
@@ -169,7 +167,8 @@ public class CrashDialog extends FeedbackDialog {
 
 		lblProgress.setEnabled(false);
 		progressBar.setEnabled(false);
-
-		return shlCrashNotification;
+		
+		putClientInfoInTree(Version.getVersion());
+		putExceptionInTree(exception);
 	}
 }
