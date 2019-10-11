@@ -2,6 +2,7 @@ package org.reldb.relang.core.updates;
 
 import org.eclipse.swt.widgets.Shell;
 import org.reldb.relang.core.updates.UpdatesCheck.SendStatus;
+import org.reldb.relang.core.utilities.DialogBase;
 import org.reldb.relang.platform.FontSize;
 import org.reldb.relang.platform.IconLoader;
 import org.reldb.relang.platform.MessageDialog;
@@ -9,21 +10,20 @@ import org.reldb.relang.core.version.Version;
 import org.eclipse.swt.graphics.Cursor;
 import org.eclipse.swt.layout.FormLayout;
 import org.eclipse.swt.widgets.Label;
+import org.eclipse.swt.widgets.Link;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.FormData;
 import org.eclipse.swt.layout.FormAttachment;
 import org.eclipse.swt.widgets.ProgressBar;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
-import org.eclipse.swt.widgets.Dialog;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.layout.GridData;
 
-public class UpdatesCheckDialog extends Dialog {
-	private static final long serialVersionUID = 1L;
-	
+public class UpdatesCheckDialog extends DialogBase<String> {
+
 	private Label lblNewUpdatesAvailable;
-	private Label lblNewUpdateURL;
+	private Link lblNewUpdateURL;
 	private Label lblInstructions;
 	private Label lblProgress;
 	private Button btnCancel;
@@ -38,21 +38,9 @@ public class UpdatesCheckDialog extends Dialog {
 	 * @param parent
 	 * @param style
 	 */
-	public UpdatesCheckDialog(Shell parent, int style) {
-		super(parent, SWT.NONE);
+	public UpdatesCheckDialog(Shell parent) {
+		super(parent);
 		setText("Check for Updates");
-		shell = createContents();
-		checker = new UpdatesCheck(btnGo, lblProgress, progressBar, Version.getUpdateURL(), Version.getVersionNumber()) {
-			@Override
-			public void completed(SendStatus sendStatus) {
-				UpdatesCheckDialog.this.completed(sendStatus);
-			}
-
-			@Override
-			public void quit() {
-				UpdatesCheckDialog.this.quit();
-			}
-		};
 	}
 
 	protected void completed(SendStatus sendStatus) {
@@ -91,12 +79,6 @@ public class UpdatesCheckDialog extends Dialog {
 		lblProgress.setText("Ready...");
 	}
 
-	protected void open() {
-		shell.open();
-		shell.layout();
-		open(dlg -> {});
-	}
-
 	/**
 	 * Launch the dialog.
 	 * 
@@ -105,7 +87,7 @@ public class UpdatesCheckDialog extends Dialog {
 	public static void launch(Shell shell) {
 		try {
 			shell.getDisplay().syncExec(() -> {
-				UpdatesCheckDialog checker = new UpdatesCheckDialog(shell, SWT.None);
+				UpdatesCheckDialog checker = new UpdatesCheckDialog(shell);
 				checker.open();
 			});
 		} catch (Exception e) {
@@ -129,10 +111,8 @@ public class UpdatesCheckDialog extends Dialog {
 	}
 
 	/** Create contents of the dialog. */
-	protected Shell createContents() {
-		shell = new Shell(getParent(), SWT.DIALOG_TRIM | SWT.RESIZE | SWT.APPLICATION_MODAL);
+	protected void create(Shell shell) {
 		shell.setSize(600, 250);
-		shell.setText(getText());
 		shell.setLayout(new FormLayout());
 
 		Composite panelIntro = new Composite(shell, SWT.NONE);
@@ -161,7 +141,7 @@ public class UpdatesCheckDialog extends Dialog {
 		fd_lblNewUpdatesAvailable.right = new FormAttachment(100);
 		lblNewUpdatesAvailable.setLayoutData(fd_lblNewUpdatesAvailable);
 
-		lblNewUpdateURL = new Label(shell, SWT.WRAP);
+		lblNewUpdateURL = new Link(shell, SWT.WRAP);
 		lblNewUpdateURL.setVisible(false);
 		FormData fd_lblNewUpdateURL = new FormData();
 		fd_lblNewUpdateURL.top = new FormAttachment(lblNewUpdatesAvailable);
@@ -217,7 +197,17 @@ public class UpdatesCheckDialog extends Dialog {
 
 		lblProgress.setEnabled(false);
 		progressBar.setEnabled(false);
+		
+		checker = new UpdatesCheck(btnGo, lblProgress, progressBar, Version.getUpdateURL(), Version.getVersionNumber()) {
+			@Override
+			public void completed(SendStatus sendStatus) {
+				UpdatesCheckDialog.this.completed(sendStatus);
+			}
 
-		return shell;
+			@Override
+			public void quit() {
+				UpdatesCheckDialog.this.quit();
+			}
+		};
 	}
 }
