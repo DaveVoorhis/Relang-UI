@@ -1,10 +1,12 @@
 package org.reldb.relang.updates;
 
 import org.eclipse.swt.widgets.Shell;
+import org.eclipse.wb.swt.SWTResourceManager;
 import org.reldb.relang.platform.DialogBase;
 import org.reldb.relang.platform.FontSize;
 import org.reldb.relang.platform.IconLoader;
 import org.reldb.relang.platform.MessageDialog;
+import org.reldb.relang.platform.Platform;
 import org.reldb.relang.updates.UpdatesCheck.SendStatus;
 import org.reldb.relang.version.Version;
 import org.eclipse.swt.graphics.Cursor;
@@ -146,12 +148,10 @@ public class UpdatesCheckDialog extends DialogBase<String> {
 		FormData fd_lblNewUpdateURL = new FormData();
 		fd_lblNewUpdateURL.top = new FormAttachment(lblNewUpdatesAvailable);
 		fd_lblNewUpdateURL.left = new FormAttachment(10);
-		fd_lblNewUpdateURL.right = new FormAttachment(100);
+		fd_lblNewUpdateURL.right = new FormAttachment(75);
 		lblNewUpdateURL.setLayoutData(fd_lblNewUpdateURL);
-//		lblNewUpdateURL.setForeground(SWTResourceManager.getColor(SWT.COLOR_LINK_FOREGROUND));
-
-//		lblNewUpdateURL.addListener(SWT.MouseUp,
-//				e -> org.eclipse.swt.program.Program.launch(lblNewUpdateURL.getText()));
+		lblNewUpdateURL.setForeground(SWTResourceManager.getColor(SWT.COLOR_DARK_BLUE));
+		lblNewUpdateURL.addListener(SWT.MouseUp, e -> Platform.launchBrowserWith(lblNewUpdateURL.getText()));
 		lblNewUpdateURL.addListener(SWT.MouseMove, e -> {
 			Cursor cursor = shell.getCursor();
 			if (cursor != null)
