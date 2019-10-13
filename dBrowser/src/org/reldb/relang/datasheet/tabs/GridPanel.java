@@ -23,8 +23,8 @@ import org.reldb.relang.dengine.data.Data;
 import org.reldb.relang.dengine.tuples.Tuple;
 import org.reldb.relang.dengine.tuples.TupleTypeGenerator;
 import org.reldb.relang.launcher.Launcher;
-import org.reldb.relang.platform.DialogBase;
 import org.reldb.relang.platform.GridHelper;
+import org.reldb.relang.utilities.DialogAbstract;
 
 /** A Sheet (controller?) connects a Data (model) to a Datagrid (viewer).
  * 
@@ -199,7 +199,7 @@ public class GridPanel extends Composite {
 	private void showColumnDialog(Event evt) {
 		var column = (GridColumn)evt.item;
 		var parentShell = column.getParent().getShell();
-		var dialog = new DialogBase<Integer>(parentShell) {
+		var dialog = new DialogAbstract<Integer>(parentShell) {
 			@Override
 			public void create(Shell shell) {
 				shell.setText("Properties for " + column.getText());

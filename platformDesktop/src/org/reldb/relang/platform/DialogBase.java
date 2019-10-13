@@ -7,37 +7,20 @@ import org.eclipse.swt.widgets.Shell;
 
 public abstract class DialogBase<T> extends Dialog {
 
-	protected T result;
+	protected T result;	
 	protected Shell shell;
-	
-	private int shellStyle;
-	
-	public DialogBase(Shell parent, int shellStyle) {
-		super(parent, SWT.NONE);
-		this.shellStyle = shellStyle;
-	}
-	
+
 	public DialogBase(Shell parent) {
-		this(parent, SWT.DIALOG_TRIM | SWT.RESIZE | SWT.APPLICATION_MODAL);
+		super(parent, SWT.NONE);
 	}
 
-	/** This is invoked to configure the shell. */
-	protected abstract void create(Shell shell);
+	protected abstract void closed(T result);
 	
-	/** This is invoked with the dialog closes, and may be overridden to receive result. */
-	protected void closed(T result) {}
-	
-	public void open() {
-		Shell parent = getParent();
-		shell = new Shell(parent, shellStyle);
-		create(shell);
-		shell.setText(getText());
-		shell.open();
-		Display display = parent.getDisplay();
-		while (!shell.isDisposed()) {
+	public void launch() {
+		Display display = getParent().getDisplay();
+		while (!shell.isDisposed())
 			if (!display.readAndDispatch())
 				display.sleep();
-		}
 		closed(result);
 	}
 }

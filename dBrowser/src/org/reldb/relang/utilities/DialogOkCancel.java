@@ -1,7 +1,6 @@
 package org.reldb.relang.utilities;
 
 import org.eclipse.swt.widgets.Shell;
-import org.reldb.relang.platform.DialogBase;
 import org.eclipse.swt.layout.FormLayout;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
@@ -10,7 +9,7 @@ import org.eclipse.swt.layout.FormData;
 import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.layout.FormAttachment;
 
-public abstract class DialogOkCancel<T> extends DialogBase<T> {
+public abstract class DialogOkCancel<T> extends DialogAbstract<T> {
 
 	/**
 	 * Create the dialog.
@@ -23,6 +22,7 @@ public abstract class DialogOkCancel<T> extends DialogBase<T> {
 	
 	private void close(T openReturnValue) {
 		result = openReturnValue;
+		shell.close();
 		shell.dispose();
 	}
 	
@@ -42,7 +42,7 @@ public abstract class DialogOkCancel<T> extends DialogBase<T> {
 	/**
 	 * Invoked when the CANCEL button is pressed or shell is closed via close button. 
 	 * 
-	 * By default, returns Null to the caller of open().
+	 * Returns Null to the caller of open().
 	 */
 	protected void cancel() {
 		close(null);

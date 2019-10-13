@@ -10,11 +10,11 @@ import org.eclipse.swt.widgets.Tree;
 import org.eclipse.swt.widgets.ProgressBar;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.TreeItem;
-import org.reldb.relang.platform.DialogBase;
 import org.reldb.relang.platform.Feedback;
 import org.reldb.relang.platform.MessageDialog;
+import org.reldb.relang.utilities.DialogAbstract;
 
-public abstract class FeedbackDialog extends DialogBase<String> {
+public abstract class FeedbackDialog extends DialogAbstract<String> {
 	protected Label lblProgress;
 	protected ProgressBar progressBar;
 	
