@@ -5,7 +5,7 @@ import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.Menu;
 import org.eclipse.swt.widgets.MenuItem;
 
-// A MenuItem with an optional icon that can change size in response to change in Preferences.
+// A MenuItem with an optional icon.
 public class IconMenuItem extends MenuItem {
 	private static final long serialVersionUID = 1L;
 	

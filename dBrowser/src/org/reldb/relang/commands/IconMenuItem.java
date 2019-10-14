@@ -1,12 +1,13 @@
-package org.reldb.relang.platform;
+package org.reldb.relang.commands;
 
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.Menu;
-import org.eclipse.swt.widgets.MenuItem;
+import org.reldb.relang.platform.IconLoader;
+import org.reldb.relang.platform.PlatformMenuItem;
 
-// A MenuItem with an optional icon that can change size in response to change in Preferences.
-public class IconMenuItem extends MenuItem {
+// A MenuItem with an optional icon.
+public class IconMenuItem extends PlatformMenuItem {
 	private String imageName;
 	
 	public IconMenuItem(Menu parentMenu, String text, String imageName, int style, Listener listener) {
@@ -27,6 +28,4 @@ public class IconMenuItem extends MenuItem {
 		if (imageName != null)
 			setImage(IconLoader.loadIcon(imageName));
 	}
-	
-	public void checkSubclass() {}
 }

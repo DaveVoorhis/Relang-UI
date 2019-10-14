@@ -1,4 +1,4 @@
-package org.reldb.relang.platform;
+package org.reldb.relang.commands;
 
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.*;
@@ -34,10 +34,4 @@ public class AcceleratedMenuItem extends IconMenuItem {
 	public boolean canExecute() {
 		return true;
 	}
-
-	public void setToolTipText(String toolTipText) {
-		// No-op in RWT
-	}
-	
-	public void checkSubclass() {}
 }
