@@ -20,7 +20,7 @@ import org.reldb.relang.dengine.data.CatalogEntry;
 import org.reldb.relang.dengine.data.Data;
 import org.reldb.relang.dengine.data.bdbje.BDBJEBase;
 import org.reldb.relang.dengine.data.bdbje.BDBJEData;
-import org.reldb.relang.platform.MessageDialog;
+import org.reldb.relang.utilities.MessageDialog;
 import org.eclipse.swt.custom.CTabFolder;
 import org.eclipse.swt.custom.CTabFolder2Adapter;
 import org.eclipse.swt.custom.CTabFolderEvent;
@@ -171,13 +171,13 @@ public class Datasheet extends Composite {
 			if (selection == null)
 				return;
 			String name = selection.getText();
-			if (MessageDialog.openQuestion(getShell(), "Drop?", "Do you wish to permanently drop data source '" + name + "'?")) {
+			MessageDialog.openQuestion(getShell(), "Drop?", "Do you wish to permanently drop data source '" + name + "'?", () -> {
 				base.remove(name);
 				var tab = getTab(name);
 				if (tab != null)
 					tab.dispose();
 				updateCatalogTree();
-			}
+			});
 		});
 		
 		renameItem = new MenuItem(menu, SWT.PUSH);

@@ -6,7 +6,7 @@ import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.Shell;
-import org.reldb.relang.platform.MessageDialog;
+import org.reldb.relang.utilities.MessageDialog;
 
 public class TestMessageDialog {
 
@@ -45,19 +45,13 @@ public class TestMessageDialog {
 	}
 	
 	public void testConfirmOk() {
-		boolean result = MessageDialog.openConfirm(shell, "ConfirmTest", "This is a confirmation message. Press Ok to verify it works.");
-		if (result)
-			MessageDialog.openInformation(shell, "ConfirmTest", "You pressed Ok.");
-		else
-			MessageDialog.openInformation(shell, "ConfirmTest", "You pressed something other than Ok.");
+		MessageDialog.openConfirm(shell, "ConfirmTest", "This is a confirmation message. Press Ok to verify it works.", 
+			() -> MessageDialog.openInformation(shell, "ConfirmTest", "You pressed Ok."));
 	}
 	
 	public void testConfirmCancel() {
-		boolean result = MessageDialog.openConfirm(shell, "ConfirmTest", "This is a confirmation message. Press Cancel to verify it works.");
-		if (result)
-			MessageDialog.openInformation(shell, "ConfirmTest", "You pressed Ok.");
-		else
-			MessageDialog.openInformation(shell, "ConfirmTest", "You pressed something other than Ok.");
+		MessageDialog.openConfirm(shell, "ConfirmTest", "This is a confirmation message. Press Cancel to verify it works.",
+			() -> MessageDialog.openInformation(shell, "ConfirmTest", "You either pressed Ok, or it's broken."));
 	}
 
 	public void testError() {
@@ -73,18 +67,12 @@ public class TestMessageDialog {
 	}
 	
 	public void testQuestionYes() {
-		boolean result = MessageDialog.openQuestion(shell, "QuestionTest", "This is a question message. Press Yes to verify it works.");
-		if (result)
-			MessageDialog.openInformation(shell, "ConfirmTest", "You pressed Yes.");
-		else
-			MessageDialog.openInformation(shell, "ConfirmTest", "You pressed something other than Yes.");
+		MessageDialog.openQuestion(shell, "QuestionTest", "This is a question message. Press Yes to verify it works.",
+			() -> MessageDialog.openInformation(shell, "ConfirmTest", "You pressed Yes."));
 	}
 	
 	public void testQuestionNo() {
-		boolean result = MessageDialog.openQuestion(shell, "QuestionTest", "This is a question message. Press No to verify it works.");
-		if (result)
-			MessageDialog.openInformation(shell, "ConfirmTest", "You pressed Yes.");
-		else
-			MessageDialog.openInformation(shell, "ConfirmTest", "You pressed something other than Yes.");
+		MessageDialog.openQuestion(shell, "QuestionTest", "This is a question message. Press No to verify it works.",
+			() -> MessageDialog.openInformation(shell, "ConfirmTest", "You either pressed Yes, or it's broken."));
 	}
 }

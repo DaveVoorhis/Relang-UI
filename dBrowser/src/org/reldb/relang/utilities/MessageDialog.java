@@ -1,8 +1,10 @@
-package org.reldb.relang.platform;
+package org.reldb.relang.utilities;
 
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.MessageBox;
 import org.eclipse.swt.widgets.Shell;
+import org.reldb.relang.dengine.utilities.Action;
+import org.reldb.relang.platform.MessageBoxLauncher;
 
 /**
  * A dialog for showing messages to the user.
@@ -30,16 +32,28 @@ public class MessageDialog {
 	}
 
 	/**
+	 * Create and open a MessageBox that invokes a lambda if SWT.YES or SWT.OK is pressed.
+	 * 
+	 * @param parent  the parent shell of the dialog or <code>null</code> if none
+	 * @param title  the dialog's title, or <code>null</code> if none
+	 * @param message  the message
+	 * @param style  Style codes, e.g., SWT.ICON_QUESTION, SWT.ICON_WARNING, SWT.ICON_ERROR | SWT.YES, SWT.NO, SWT.OK, SWT.CANCEL, etc.
+	 * @param act  a lambda to be invoked if SWT.YES or SWT.OK is pressed
+	 */
+	public static void openMessageBox(Shell parent, String title, String message, int style, Action act) {
+		MessageBoxLauncher.open(createMessageBox(parent, title, message, style), act);
+	}
+
+	/**
 	 * Create and open a MessageBox.
 	 * 
 	 * @param parent  the parent shell of the dialog or <code>null</code> if none
 	 * @param title  the dialog's title, or <code>null</code> if none
 	 * @param message  the message
 	 * @param style  Style codes, e.g., SWT.ICON_QUESTION, SWT.ICON_WARNING, SWT.ICON_ERROR | SWT.YES, SWT.NO, SWT.OK, SWT.CANCEL, etc.
-	 * @return integer return code indicating button press, e.g., SWT.OK, SWT.CANCEL, etc.
 	 */
-	public static int openMessageBox(Shell parent, String title, String message, int style) {
-		return createMessageBox(parent, title, message, style).open();
+	public static void openMessageBox(Shell parent, String title, String message, int style) {
+		MessageBoxLauncher.open(createMessageBox(parent, title, message, style), null);
 	}
 	
 	/**
@@ -48,11 +62,10 @@ public class MessageDialog {
 	 * @param parent  the parent shell of the dialog, or <code>null</code> if none
 	 * @param title   the dialog's title, or <code>null</code> if none
 	 * @param message the message
-	 * @return <code>true</code> if the user presses the OK button,
-	 *         <code>false</code> otherwise
+	 * @param act  a lambda to be invoked if SWT.OK is pressed
 	 */
-	public static boolean openConfirm(Shell parent, String title, String message) {
-		return openMessageBox(parent, title, message, SWT.OK | SWT.CANCEL | SWT.ICON_QUESTION) == SWT.OK;
+	public static void openConfirm(Shell parent, String title, String message, Action act) {
+		openMessageBox(parent, title, message, SWT.OK | SWT.CANCEL | SWT.ICON_QUESTION, act);
 	}
 
 	/**
@@ -63,7 +76,7 @@ public class MessageDialog {
 	 * @param message the message
 	 */
 	public static void openError(Shell parent, String title, String message) {
-		createMessageBox(parent, title, message, SWT.OK | SWT.ICON_ERROR).open();
+		openMessageBox(parent, title, message, SWT.OK | SWT.ICON_ERROR);
 	}
 
 	/**
@@ -74,7 +87,7 @@ public class MessageDialog {
 	 * @param message the message
 	 */
 	public static void openInformation(Shell parent, String title, String message) {
-		createMessageBox(parent, title, message, SWT.OK | SWT.ICON_INFORMATION).open();
+		openMessageBox(parent, title, message, SWT.OK | SWT.ICON_INFORMATION);
 	}
 
 	/**
@@ -83,11 +96,10 @@ public class MessageDialog {
 	 * @param parent  the parent shell of the dialog, or <code>null</code> if none
 	 * @param title   the dialog's title, or <code>null</code> if none
 	 * @param message the message
-	 * @return <code>true</code> if the user presses the Yes button,
-	 *         <code>false</code> otherwise
+	 * @param act  a lambda to be invoked if SWT.YES is pressed
 	 */
-	public static boolean openQuestion(Shell parent, String title, String message) {
-		return openMessageBox(parent, title, message, SWT.YES | SWT.NO | SWT.ICON_QUESTION) == SWT.YES;
+	public static void openQuestion(Shell parent, String title, String message, Action act) {
+		openMessageBox(parent, title, message, SWT.YES | SWT.NO | SWT.ICON_QUESTION, act);
 	}
 
 	/**
@@ -98,7 +110,7 @@ public class MessageDialog {
 	 * @param message the message
 	 */
 	public static void openWarning(Shell parent, String title, String message) {
-		createMessageBox(parent, title, message, SWT.OK | SWT.ICON_WARNING).open();
+		openMessageBox(parent, title, message, SWT.OK | SWT.ICON_WARNING);
 	}
 
 }

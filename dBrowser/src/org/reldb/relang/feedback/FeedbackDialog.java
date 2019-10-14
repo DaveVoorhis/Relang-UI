@@ -11,8 +11,8 @@ import org.eclipse.swt.widgets.ProgressBar;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.TreeItem;
 import org.reldb.relang.platform.Feedback;
-import org.reldb.relang.platform.MessageDialog;
 import org.reldb.relang.utilities.DialogAbstract;
+import org.reldb.relang.utilities.MessageDialog;
 
 public abstract class FeedbackDialog extends DialogAbstract<String> {
 	protected Label lblProgress;

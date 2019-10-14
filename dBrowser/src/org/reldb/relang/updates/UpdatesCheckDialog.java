@@ -2,12 +2,12 @@ package org.reldb.relang.updates;
 
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.wb.swt.SWTResourceManager;
-import org.reldb.relang.platform.FontSize;
 import org.reldb.relang.platform.IconLoader;
-import org.reldb.relang.platform.MessageDialog;
 import org.reldb.relang.platform.Platform;
 import org.reldb.relang.updates.UpdatesCheck.SendStatus;
 import org.reldb.relang.utilities.DialogAbstract;
+import org.reldb.relang.utilities.FontSize;
+import org.reldb.relang.utilities.MessageDialog;
 import org.reldb.relang.version.Version;
 import org.eclipse.swt.graphics.Cursor;
 import org.eclipse.swt.layout.FormLayout;
