@@ -14,7 +14,6 @@ import java.util.Queue;
 import java.util.concurrent.Semaphore;
 
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.dnd.Clipboard;
 import org.eclipse.swt.dnd.HTMLTransfer;
 import org.eclipse.swt.dnd.TextTransfer;
 import org.eclipse.swt.events.MenuAdapter;
@@ -28,6 +27,7 @@ import org.reldb.relang.platform.AcceleratedMenuItem;
 import org.reldb.relang.platform.IconLoader;
 import org.reldb.relang.platform.MessageDialog;
 import org.reldb.relang.platform.Platform;
+import org.reldb.relang.platform.UniversalClipboard;
 import org.reldb.relang.preferences.Preferences;
 import org.reldb.relang.updates.UpdatesCheckDialog;
 import org.reldb.relang.utilities.PlatformDetect;
@@ -150,7 +150,7 @@ public class Launcher {
 	}
 	
 	private static boolean isThereSomethingToPaste() {
-		Clipboard clipboard = new Clipboard(Display.getCurrent());
+		UniversalClipboard clipboard = new UniversalClipboard(Display.getCurrent());
 		try {
 			TextTransfer textTransfer = TextTransfer.getInstance();
 			HTMLTransfer htmlTransfer = HTMLTransfer.getInstance();
