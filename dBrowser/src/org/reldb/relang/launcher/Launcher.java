@@ -162,13 +162,6 @@ public class Launcher {
 		}
 	}
 	
-	/*
-	// Link a command (which implies a toolbar-accessible action) with a menu item.
-	private static void linkCommand(Commands.Do command, AcceleratedMenuItem menuItem) {
-		Commands.linkCommand(command, menuItem);
-	}
-	*/
-	
 	private static Method getEditMethod(String methodName, Control control) {
 		if (control == null)
 			return null;
@@ -242,6 +235,9 @@ public class Launcher {
 	}
 	
 	private static void createEditMenu(Menu bar) {		
+		if (!UniversalClipboard.isClipboardAvailable())
+			return;
+		
 		MenuItem editItem = new MenuItem(bar, SWT.CASCADE);
 		editItem.setText("Edit");
 		
@@ -254,7 +250,7 @@ public class Launcher {
 		createEditMenuItem("redo", new AcceleratedMenuItem(menu, "Redo\tCtrl-Y", redoAccelerator, "redo"));
 		
 		new MenuItem(menu, SWT.SEPARATOR);
-		
+
 		createEditMenuItem("cut", new AcceleratedMenuItem(menu, "Cut\tCtrl-X", SWT.MOD1 | 'X', "cut"));
 		createEditMenuItem("copy", new AcceleratedMenuItem(menu, "Copy\tCtrl-C", SWT.MOD1 | 'C', "copy"));
 		createEditMenuItem("paste", new AcceleratedMenuItem(menu, "Paste\tCtrl-V", SWT.MOD1 | 'V', "paste") {
@@ -262,28 +258,9 @@ public class Launcher {
 				return isThereSomethingToPaste();
 			}
 		});
+		
 		createEditMenuItem("delete", new AcceleratedMenuItem(menu, "Delete\tDel", SWT.DEL, "rubbish-bin"));
 		createEditMenuItem("selectAll", new AcceleratedMenuItem(menu, "Select All\tCtrl-A", SWT.MOD1 | 'A', "select-all"));
-
-		/*
-		linkCommand(Commands.Do.FindReplace, new AcceleratedMenuItem(menu, "Find/Replace", 0, "edit_find_replace"));
-
-		new MenuItem(menu, SWT.SEPARATOR);
-		
-		linkCommand(Commands.Do.SpecialCharacters, new AcceleratedMenuItem(menu, "Special characters", 0, "characters"));
-		linkCommand(Commands.Do.PreviousHistory, new AcceleratedMenuItem(menu, "Previous history", 0, "previousIcon"));
-		linkCommand(Commands.Do.NextHistory, new AcceleratedMenuItem(menu, "Next history", 0, "nextIcon"));
-		linkCommand(Commands.Do.LoadFile, new AcceleratedMenuItem(menu, "Load file", 0, "loadIcon"));
-		linkCommand(Commands.Do.InsertFile, new AcceleratedMenuItem(menu, "Insert file", 0, "loadInsertIcon"));
-		linkCommand(Commands.Do.InsertFileName, new AcceleratedMenuItem(menu, "Insert file name", 0, "pathIcon"));
-		linkCommand(Commands.Do.SaveFile, new AcceleratedMenuItem(menu, "Save file", 0, "saveIcon"));
-		linkCommand(Commands.Do.SaveHistory, new AcceleratedMenuItem(menu, "Save history", 0, "saveHistoryIcon"));
- 
- 		new MenuItem(menu, SWT.SEPARATOR);
- 
- 		linkCommand(Commands.Do.CopyInputToOutput, new AcceleratedMenuItem(menu, "Copy input to output", 0, "copyToOutputIcon", SWT.CHECK));
- 		linkCommand(Commands.Do.WrapText, new AcceleratedMenuItem(menu, "Wrap text", 0, "wrapIcon", SWT.CHECK));
- 		*/
 	}
 	
 	static void createDataMenu(Menu bar) {

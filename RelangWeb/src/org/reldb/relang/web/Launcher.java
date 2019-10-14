@@ -4,7 +4,6 @@ import java.io.File;
 import java.net.InetAddress;
 import java.net.UnknownHostException;
 
-import org.apache.catalina.LifecycleException;
 import org.apache.catalina.startup.Tomcat;
 import org.apache.catalina.webresources.StandardRoot;
 
@@ -42,14 +41,13 @@ public class Launcher {
         context.setResources(resources);
 	}
 
-	public void go() {        
+	public void go() {  
 		try {
 			tomcat.start();
-		} catch (LifecycleException e) {
+		} catch (Throwable e) {
+			System.out.println("Launch failure due to: " + e);
 			e.printStackTrace();
-			return;
 		}
-        tomcat.getServer().await();
 	}
 
 }

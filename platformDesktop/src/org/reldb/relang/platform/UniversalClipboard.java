@@ -25,4 +25,8 @@ public class UniversalClipboard {
 		clipboard.dispose();
 	}
 
+	public static boolean isClipboardAvailable() {
+		return true;
+	}
+
 }
