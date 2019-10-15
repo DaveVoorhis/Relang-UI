@@ -1,5 +1,6 @@
 ** TO DO **
 
+- Fix Dialog closing in Web?
 - Fix setToolTipText on MenuItem in Web.
 - Show test URL in MainDev Web launch console.
 - Make Dialog subclasses editable with Eclipse WindowBuilder.
