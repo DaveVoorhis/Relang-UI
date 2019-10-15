@@ -1,9 +1,9 @@
 ** TO DO **
 
+- Make Dialog subclasses editable with Eclipse WindowBuilder. Consider only editing CompositeS, and injecting them into Dialog boxes.
 - Fix Dialog closing in Web?
 - Fix setToolTipText on MenuItem in Web.
 - Show test URL in MainDev Web launch console.
-- Make Dialog subclasses editable with Eclipse WindowBuilder.
 - Re-enable crash trapping on Web version.
 - Work on general-purpose property set/get that allows manipulating and saving any properties of an instance, via reflection. Should display in a grid.
 - Work on keys for Data, based on natural keys. Don't use row numbers; that won't work as soon as a row is deleted.
