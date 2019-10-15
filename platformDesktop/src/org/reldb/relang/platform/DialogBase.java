@@ -7,6 +7,8 @@ import org.reldb.relang.dengine.utilities.Action;
 
 public class DialogBase extends Dialog {
 	
+	public Shell shell;
+	
 	public DialogBase(Shell parent) {
 		super(parent);
 	}

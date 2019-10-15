@@ -1,28 +1,32 @@
 package org.reldb.relang.utilities;
 
 import org.eclipse.swt.widgets.Shell;
-import org.reldb.relang.dengine.utilities.EventListener;
+import org.reldb.relang.dengine.utilities.Action;
 import org.eclipse.swt.layout.FormLayout;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.FormData;
 import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.layout.FormAttachment;
 
-public abstract class DialogOkCancel<T> extends DialogAbstract<T> {
-
+public abstract class DialogOkCancel extends DialogAbstract {
+	
+	private Action onOk;
+	protected Shell shell;
+	
 	/**
 	 * Create the dialog.
 	 * @param parent
 	 * @param style
 	 */
-	public DialogOkCancel(Shell parent, EventListener<T> actionResult) {
-		super(parent, actionResult);
+	public DialogOkCancel(Shell parent, Action onOk) {
+		super(parent);
+		this.onOk = onOk;
 	}
 	
-	private void close(T openReturnValue) {
-		result = openReturnValue;
+	private void close() {
 		shell.close();
 		shell.dispose();
 	}
@@ -33,36 +37,21 @@ public abstract class DialogOkCancel<T> extends DialogAbstract<T> {
 	 */
 	protected abstract void createContent(Composite content);
 	
-	/** 
-	 * Invoked when the OK button is pressed. Return the value that should be passed to the EventListener lambda specified in the constructor.
-	 * 
-	 * @return - value to be passed to EventListener, of type T.
-	 */
-	protected abstract T ok();
-	
-	/**
-	 * Invoked when the CANCEL button is pressed or shell is closed via close button.
-	 * 
-	 * Causes Null to be passed to the EventListener lambda specified in the constructor.
-	 */
-	protected void cancel() {
-		close(null);
-	}
-	
 	/**
 	 * Create contents of the dialog.
 	 */
 	protected void createContents() {
 		shell.setLayout(new FormLayout());
-		shell.addListener(SWT.CLOSE, evt -> cancel());
+		shell.addListener(SWT.CLOSE, evt -> close());
 		
-		var btnCancel = new Button(shell, SWT.NONE);
+		System.out.println("Shell = " + shell);
+		var btnCancel = new Button(shell, SWT.BORDER);
 		var fd_btnCancel = new FormData();
 		fd_btnCancel.bottom = new FormAttachment(100, -10);
 		fd_btnCancel.right = new FormAttachment(100, -10);
 		btnCancel.setLayoutData(fd_btnCancel);
 		btnCancel.setText("Cancel");
-		btnCancel.addListener(SWT.Selection, evt -> cancel());
+		btnCancel.addListener(SWT.Selection, evt -> close());
 		
 		var btnOk = new Button(shell, SWT.NONE);
 		var fd_btnOk = new FormData();
@@ -70,7 +59,10 @@ public abstract class DialogOkCancel<T> extends DialogAbstract<T> {
 		fd_btnOk.right = new FormAttachment(btnCancel, -6);
 		btnOk.setLayoutData(fd_btnOk);
 		btnOk.setText("Ok");
-		btnOk.addListener(SWT.Selection, evt -> close(ok()));
+		btnOk.addListener(SWT.Selection, evt -> {
+			onOk.go();
+			close();
+		});
 		
 		var contentPanel = new Composite(shell, SWT.NONE);
 		var fd_contentPanel = new FormData();
@@ -83,6 +75,28 @@ public abstract class DialogOkCancel<T> extends DialogAbstract<T> {
 		createContent(contentPanel);
 		
 		shell.setDefaultButton(btnOk);
+	}
+	
+	public Shell obtainShell() {
+		return new Shell(getParent(), getStyle());
+	}
+
+	public void launch() {
+		createContents();
+		shell.open();
+		launch(shell);
+	}
+	
+	public void open() {
+		shell = obtainShell();
+		createContents();
+		shell.open();
+		Display display = getParent().getDisplay();
+		while (!shell.isDisposed()) {
+			if (!display.readAndDispatch()) {
+				display.sleep();
+			}
+		}
 	}
 	
 }
