@@ -1,6 +1,8 @@
 ** TO DO **
 
-- Maybe make Dialog use MessageBoxLauncher code and use response lambda in a similar manner as MessageDialog?
+- Fix setToolTipText on MenuItem in Web.
+- Show test URL in MainDev Web launch console.
+- Make Dialog subclasses editable with Eclipse WindowBuilder.
 - Re-enable crash trapping on Web version.
 - Work on general-purpose property set/get that allows manipulating and saving any properties of an instance, via reflection. Should display in a grid.
 - Work on keys for Data, based on natural keys. Don't use row numbers; that won't work as soon as a row is deleted.

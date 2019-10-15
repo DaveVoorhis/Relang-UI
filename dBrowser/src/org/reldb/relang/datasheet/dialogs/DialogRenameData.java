@@ -3,6 +3,7 @@ package org.reldb.relang.datasheet.dialogs;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Shell;
+import org.reldb.relang.dengine.utilities.EventListener;
 import org.reldb.relang.utilities.DialogOkCancel;
 
 public class DialogRenameData extends DialogOkCancel<String> {
@@ -10,8 +11,8 @@ public class DialogRenameData extends DialogOkCancel<String> {
 	private PanelRenameData renameData;
 	private String name;
 	
-	public DialogRenameData(Shell shell, String name) {
-		super(shell);
+	public DialogRenameData(Shell shell, String name, EventListener<String> actionResult) {
+		super(shell, actionResult);
 		this.name = name;
 	}
 	

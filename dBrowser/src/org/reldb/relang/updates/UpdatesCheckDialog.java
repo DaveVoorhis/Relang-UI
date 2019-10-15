@@ -41,7 +41,7 @@ public class UpdatesCheckDialog extends DialogAbstract<String> {
 	 * @param style
 	 */
 	public UpdatesCheckDialog(Shell parent) {
-		super(parent);
+		super(parent, null);
 		setText("Check for Updates");
 	}
 

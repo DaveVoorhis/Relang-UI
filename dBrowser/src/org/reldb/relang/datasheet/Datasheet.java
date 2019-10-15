@@ -186,24 +186,22 @@ public class Datasheet extends Composite {
 			var selection = getTreeSelection();
 			if (selection == null)
 				return;
-			final String name = selection.getText();		
-			var renameDialog = new DialogRenameData(getShell(), name) {
-				public void closed(String newName) {
-					if (newName != null && newName.length() > 0 && !newName.equals(name)) {
-						try {
-							base.rename(name, newName);
-						} catch (Throwable e) {
-							MessageDialog.openError(getShell(), "Unable to Rename", "Unable to rename: " + e.getMessage());
-							return;
-						}
-						var tab = getTab(name);
-						if (tab != null)
-							tab.setText(newName);
-						updateCatalogTree();
-						setTreeSelection(newName);
-					}					
+			final String name = selection.getText();
+			var renameDialog = new DialogRenameData(getShell(), name, newName -> {
+				if (newName == null || newName.trim().length() == 0 || newName.trim().equals(name.trim()))
+					return;
+				try {
+					base.rename(name, newName);
+				} catch (Throwable e) {
+					MessageDialog.openError(getShell(), "Unable to Rename", "Unable to rename: " + e.getMessage());
+					return;
 				}
-			};
+				var tab = getTab(name);
+				if (tab != null)
+					tab.setText(newName);
+				updateCatalogTree();
+				setTreeSelection(newName);
+			});
 			renameDialog.open();
 		});
 	}

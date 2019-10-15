@@ -1,6 +1,7 @@
 package org.reldb.relang.utilities;
 
 import org.eclipse.swt.widgets.Shell;
+import org.reldb.relang.dengine.utilities.EventListener;
 import org.eclipse.swt.layout.FormLayout;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
@@ -16,8 +17,8 @@ public abstract class DialogOkCancel<T> extends DialogAbstract<T> {
 	 * @param parent
 	 * @param style
 	 */
-	public DialogOkCancel(Shell parent) {
-		super(parent);
+	public DialogOkCancel(Shell parent, EventListener<T> actionResult) {
+		super(parent, actionResult);
 	}
 	
 	private void close(T openReturnValue) {
@@ -33,16 +34,16 @@ public abstract class DialogOkCancel<T> extends DialogAbstract<T> {
 	protected abstract void createContent(Composite content);
 	
 	/** 
-	 * Invoked when the OK button is pressed. Return the value that should be returned to the caller of open().
+	 * Invoked when the OK button is pressed. Return the value that should be passed to the EventListener lambda specified in the constructor.
 	 * 
-	 * @return - value to be returned to the caller of open(), of type T.
+	 * @return - value to be passed to EventListener, of type T.
 	 */
 	protected abstract T ok();
 	
 	/**
-	 * Invoked when the CANCEL button is pressed or shell is closed via close button. 
+	 * Invoked when the CANCEL button is pressed or shell is closed via close button.
 	 * 
-	 * Returns Null to the caller of open().
+	 * Causes Null to be passed to the EventListener lambda specified in the constructor.
 	 */
 	protected void cancel() {
 		close(null);

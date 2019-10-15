@@ -33,7 +33,7 @@ public abstract class FeedbackDialog extends DialogAbstract<String> {
 	 * @param style
 	 */
 	public FeedbackDialog(Shell parent) {
-		super(parent);
+		super(parent, null);
 	}
 	
 	protected static String getCurrentTimeStamp() {

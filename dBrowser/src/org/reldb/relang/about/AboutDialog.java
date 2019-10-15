@@ -17,7 +17,7 @@ public class AboutDialog extends DialogAbstract<String> {
 	 * @param style
 	 */
 	public AboutDialog(Shell parent) {
-		super(parent, SWT.DIALOG_TRIM | SWT.APPLICATION_MODAL);
+		super(parent, SWT.DIALOG_TRIM | SWT.APPLICATION_MODAL, null);
 	}
 
 	/**
