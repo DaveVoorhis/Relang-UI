@@ -435,7 +435,7 @@ public class Launcher {
 		
 		OSSpecific.launch(Version.getAppName(),
 			event -> quit(),
-			event -> new AboutDialog(shell).open(),
+			event -> new AboutDialog(shell).launch(),
 			event -> new Preferences(shell).show()
 		);
 
@@ -547,7 +547,7 @@ public class Launcher {
 		
 		OSSpecific.launch(Version.getAppName(),
 			event -> quit(),
-			event -> new AboutDialog(shell).open(),
+			event -> new AboutDialog(shell).launch(),
 			event -> new Preferences(shell).show()
 		);
 		

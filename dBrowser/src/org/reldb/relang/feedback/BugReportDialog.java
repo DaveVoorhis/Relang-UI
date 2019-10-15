@@ -54,11 +54,11 @@ public class BugReportDialog extends FeedbackDialog {
 	}
 
 	/** Create contents of the dialog. */
-	protected void create(Shell shlBugReport) {
-		shlBugReport.setSize(700, 500);
-		shlBugReport.setLayout(new FormLayout());
+	protected void createContents() {
+		shell.setSize(700, 500);
+		shell.setLayout(new FormLayout());
 		
-		Composite panelIntro = new Composite(shlBugReport, SWT.NONE);
+		Composite panelIntro = new Composite(shell, SWT.NONE);
 		panelIntro.setLayout(new GridLayout(2, false));
 		FormData fd_panelIntro = new FormData();
 		fd_panelIntro.top = new FormAttachment(0);
@@ -74,35 +74,35 @@ public class BugReportDialog extends FeedbackDialog {
 		lblInstructions.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true, 1, 1));
 		lblInstructions.setText("Please complete the following and remove any information that you don't want to send.  Then press the Send button to transmit it to the developers.");
 		
-		Label lblStep1 = new Label(shlBugReport, SWT.NONE);
+		Label lblStep1 = new Label(shell, SWT.NONE);
 		FormData fd_lblStep1 = new FormData();
 		fd_lblStep1.top = new FormAttachment(panelIntro, 10);
 		fd_lblStep1.left = new FormAttachment(0, 10);
 		lblStep1.setLayoutData(fd_lblStep1);
 		lblStep1.setText("1. Please describe the problem.");
 		
-		textWhatHappened = new Text(shlBugReport, SWT.BORDER | SWT.WRAP | SWT.V_SCROLL);
+		textWhatHappened = new Text(shell, SWT.BORDER | SWT.WRAP | SWT.V_SCROLL);
 		FormData fd_textWhatHappened = new FormData();
 		fd_textWhatHappened.top = new FormAttachment(lblStep1, 6);
 		fd_textWhatHappened.left = new FormAttachment(0, 10);
 		fd_textWhatHappened.right = new FormAttachment(100, -10);
 		textWhatHappened.setLayoutData(fd_textWhatHappened);
 		
-		Label lblStep2 = new Label(shlBugReport, SWT.NONE);
+		Label lblStep2 = new Label(shell, SWT.NONE);
 		FormData fd_lblStep2 = new FormData();
 		lblStep2.setLayoutData(fd_lblStep2);
 		lblStep2.setText("2. What is your email address?  (optional - we'll only use it if we need to ask you further questions)");
 		
-		textEmailAddress = new Text(shlBugReport, SWT.BORDER);
+		textEmailAddress = new Text(shell, SWT.BORDER);
 		FormData fd_textEmailAddress = new FormData();
 		textEmailAddress.setLayoutData(fd_textEmailAddress);
 		
-		Label lblStep3 = new Label(shlBugReport, SWT.NONE);
+		Label lblStep3 = new Label(shell, SWT.NONE);
 		FormData fd_lblStep3 = new FormData();
 		lblStep3.setLayoutData(fd_lblStep3);
 		lblStep3.setText("3. Examine these further details and un-check anything you don't want to send.");
 		
-		treeDetails = new Tree(shlBugReport, SWT.BORDER | SWT.CHECK);
+		treeDetails = new Tree(shell, SWT.BORDER | SWT.CHECK);
 		FormData fd_treeDetails = new FormData();
 		treeDetails.setLayoutData(fd_treeDetails);
 		fd_treeDetails.height = 75;
@@ -115,24 +115,24 @@ public class BugReportDialog extends FeedbackDialog {
 	            }
 	    });
 		
-		lblProgress = new Label(shlBugReport, SWT.NONE);
+		lblProgress = new Label(shell, SWT.NONE);
 		fd_treeDetails.bottom = new FormAttachment(lblProgress, -10);
 		FormData fd_lblProgress = new FormData();
 		fd_lblProgress.right = new FormAttachment(textWhatHappened, 0, SWT.RIGHT);
 		lblProgress.setLayoutData(fd_lblProgress);
 		lblProgress.setText("Progress...");
 		
-		progressBar = new ProgressBar(shlBugReport, SWT.NONE);
+		progressBar = new ProgressBar(shell, SWT.NONE);
 		FormData fd_progressBar = new FormData();
 		progressBar.setLayoutData(fd_progressBar);
 		
-		btnCancel = new Button(shlBugReport, SWT.NONE);
+		btnCancel = new Button(shell, SWT.NONE);
 		FormData fd_btnCancel = new FormData();
 		btnCancel.setLayoutData(fd_btnCancel);
 		btnCancel.setText("Cancel");
 		btnCancel.addListener(SWT.Selection, e -> doCancel());
 		
-		btnSend = new Button(shlBugReport, SWT.NONE);
+		btnSend = new Button(shell, SWT.NONE);
 		fd_btnCancel.right = new FormAttachment(btnSend, -6);
 		FormData fd_btnSend = new FormData();
 		fd_btnSend.bottom = new FormAttachment(100, -10);

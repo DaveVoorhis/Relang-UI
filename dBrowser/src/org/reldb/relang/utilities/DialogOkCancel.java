@@ -52,7 +52,7 @@ public abstract class DialogOkCancel<T> extends DialogAbstract<T> {
 	/**
 	 * Create contents of the dialog.
 	 */
-	protected void create(Shell shell) {
+	protected void createContents() {
 		shell.setLayout(new FormLayout());
 		shell.addListener(SWT.CLOSE, evt -> cancel());
 		

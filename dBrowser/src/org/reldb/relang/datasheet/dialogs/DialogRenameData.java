@@ -28,4 +28,6 @@ public class DialogRenameData extends DialogOkCancel<String> {
 	protected String ok() {
 		return renameData.textNewName.getText().trim();
 	}
+	
+	
 }

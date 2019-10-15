@@ -1,26 +1,29 @@
 package org.reldb.relang.platform;
 
-import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Dialog;
 import org.eclipse.swt.widgets.Shell;
-import org.reldb.relang.dengine.utilities.EventListener;
+import org.reldb.relang.dengine.utilities.Action;
 
-public abstract class DialogBase<T> extends Dialog {
+public class DialogBase extends Dialog {
 	private static final long serialVersionUID = 1L;
 
-	private EventListener<T> eventListener;
-
-	protected T result;
-	
-	public DialogBase(Shell parent, EventListener<T> EventListener) {
-		super(parent, SWT.NONE);
-		this.eventListener = EventListener;
+	public DialogBase(Shell parent) {
+		super(parent);
 	}
 	
-	protected void launch() {
+	public DialogBase(Shell parent, int style) {
+		super(parent, style);
+	}
+	
+	public void launch(Shell shell, Action closed) {
 		open(dlg -> {
-			if (eventListener != null)
-				eventListener.notify(result);
+			if (closed != null)
+				closed.go();
 		});
 	}
+
+	public void launch(Shell shell) {
+		launch(shell, null);
+	}
+	
 }

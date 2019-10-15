@@ -202,7 +202,7 @@ public class Datasheet extends Composite {
 				updateCatalogTree();
 				setTreeSelection(newName);
 			});
-			renameDialog.open();
+			renameDialog.launch();
 		});
 	}
 

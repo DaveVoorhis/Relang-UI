@@ -13,7 +13,6 @@ import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Label;
-import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Text;
 import org.reldb.relang.datagrid.Datagrid;
 import org.reldb.relang.datagrid.GridWidgetInterface;
@@ -201,7 +200,7 @@ public class GridPanel extends Composite {
 		var parentShell = column.getParent().getShell();
 		var dialog = new DialogAbstract<Integer>(parentShell, null) {
 			@Override
-			public void create(Shell shell) {
+			public void createContents() {
 				shell.setText("Properties for " + column.getText());
 				shell.setLayout(new FillLayout());
 				var label = new Label(shell, SWT.NONE);

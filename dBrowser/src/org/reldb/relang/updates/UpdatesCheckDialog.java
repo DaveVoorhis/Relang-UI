@@ -113,7 +113,7 @@ public class UpdatesCheckDialog extends DialogAbstract<String> {
 	}
 
 	/** Create contents of the dialog. */
-	protected void create(Shell shell) {
+	protected void createContents() {
 		shell.setSize(600, 250);
 		shell.setLayout(new FormLayout());
 

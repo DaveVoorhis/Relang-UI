@@ -1,36 +1,30 @@
 package org.reldb.relang.utilities;
 
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.widgets.Shell;
-import org.reldb.relang.dengine.utilities.EventListener;
 import org.reldb.relang.platform.DialogBase;
 
-public abstract class DialogAbstract<T> extends DialogBase<T> {
-	private int shellStyle;
+public abstract class DialogAbstract extends DialogBase {
+	private Point size;
 	
-	public DialogAbstract(Shell parent, int shellStyle, EventListener<T> actionResult) {
-		super(parent, actionResult);
-		this.shellStyle = shellStyle;
+	public DialogAbstract(Shell parent, int shellStyle) {
+		super(parent);
 	}
 	
-	public DialogAbstract(Shell parent, EventListener<T> actionResult) {
-		this(parent, SWT.DIALOG_TRIM | SWT.RESIZE | SWT.APPLICATION_MODAL, actionResult);
+	public DialogAbstract(Shell parent) {
+		this(parent, SWT.DIALOG_TRIM | SWT.RESIZE | SWT.APPLICATION_MODAL);
 	}
 
 	/** Create the contents of the dialog in shell. */
-	protected abstract void create(Shell shell);
-	
-	/** Create, open, and and assign a new dialog Shell to shell. */
-	private void newShell() {
-		shell = new Shell(getParent(), shellStyle);
-		create(shell);
-		shell.setText(getText());
-		shell.open();
-	}
+	protected abstract void createContents();
 
-	public void open() {
-		newShell();
-		launch();
+	protected void setSize(Point size) {
+		this.size = size;
+	}
+	
+	protected Point getSize() {
+		return size;
 	}
 
 }

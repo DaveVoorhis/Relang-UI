@@ -1,29 +1,31 @@
 package org.reldb.relang.platform;
 
-import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Dialog;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Shell;
-import org.reldb.relang.dengine.utilities.EventListener;
+import org.reldb.relang.dengine.utilities.Action;
 
-public abstract class DialogBase<T> extends Dialog {
-
-	private EventListener<T> eventListener;
+public class DialogBase extends Dialog {
 	
-	protected T result;
-	protected Shell shell;
-
-	public DialogBase(Shell parent, EventListener<T> EventListener) {
-		super(parent, SWT.NONE);
-		this.eventListener = EventListener;
+	public DialogBase(Shell parent) {
+		super(parent);
 	}
 	
-	public void launch() {
-		Display display = getParent().getDisplay();
+	public DialogBase(Shell parent, int style) {
+		super(parent, style);
+	}
+
+	public void launch(Shell shell, Action closed) {
+		Display display = shell.getDisplay();
 		while (!shell.isDisposed())
 			if (!display.readAndDispatch())
 				display.sleep();
-		if (eventListener != null)
-			eventListener.notify(result);
+		if (closed != null)
+			closed.go();
 	}
+
+	public void launch(Shell shell) {
+		launch(shell, null);
+	}
+	
 }
