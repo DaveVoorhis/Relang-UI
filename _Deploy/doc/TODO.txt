@@ -2,6 +2,7 @@
 
 - Consolidate duplicate code in BugReportDialog, CrashDialog, FeedbackDialog and SuggestionboxDialog.
 - Show test URL in MainDev Web launch console.
+- Fix browser tab title to show product name, rather than "POI".
 - Re-enable crash trapping on Web version.
 - Work on general-purpose property set/get that allows manipulating and saving any properties of an instance, via reflection. Should display in a grid.
 - Work on keys for Data, based on natural keys. Don't use row numbers; that won't work as soon as a row is deleted.
