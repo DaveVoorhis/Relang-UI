@@ -5,7 +5,6 @@ import org.eclipse.swt.graphics.Rectangle;
 import org.eclipse.swt.widgets.Dialog;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Shell;
-import org.reldb.relang.dengine.utilities.Action;
 
 public class DialogBase extends Dialog {
 	private static final long serialVersionUID = 1L;
@@ -18,18 +17,11 @@ public class DialogBase extends Dialog {
 		super(parent, style);
 	}
 	
-	protected void launch(Action closed) {
-		open(dlg -> {
-			if (closed != null)
-				closed.go();
-		});
+	protected void launch() {
+		open(null);
 		Rectangle displaySize =  Display.getCurrent().getBounds();
 		Point position = new Point((displaySize.width - shell.getSize().x) / 2 + displaySize.x, (displaySize.height - shell.getSize().y) / 2 + displaySize.y);
 		shell.setLocation(position);
-	}
-
-	protected void launch() {
-		launch(null);
 	}
 	
 }

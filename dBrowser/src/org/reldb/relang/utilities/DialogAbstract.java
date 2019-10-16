@@ -2,7 +2,6 @@ package org.reldb.relang.utilities;
 
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Shell;
-import org.reldb.relang.dengine.utilities.Action;
 import org.reldb.relang.platform.DialogBase;
 
 public abstract class DialogAbstract extends DialogBase {
@@ -18,20 +17,16 @@ public abstract class DialogAbstract extends DialogBase {
 	public void close() {
 		shell.close();
 		shell.dispose();
-		shell = null;
 	}
 
 	/** Override to create the contents of the dialog in shell. */
 	protected abstract void createContents();
 	
-	public void open(Action onClose) {
+	public void open() {
 		shell = new Shell(getParent(), getStyle());
 		shell.setText(getText());
 		createContents();
-		launch(onClose);
+		launch();
 	}
 	
-	public void open() {
-		open((Action)null);
-	}
 }

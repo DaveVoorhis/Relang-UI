@@ -14,7 +14,7 @@ import org.eclipse.swt.widgets.TreeItem;
 import org.reldb.relang.commands.CommandActivator;
 import org.reldb.relang.commands.Commands;
 import org.reldb.relang.commands.IconMenuItem;
-import org.reldb.relang.datasheet.dialogs.DialogRenameData;
+import org.reldb.relang.datasheet.dialogs.RenameDataDialog;
 import org.reldb.relang.datasheet.tabs.GridTab;
 import org.reldb.relang.dengine.data.CatalogEntry;
 import org.reldb.relang.dengine.data.Data;
@@ -187,10 +187,10 @@ public class Datasheet extends Composite {
 			if (selection == null)
 				return;
 			final String name = selection.getText();
-			var renameDialog = new DialogRenameData(getShell(), name);
-			renameDialog.open(() -> {
+			var renameDialog = new RenameDataDialog(getShell(), name);
+			renameDialog.okListener.addListener(event -> {
 				var newName = renameDialog.getNewName();
-				if (newName == null || newName.length() == 0 || newName.equals(name.trim()))
+				if (newName.length() == 0 || newName.equals(name.trim()))
 					return;
 				try {
 					base.rename(name, newName);
@@ -203,7 +203,9 @@ public class Datasheet extends Composite {
 					tab.setText(newName);
 				updateCatalogTree();
 				setTreeSelection(newName);
+				renameDialog.close();
 			});
+			renameDialog.open();
 		});
 	}
 

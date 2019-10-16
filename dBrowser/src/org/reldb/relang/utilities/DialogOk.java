@@ -10,9 +10,8 @@ import org.eclipse.swt.layout.FormData;
 import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.layout.FormAttachment;
 
-public abstract class DialogOkCancel extends DialogAbstract {
+public abstract class DialogOk extends DialogAbstract {
 	
-	public EventHandler<Void> cancelListener = new EventHandler<>();
 	public EventHandler<Void> okListener = new EventHandler<>();
 	
 	/**
@@ -20,7 +19,7 @@ public abstract class DialogOkCancel extends DialogAbstract {
 	 * @param parent
 	 * @param style
 	 */
-	public DialogOkCancel(Shell parent) {
+	public DialogOk(Shell parent) {
 		super(parent);
 	}
 	
@@ -36,31 +35,23 @@ public abstract class DialogOkCancel extends DialogAbstract {
 	protected void createContents() {
 		shell.setLayout(new FormLayout());
 		
-		var btnCancel = new Button(shell, SWT.NONE);
-		var fd_btnCancel = new FormData();
-		fd_btnCancel.bottom = new FormAttachment(100, -10);
-		fd_btnCancel.right = new FormAttachment(100, -10);
-		btnCancel.setLayoutData(fd_btnCancel);
-		btnCancel.setText("Cancel");
-		btnCancel.addListener(SWT.Selection, evt -> {
-			cancelListener.fire(null);
-			close();
-		});
-		
 		var btnOk = new Button(shell, SWT.NONE);
 		var fd_btnOk = new FormData();
-		fd_btnOk.bottom = new FormAttachment(btnCancel, 0, SWT.BOTTOM);
-		fd_btnOk.right = new FormAttachment(btnCancel, -6);
+		fd_btnOk.bottom = new FormAttachment(100, -10);
+		fd_btnOk.right = new FormAttachment(100, -10);
 		btnOk.setLayoutData(fd_btnOk);
 		btnOk.setText("Ok");
-		btnOk.addListener(SWT.Selection, evt -> okListener.fire(null));
+		btnOk.addListener(SWT.Selection, evt -> {
+			okListener.fire(null);
+			close();
+		});
 		
 		var contentPanel = new Composite(shell, SWT.NONE);
 		var fd_contentPanel = new FormData();
 		fd_contentPanel.top = new FormAttachment(0, 10);
 		fd_contentPanel.left = new FormAttachment(0, 10);
 		fd_contentPanel.right = new FormAttachment(100, -10);
-		fd_contentPanel.bottom = new FormAttachment(btnCancel, -10, SWT.TOP);
+		fd_contentPanel.bottom = new FormAttachment(btnOk, -10, SWT.TOP);
 		contentPanel.setLayoutData(fd_contentPanel);
 		contentPanel.setLayout(new FillLayout());
 		createContent(contentPanel);
