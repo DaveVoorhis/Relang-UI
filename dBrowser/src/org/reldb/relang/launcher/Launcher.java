@@ -290,9 +290,9 @@ public class Launcher {
 		
 		new AcceleratedMenuItem(menu, "View log", 0, "log", e -> LogWin.open());
 		new MenuItem(menu, SWT.SEPARATOR);
-		new AcceleratedMenuItem(menu, "Submit Feedback", 0, "idea", e -> SuggestionboxDialog.launch(shell));
-		new AcceleratedMenuItem(menu, "Bug Report", 0, "bug_menu", e -> BugReportDialog.launch(shell));
-		new AcceleratedMenuItem(menu, "Check for Updates", 0, "upgrade_menu", e -> UpdatesCheckDialog.launch(shell));
+		new AcceleratedMenuItem(menu, "Submit Feedback", 0, "idea", e -> new SuggestionboxDialog(shell).open());
+		new AcceleratedMenuItem(menu, "Bug Report", 0, "bug_menu", e -> new BugReportDialog(shell).open());
+		new AcceleratedMenuItem(menu, "Check for Updates", 0, "upgrade_menu", e -> new UpdatesCheckDialog(shell).open());
 		
 		if (showKaboomMenuItem) {
 			new MenuItem(menu, SWT.SEPARATOR);
@@ -530,7 +530,7 @@ public class Launcher {
 			} catch (Throwable t) {
 				System.out.println(Version.getAppName() + ": Exception: " + t);
 				t.printStackTrace();
-				CrashDialog.launch(t, shell);
+				CrashDialog.launch(shell, t);
 			}
 		}
 	}

@@ -4,14 +4,22 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 
 import org.eclipse.swt.widgets.Shell;
+import org.eclipse.swt.widgets.Text;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.layout.FormAttachment;
+import org.eclipse.swt.layout.FormData;
+import org.eclipse.swt.layout.GridData;
+import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Tree;
 import org.eclipse.swt.widgets.ProgressBar;
 import org.eclipse.swt.widgets.Button;
+import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.TreeItem;
+import org.reldb.relang.platform.IconLoader;
 import org.reldb.relang.utilities.DialogAbstract;
 import org.reldb.relang.utilities.MessageDialog;
+import org.reldb.relang.version.Version;
 
 public abstract class FeedbackDialog extends DialogAbstract {
 	protected Label lblProgress;
@@ -25,6 +33,9 @@ public abstract class FeedbackDialog extends DialogAbstract {
 	protected TreeItem report;
 	
 	protected Feedback phoneHome;
+	
+	protected Text textFeedback;
+	protected Text textEmailAddress;
 		
 	/**
 	 * Create the dialog.
@@ -150,7 +161,15 @@ public abstract class FeedbackDialog extends DialogAbstract {
 		}
 	}
 
-	protected abstract FeedbackInfo getFeedbackInfo();
+	protected abstract String getFeedbackType();
+		
+	private FeedbackInfo getFeedbackInfo() {
+		FeedbackInfo report = new FeedbackInfo(getFeedbackType());
+		report.addString("Feedback", textFeedback.getText());
+		report.addString("Email", textEmailAddress.getText());
+		report.addTree(treeDetails.getItems()[0]);
+		return report;
+	}
 	
 	protected void doSend() {
 		phoneHome.doSend(getFeedbackInfo().toString());
@@ -162,5 +181,137 @@ public abstract class FeedbackDialog extends DialogAbstract {
 	
 	protected void quit() {
 		shell.dispose();
+	}
+	
+	protected void populateTree() {
+		putClientInfoInTree(Version.getVersion());		
+	}
+	
+	protected void buildContents(String iconName, String instructions, String step1) {
+		Composite panelIntro = new Composite(shell, SWT.NONE);
+		panelIntro.setLayout(new GridLayout(2, false));
+		FormData fd_panelIntro = new FormData();
+		fd_panelIntro.top = new FormAttachment(0);
+		fd_panelIntro.right = new FormAttachment(100);
+		fd_panelIntro.left = new FormAttachment(0);
+		panelIntro.setLayoutData(fd_panelIntro);
+
+		Label lblIcon = new Label(panelIntro, SWT.NONE);
+		lblIcon.setLayoutData(new GridData(SWT.LEFT, SWT.TOP, false, false, 1, 1));
+		lblIcon.setImage(IconLoader.loadIcon(iconName));
+
+		Label lblInstructions = new Label(panelIntro, SWT.WRAP);
+		lblInstructions.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true, 1, 1));
+		lblInstructions.setText(instructions);
+
+		Label lblStep1 = new Label(shell, SWT.NONE);
+		FormData fd_lblStep1 = new FormData();
+		fd_lblStep1.top = new FormAttachment(panelIntro, 10);
+		fd_lblStep1.left = new FormAttachment(0, 10);
+		lblStep1.setLayoutData(fd_lblStep1);
+		lblStep1.setText(step1);
+
+		textFeedback = new Text(shell, SWT.BORDER | SWT.WRAP | SWT.V_SCROLL);
+		FormData fd_textWhatHappened = new FormData();
+		fd_textWhatHappened.top = new FormAttachment(lblStep1, 6);
+		fd_textWhatHappened.left = new FormAttachment(0, 10);
+		fd_textWhatHappened.right = new FormAttachment(100, -10);
+		textFeedback.setLayoutData(fd_textWhatHappened);
+
+		Label lblStep2 = new Label(shell, SWT.NONE);
+		FormData fd_lblStep2 = new FormData();
+		lblStep2.setLayoutData(fd_lblStep2);
+		lblStep2.setText(
+				"2. What is your email address?  (optional - we'll only use it if we need to ask you further questions)");
+
+		textEmailAddress = new Text(shell, SWT.BORDER);
+		FormData fd_textEmailAddress = new FormData();
+		textEmailAddress.setLayoutData(fd_textEmailAddress);
+
+		Label lblStep3 = new Label(shell, SWT.NONE);
+		FormData fd_lblStep3 = new FormData();
+		lblStep3.setLayoutData(fd_lblStep3);
+		lblStep3.setText("3. Examine these further details and un-check anything you don't want to send.");
+
+		treeDetails = new Tree(shell, SWT.BORDER | SWT.CHECK);
+		FormData fd_treeDetails = new FormData();
+		treeDetails.setLayoutData(fd_treeDetails);
+		fd_treeDetails.height = 75;
+		treeDetails.addListener(SWT.Selection, event -> {
+			if (event.detail == SWT.CHECK) {
+				TreeItem item = (TreeItem) event.item;
+				boolean checked = item.getChecked();
+				checkItems(item, checked);
+				checkPath(item.getParentItem(), checked, false);
+			}
+		});
+
+		lblProgress = new Label(shell, SWT.NONE);
+		fd_treeDetails.bottom = new FormAttachment(lblProgress, -10);
+		FormData fd_lblProgress = new FormData();
+		fd_lblProgress.right = new FormAttachment(textFeedback, 0, SWT.RIGHT);
+		lblProgress.setLayoutData(fd_lblProgress);
+		lblProgress.setText("Progress...");
+
+		progressBar = new ProgressBar(shell, SWT.NONE);
+		FormData fd_progressBar = new FormData();
+		progressBar.setLayoutData(fd_progressBar);
+
+		btnCancel = new Button(shell, SWT.NONE);
+		FormData fd_btnCancel = new FormData();
+		btnCancel.setLayoutData(fd_btnCancel);
+		btnCancel.setText("Cancel");
+		btnCancel.addListener(SWT.Selection, e -> doCancel());
+
+		btnSend = new Button(shell, SWT.NONE);
+		fd_btnCancel.right = new FormAttachment(btnSend, -6);
+		FormData fd_btnSend = new FormData();
+		fd_btnSend.bottom = new FormAttachment(100, -10);
+		fd_btnSend.right = new FormAttachment(100, -10);
+		btnSend.setLayoutData(fd_btnSend);
+		btnSend.setText("Send");
+		btnSend.addListener(SWT.Selection, e -> doSend());
+
+		fd_btnCancel.bottom = new FormAttachment(100, -10);
+		fd_btnCancel.right = new FormAttachment(btnSend, -10);
+
+		fd_progressBar.bottom = new FormAttachment(btnCancel, -10);
+		fd_progressBar.left = new FormAttachment(0, 10);
+		fd_progressBar.right = new FormAttachment(100, -10);
+
+		fd_lblProgress.bottom = new FormAttachment(progressBar, -6);
+		fd_lblProgress.left = new FormAttachment(0, 10);
+		fd_treeDetails.left = new FormAttachment(0, 10);
+		fd_treeDetails.right = new FormAttachment(100, -10);
+
+		fd_lblStep3.bottom = new FormAttachment(treeDetails, -6);
+		fd_lblStep3.left = new FormAttachment(0, 10);
+
+		fd_textEmailAddress.bottom = new FormAttachment(lblStep3, -10);
+		fd_textEmailAddress.left = new FormAttachment(0, 10);
+		fd_textEmailAddress.right = new FormAttachment(100, -10);
+
+		fd_lblStep2.bottom = new FormAttachment(textEmailAddress, -6);
+		fd_lblStep2.left = new FormAttachment(0, 10);
+
+		fd_textWhatHappened.bottom = new FormAttachment(lblStep2, -10);
+
+		lblProgress.setEnabled(false);
+		progressBar.setEnabled(false);
+		
+		report = newTreeItem(treeDetails, "Details");
+		phoneHome = new Feedback(btnSend, lblProgress, progressBar) {
+		    public void completed(SendStatus sendStatus) {	
+		    	FeedbackDialog.this.completed(sendStatus);
+		    }
+			public void quit() {
+				FeedbackDialog.this.quit();
+			}
+		};
+		phoneHome.resetProgress();
+
+		populateTree();
+		
+		report.setExpanded(true);		
 	}
 }

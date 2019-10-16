@@ -81,22 +81,6 @@ public class UpdatesCheckDialog extends DialogAbstract {
 		lblProgress.setText("Ready...");
 	}
 
-	/**
-	 * Launch the dialog.
-	 * 
-	 * @param shell
-	 */
-	public static void launch(Shell shell) {
-		try {
-			shell.getDisplay().syncExec(() -> {
-				UpdatesCheckDialog checker = new UpdatesCheckDialog(shell);
-				checker.open();
-			});
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
-	}
-
 	protected void doSend() {
 		if (lblNewUpdatesAvailable.isVisible())
 			quit();
