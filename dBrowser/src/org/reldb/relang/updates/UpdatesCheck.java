@@ -17,6 +17,7 @@ import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.ProgressBar;
+import org.reldb.relang.platform.Animate;
 
 /** Check for updates. */
 public class UpdatesCheck {
@@ -113,7 +114,11 @@ public class UpdatesCheck {
 
 	private class SendWorker extends Thread {
 
+		private Animate animate;
+		
 		public SendWorker() {
+			animate = new Animate();
+			animate.start();
 		}
 
 		public void publish(SendProgress progressMessage) {
@@ -128,6 +133,7 @@ public class UpdatesCheck {
 			} catch (Exception e) {
 				status = new SendStatus(e);
 			}
+			animate.stop();
 			if (display.isDisposed())
 				return;
 			display.asyncExec(() -> {
@@ -137,7 +143,7 @@ public class UpdatesCheck {
 			});
 		}
 
-		protected SendStatus doInBackground() throws Exception {
+		protected SendStatus doInBackground() throws Exception {			
 			publish(new SendProgress("Generating message...", 10));
 
 			HttpClient client = HttpClientBuilder.create().build();
@@ -154,23 +160,26 @@ public class UpdatesCheck {
 				httppost.setEntity(entity);
 
 				publish(new SendProgress("Sending message...", 50));
+				
 				HttpResponse response = client.execute(httppost);
 				entity = response.getEntity();
 
 				publish(new SendProgress("Getting response...", 75));
-				BufferedReader is = new BufferedReader(new InputStreamReader(entity.getContent()));
-				String input;
+				
 				String result = "";
-				while ((input = is.readLine()) != null)
-					result += input + "\n";
-				is.close();
+				try (BufferedReader is = new BufferedReader(new InputStreamReader(entity.getContent()))) {
+					String input;
+					while ((input = is.readLine()) != null)
+						result += input + "\n";
+				}
 
 				publish(new SendProgress("Done", 100));
+				
 				try {
 					Thread.sleep(1000);
 				} catch (InterruptedException e) {
 				}
-
+				
 				return new SendStatus(result);
 			} catch (Exception e) {
 				return new SendStatus(e);
@@ -198,7 +207,7 @@ public class UpdatesCheck {
 			return updateURL;
 		return null;
 	}
-
+	
 	public void doSend() {
 		initialiseProgress("Sending...", 100);
 		synchronized (sendWorkerMutex) {
