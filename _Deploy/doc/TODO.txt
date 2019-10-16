@@ -1,6 +1,5 @@
 ** TO DO **
 
-- Consolidate duplicate code in BugReportDialog, CrashDialog, FeedbackDialog and SuggestionboxDialog.
 - Show test URL in MainDev Web launch console.
 - Fix browser tab title to show product name, rather than "POI".
 - Re-enable crash trapping on Web version.
