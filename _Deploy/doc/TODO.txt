@@ -1,7 +1,6 @@
 ** TO DO **
 
 - Consolidate duplicate code in BugReportDialog, CrashDialog, FeedbackDialog and SuggestionboxDialog.
-- Fix Dialog closing/updating in Web?
 - Show test URL in MainDev Web launch console.
 - Re-enable crash trapping on Web version.
 - Work on general-purpose property set/get that allows manipulating and saving any properties of an instance, via reflection. Should display in a grid.
