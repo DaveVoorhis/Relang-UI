@@ -21,7 +21,6 @@ public class OSSpecific {
 	}
 
 	public static void addFileMenuItems(Menu menu) {
-		new MenuItem(menu, SWT.SEPARATOR);
 		MenuItem preferences = new MenuItem(menu, SWT.PUSH);
 		preferences.setText("Preferences...");
 		preferences.addListener(SWT.Selection, preferencesListener);
