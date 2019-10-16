@@ -22,7 +22,7 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.layout.GridData;
 
-public class UpdatesCheckDialog extends DialogAbstract<String> {
+public class UpdatesCheckDialog extends DialogAbstract {
 
 	private Label lblNewUpdatesAvailable;
 	private Link lblNewUpdateURL;
@@ -41,7 +41,7 @@ public class UpdatesCheckDialog extends DialogAbstract<String> {
 	 * @param style
 	 */
 	public UpdatesCheckDialog(Shell parent) {
-		super(parent, null);
+		super(parent);
 		setText("Check for Updates");
 	}
 

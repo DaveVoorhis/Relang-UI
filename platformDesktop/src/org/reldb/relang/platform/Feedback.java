@@ -131,15 +131,15 @@ public class Feedback {
 				HttpResponse response = client.execute(httppost);
 				entity = response.getEntity();
 
+				var result = "";
 				publish(new SendProgress("Getting response...", 75));
-				BufferedReader is = new BufferedReader(new InputStreamReader(entity.getContent()));
-				String input;
-				String result = "";
-				while ((input = is.readLine()) != null) {
-					if (input.startsWith("Success") || input.startsWith("ERROR"))
-						result = input;
+				try (var is = new BufferedReader(new InputStreamReader(entity.getContent()))) {
+					String input;
+					while ((input = is.readLine()) != null) {
+						if (input.startsWith("Success") || input.startsWith("ERROR"))
+							result = input;
+					}
 				}
-				is.close();
 
 				publish(new SendProgress("Done", 100));
 				try {

@@ -1,6 +1,9 @@
 package org.reldb.relang.platform;
 
+import org.eclipse.swt.graphics.Point;
+import org.eclipse.swt.graphics.Rectangle;
 import org.eclipse.swt.widgets.Dialog;
+import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Shell;
 import org.reldb.relang.dengine.utilities.Action;
 
@@ -15,15 +18,18 @@ public class DialogBase extends Dialog {
 		super(parent, style);
 	}
 	
-	public void launch(Shell shell, Action closed) {
+	protected void launch(Action closed) {
 		open(dlg -> {
 			if (closed != null)
 				closed.go();
 		});
+		Rectangle displaySize =  Display.getCurrent().getBounds();
+		Point position = new Point((displaySize.width - shell.getSize().x) / 2 + displaySize.x, (displaySize.height - shell.getSize().y) / 2 + displaySize.y);
+		shell.setLocation(position);
 	}
 
-	public void launch(Shell shell) {
-		launch(shell, null);
+	protected void launch() {
+		launch(null);
 	}
 	
 }

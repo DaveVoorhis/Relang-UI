@@ -14,7 +14,7 @@ import org.reldb.relang.platform.Feedback;
 import org.reldb.relang.utilities.DialogAbstract;
 import org.reldb.relang.utilities.MessageDialog;
 
-public abstract class FeedbackDialog extends DialogAbstract<String> {
+public abstract class FeedbackDialog extends DialogAbstract {
 	protected Label lblProgress;
 	protected ProgressBar progressBar;
 	
@@ -33,7 +33,7 @@ public abstract class FeedbackDialog extends DialogAbstract<String> {
 	 * @param style
 	 */
 	public FeedbackDialog(Shell parent) {
-		super(parent, null);
+		super(parent);
 	}
 	
 	protected static String getCurrentTimeStamp() {

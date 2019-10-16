@@ -7,7 +7,7 @@ import org.reldb.relang.dengine.utilities.Action;
 
 public class DialogBase extends Dialog {
 	
-	public Shell shell;
+	protected Shell shell;
 	
 	public DialogBase(Shell parent) {
 		super(parent);
@@ -17,7 +17,8 @@ public class DialogBase extends Dialog {
 		super(parent, style);
 	}
 
-	public void launch(Shell shell, Action closed) {
+	protected void launch(Action closed) {
+		shell.open();
 		Display display = shell.getDisplay();
 		while (!shell.isDisposed())
 			if (!display.readAndDispatch())
@@ -26,8 +27,8 @@ public class DialogBase extends Dialog {
 			closed.go();
 	}
 
-	public void launch(Shell shell) {
-		launch(shell, null);
+	protected void launch() {
+		launch(null);
 	}
 	
 }

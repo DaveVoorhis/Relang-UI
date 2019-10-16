@@ -3,7 +3,6 @@ package org.reldb.relang.about;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Button;
-import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.wb.swt.SWTResourceManager;
 import org.reldb.relang.platform.IconLoader;
@@ -14,8 +13,6 @@ import org.eclipse.swt.layout.FormData;
 import org.eclipse.swt.layout.FormAttachment;
 
 public class AboutDialog extends DialogAbstract {
-
-	private Shell shell;
 	
 	/**
 	 * Create the dialog.
@@ -31,7 +28,6 @@ public class AboutDialog extends DialogAbstract {
 	 * Create contents of the dialog.
 	 */
 	protected void createContents() {
-		shell = new Shell(getParent(), getStyle());
 		shell.setSize(450, 300);
 		shell.setText(getText());
 		shell.setLayout(new FormLayout());
@@ -65,20 +61,4 @@ public class AboutDialog extends DialogAbstract {
 		shell.layout();
 	}
 	
-	public void launch() {
-		createContents();
-		shell.open();
-		launch(shell);
-	}
-	
-	public void open() {
-		createContents();
-		shell.open();
-		Display display = getParent().getDisplay();
-		while (!shell.isDisposed()) {
-			if (!display.readAndDispatch()) {
-				display.sleep();
-			}
-		}
-	}
 }

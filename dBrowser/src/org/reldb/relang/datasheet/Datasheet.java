@@ -187,8 +187,10 @@ public class Datasheet extends Composite {
 			if (selection == null)
 				return;
 			final String name = selection.getText();
-			var renameDialog = new DialogRenameData(getShell(), name, newName -> {
-				if (newName == null || newName.trim().length() == 0 || newName.trim().equals(name.trim()))
+			var renameDialog = new DialogRenameData(getShell(), name);
+			renameDialog.open(() -> {
+				var newName = renameDialog.getNewName();
+				if (newName == null || newName.length() == 0 || newName.equals(name.trim()))
 					return;
 				try {
 					base.rename(name, newName);
@@ -202,7 +204,6 @@ public class Datasheet extends Composite {
 				updateCatalogTree();
 				setTreeSelection(newName);
 			});
-			renameDialog.launch();
 		});
 	}
 

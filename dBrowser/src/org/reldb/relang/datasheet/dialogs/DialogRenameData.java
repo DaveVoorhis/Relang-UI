@@ -2,19 +2,24 @@ package org.reldb.relang.datasheet.dialogs;
 
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Composite;
-import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Shell;
-import org.reldb.relang.dengine.utilities.Action;
 import org.reldb.relang.utilities.DialogOkCancel;
 
 public class DialogRenameData extends DialogOkCancel {
 
 	private PanelRenameData renameData;
 	private String name;
+	private boolean cancelled = false;
 	
-	public DialogRenameData(Shell shell, String name, Action onOk) {
-		super(shell, onOk);
+	public DialogRenameData(Shell shell, String name) {
+		super(shell);
 		this.name = name;
+	}
+	
+	@Override
+	protected void cancel() {
+		cancelled = true;
+		super.cancel();
 	}
 	
 	@Override
@@ -26,25 +31,9 @@ public class DialogRenameData extends DialogOkCancel {
 	}
 
 	public String getNewName() {
+		if (cancelled)
+			return null;
 		return renameData.textNewName.getText().trim();
-	}
-	
-	public void launch() {
-		createContents();
-		shell.open();
-		launch(shell);
-	}
-	
-	public void open() {
-		shell = new Shell(getParent(), getStyle());
-		createContents();
-		shell.open();
-		Display display = getParent().getDisplay();
-		while (!shell.isDisposed()) {
-			if (!display.readAndDispatch()) {
-				display.sleep();
-			}
-		}
 	}
 	
 }

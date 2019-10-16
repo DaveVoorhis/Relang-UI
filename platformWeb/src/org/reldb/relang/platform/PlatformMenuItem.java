@@ -12,7 +12,7 @@ public class PlatformMenuItem extends MenuItem {
 	}
 
 	/** No-op under RWT/RAP */
-	public void setToolTip(String text) {}
+	public void setToolTipText(String text) {}
 	
 	public void checkSubclass() {}
 }

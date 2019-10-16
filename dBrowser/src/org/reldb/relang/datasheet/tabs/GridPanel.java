@@ -198,7 +198,7 @@ public class GridPanel extends Composite {
 	private void showColumnDialog(Event evt) {
 		var column = (GridColumn)evt.item;
 		var parentShell = column.getParent().getShell();
-		var dialog = new DialogAbstract<Integer>(parentShell, null) {
+		var dialog = new DialogAbstract(parentShell) {
 			@Override
 			public void createContents() {
 				shell.setText("Properties for " + column.getText());
