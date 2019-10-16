@@ -1,4 +1,4 @@
-package org.reldb.relang.platform;
+package org.reldb.relang.feedback;
 
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
@@ -16,6 +16,7 @@ import org.apache.http.message.BasicNameValuePair;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.ProgressBar;
+import org.reldb.relang.platform.Animate;
 import org.reldb.relang.version.Version;
 
 /** Send a message back home. */
@@ -94,9 +95,12 @@ public class Feedback {
 	private class SendWorker extends Thread {
 
 		private String report;
+		private Animate animate;
 
 		public SendWorker(String report) {
 			this.report = report;
+			animate = new Animate();
+			animate.start();
 		}
 
 		public void publish(SendProgress progressMessage) {
@@ -112,6 +116,7 @@ public class Feedback {
 				status = new SendStatus(e);
 			}
 			lblProgress.getDisplay().asyncExec(() -> done(status));
+			animate.stop();
 		}
 
 		protected SendStatus doInBackground() throws Exception {
@@ -131,15 +136,15 @@ public class Feedback {
 				HttpResponse response = client.execute(httppost);
 				entity = response.getEntity();
 
-				var result = "";
 				publish(new SendProgress("Getting response...", 75));
-				try (var is = new BufferedReader(new InputStreamReader(entity.getContent()))) {
-					String input;
-					while ((input = is.readLine()) != null) {
-						if (input.startsWith("Success") || input.startsWith("ERROR"))
-							result = input;
-					}
+				BufferedReader is = new BufferedReader(new InputStreamReader(entity.getContent()));
+				String input;
+				String result = "";
+				while ((input = is.readLine()) != null) {
+					if (input.startsWith("Success") || input.startsWith("ERROR"))
+						result = input;
 				}
+				is.close();
 
 				publish(new SendProgress("Done", 100));
 				try {
