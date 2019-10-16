@@ -9,6 +9,7 @@ import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.FormAttachment;
 import org.eclipse.swt.layout.FormData;
+import org.eclipse.swt.layout.FormLayout;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Tree;
@@ -188,6 +189,9 @@ public abstract class FeedbackDialog extends DialogAbstract {
 	}
 	
 	protected void buildContents(String iconName, String instructions, String step1) {
+		shell.setSize(750, 500);
+		shell.setLayout(new FormLayout());
+
 		Composite panelIntro = new Composite(shell, SWT.NONE);
 		panelIntro.setLayout(new GridLayout(2, false));
 		FormData fd_panelIntro = new FormData();
