@@ -178,7 +178,7 @@ public abstract class FeedbackDialog extends DialogAbstract {
 	}
 	
 	protected void buildContents(String iconName, String instructions, String step1) {
-		shell.setSize(750, 500);
+		shell.setSize(750, 650);
 		shell.setLayout(new FormLayout());
 
 		Composite panelIntro = new Composite(shell, SWT.NONE);
