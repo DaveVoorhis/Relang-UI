@@ -43,7 +43,6 @@
 	<classpathentry kind="lib" path="/_Deploy/lib/rwt/org.eclipse.rap.fileupload_3.10.0.20190627-0844.jar"/>
 	<classpathentry kind="lib" path="/_Deploy/lib/rwt/org.eclipse.rap.rwt_3.10.0.20190819-1509.jar"/>
 	<classpathentry kind="lib" path="tomcat/annotations-api.jar"/>
-	<classpathentry kind="lib" path="tomcat/ecj-4.12.jar"/>
 	<classpathentry kind="lib" path="tomcat/tomcat-dbcp.jar"/>
 	<classpathentry kind="lib" path="tomcat/tomcat-embed-core.jar"/>
 	<classpathentry kind="lib" path="tomcat/tomcat-embed-el.jar"/>

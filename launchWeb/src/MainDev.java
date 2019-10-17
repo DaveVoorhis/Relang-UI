@@ -9,7 +9,7 @@ public class MainDev {
 
 	public static void main(String[] args) {
 		Stream.generate("=== DEVELOPMENT LAUNCH. NOT FOR PRODUCTION!!! ==="::toString).limit(3).forEach(s -> System.out.println(s));
-		var launcher = new Launcher(port, resources -> {
+		var launcher = new Launcher(port, true, resources -> {
 	        // --- Alternative location for "WEB-INF/classes" during development. --- 
 	        
 	        // DirResourceSet(WebResourceRoot root, java.lang.String webAppMount, java.lang.String base, java.lang.String internalPath)
