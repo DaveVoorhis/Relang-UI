@@ -31,7 +31,10 @@ public class MainDev {
 	        resources.addPreResources(new DirResourceSet(resources, "/WEB-INF/classes", additionWebInfClasses.getAbsolutePath(), "/"));
 		});
 		System.out.println("Development launch base directory: " + launcher.getBaseDir());
-		launcher.go();
+		System.out.println("Please wait for start...");
+		if (!launcher.go())
+			return;
+		System.out.println("...started!");
 		System.out.println("Development launch listening at " + launcher.getURL());
 	}
 }

@@ -10,7 +10,7 @@ public class MainProd {
     private static final int port = 8080;
 
 	public static void main(String[] args) throws SecurityException, IOException {
-		var launcher = new Launcher(port, new FileHandler("tomcat.log", true), Level.INFO, resources -> {
+		var launcher = new Launcher(port, new FileHandler("tomcat.log", true), Level.WARNING, resources -> {
 	        // DirResourceSet(WebResourceRoot root, java.lang.String webAppMount, java.lang.String base, java.lang.String internalPath)
 	        //  root - The WebResourceRoot this new WebResourceSet will be added to.
 	        //  webAppMount - The path within the web application at which this WebResourceSet will be mounted. 
@@ -21,7 +21,10 @@ public class MainProd {
 	        resources.addPreResources(new DirResourceSet(resources, "/WEB-INF/classes", additionWebInfClasses.getAbsolutePath(), "/"));
 		});
 		System.out.println("Base directory: " + launcher.getBaseDir());
-		launcher.go();
+		System.out.println("Please wait for start...");
+		if (!launcher.go())
+			return;
+		System.out.println("...started!");
 		System.out.println("Listening at " + launcher.getURL());
 	}
 }

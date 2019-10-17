@@ -62,8 +62,8 @@ public class Launcher {
     	init(port, configuration, silent);
     }
     
-	public Launcher(int port, Handler loggingHandler, Level level, Configuration configuration) {
-		Logger logger = Logger.getLogger("STDOUT");
+    public void setLogger(String name, Handler loggingHandler, Level level) {
+		Logger logger = Logger.getLogger(name);
 		loggingHandler.setFormatter(new SimpleFormatter());
 		loggingHandler.setLevel(level);
 		try {
@@ -71,7 +71,11 @@ public class Launcher {
 		} catch (SecurityException | UnsupportedEncodingException e) {
 			e.printStackTrace();
 		}
-		logger.addHandler(loggingHandler);
+		logger.addHandler(loggingHandler);    	
+    }
+    
+	public Launcher(int port, Handler loggingHandler, Level level, Configuration configuration) {
+		setLogger("", loggingHandler, level);
 		init(port, configuration, false);
 	}
 
@@ -83,13 +87,15 @@ public class Launcher {
 		return baseDir;
 	}
 	
-	public void go() {  
+	public boolean go() {  
 		try {
 			tomcat.start();
 		} catch (Throwable e) {
 			System.out.println("Launch failure due to: " + e);
 			e.printStackTrace();
+			return false;
 		}
+		return true;
 	}
 
 }
