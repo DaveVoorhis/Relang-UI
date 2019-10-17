@@ -10,6 +10,8 @@ import javax.imageio.ImageIO;
 import org.eclipse.rap.rwt.application.Application;
 import org.eclipse.rap.rwt.application.ApplicationConfiguration;
 import org.eclipse.rap.rwt.client.WebClient;
+import org.eclipse.swt.widgets.Display;
+import org.reldb.relang.feedback.CrashDialog;
 import org.reldb.relang.version.Version;
 
 public class RelangApplicationConfiguration implements ApplicationConfiguration {
@@ -51,20 +53,8 @@ public class RelangApplicationConfiguration implements ApplicationConfiguration 
 	}
 	
     public void configure(Application application) {
-		/*
-		 * Setup exception handler
-		 * 
-		 * From http://www.eclipse.org/rap/developers-guide/devguide.php?topic=application-configuration.html&version=3.2
-		 * 
-		application.setExceptionHandler(new ExceptionHandler() {
-		@Override
-		  public void handleException(Throwable exception) {
-			new Popup(getShell(), );
-		    // display error dialog, redirect to error page,
-		    // write exception to log, ...
-		  }
-		});
-		*/
+		// Setup exception handler per http://www.eclipse.org/rap/developers-guide/devguide.php?topic=application-configuration.html&version=3.2
+		application.setExceptionHandler(exception -> CrashDialog.launch(Display.getCurrent().getActiveShell(), exception));
         Map<String, String> properties = new HashMap<String, String>();
 		properties.put(WebClient.PAGE_TITLE, Version.getAppName());
 		properties.put(WebClient.PAGE_OVERFLOW, "scrollY" );
