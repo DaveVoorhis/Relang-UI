@@ -2,20 +2,8 @@ package org.reldb.relang.feedback;
 
 import org.eclipse.swt.widgets.Shell;
 
-public class CrashDialog extends FeedbackDialog {
+public class CrashDialog extends TypicalFeedbackDialog {
 	private Throwable exception;
-
-	/**
-	 * Create the dialog.
-	 * 
-	 * @param parent
-	 * @param style
-	 */
-	public CrashDialog(Shell parent, Throwable exception) {
-		super(parent);
-		this.exception = exception;
-		setText("Crash Report");
-	}
 
 	/** Launch the dialog. */
 	public static void launch(Shell shell, Throwable t) {
@@ -26,9 +14,24 @@ public class CrashDialog extends FeedbackDialog {
 		}
 	}
 
-	@Override
-	protected String getFeedbackType() {
-		return "CrashReport";
+	/**
+	 * Create the dialog.
+	 * 
+	 * @param parent
+	 * @param style
+	 */
+	public CrashDialog(Shell parent, Throwable exception) {
+		super(parent, 
+			"Crash Report", 
+			"CrashReport",
+			"explosion",
+			"Unfortunately, something went wrong. We'd like to send the developers a message about it, so they can fix it in a future update.\n\n" + 
+					"If you'd rather not send anything, that's ok. Press the Cancel button and nothing will be sent.\n\n" + 
+					"Otherwise, please answer the following questions as best you can and remove any information that you don't want to send. " + 
+					"Then press the Send button to transmit it to the developers.",
+			"1. What were you doing when this happened?"
+		);
+		this.exception = exception;
 	}
 	
 	@Override
@@ -36,13 +39,5 @@ public class CrashDialog extends FeedbackDialog {
 		super.populateTree();
 		putExceptionInTree(exception);		
 	}
-
-	/** Create contents of the dialog. */
-	protected void createContents() {
-		buildContents(
-			"explosion",
-			"Unfortunately, something went wrong. We'd like to send the developers a message about it, so they can fix it in a future update.\n\nIf you'd rather not send anything, that's ok. Press the Cancel button and nothing will be sent.\n\nOtherwise, please answer the following questions as best you can and remove any information that you don't want to send. Then press the Send button to transmit it to the developers.",
-			"1. What were you doing when this happened?"
-		);
-	}
+	
 }

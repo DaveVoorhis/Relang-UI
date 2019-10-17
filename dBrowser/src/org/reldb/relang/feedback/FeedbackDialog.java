@@ -22,32 +22,23 @@ import org.reldb.relang.utilities.DialogAbstract;
 import org.reldb.relang.utilities.MessageDialog;
 import org.reldb.relang.version.Version;
 
-public abstract class FeedbackDialog extends DialogAbstract {
-	protected Label lblProgress;
-	protected ProgressBar progressBar;
-	
-	protected Button btnSend;
-	protected Button btnCancel;
-	
-	protected Tree treeDetails;
-	
-	protected TreeItem report;
-	
-	protected Feedback phoneHome;
-	
-	protected Text textFeedback;
-	protected Text textEmailAddress;
-		
+public abstract class FeedbackDialog extends DialogAbstract {	
+	private TreeItem report;	
+	private Feedback phoneHome;
+	private String feedbackType;
+
 	/**
 	 * Create the dialog.
 	 * @param parent
 	 * @param style
 	 */
-	public FeedbackDialog(Shell parent) {
+	protected FeedbackDialog(Shell parent, String title, String feedbackType) {
 		super(parent);
+		setText(title);
+		this.feedbackType = feedbackType;
 	}
 	
-	protected static String getCurrentTimeStamp() {
+	private static String getCurrentTimeStamp() {
 	    return (new SimpleDateFormat("yyyy-MM-dd HH:mm:ss.SSS Z")).format(new Date());
 	}	
 
@@ -63,7 +54,7 @@ public abstract class FeedbackDialog extends DialogAbstract {
 		return item;
 	}
 	
-	protected TreeItem newTreeItem(Tree parent, String text) {
+	private TreeItem newTreeItem(Tree parent, String text) {
 		TreeItem item = new TreeItem(parent, SWT.None);
 		setupTreeItem(item, text);
 		return item;
@@ -75,7 +66,7 @@ public abstract class FeedbackDialog extends DialogAbstract {
 			newTreeItem(stackTraceTree, element.toString());
 	}
 	
-	protected void checkPath(TreeItem item, boolean checked, boolean grayed) {
+	private void checkPath(TreeItem item, boolean checked, boolean grayed) {
 	    if (item == null) 
 	    	return;
 	    if (grayed) {
@@ -97,7 +88,7 @@ public abstract class FeedbackDialog extends DialogAbstract {
 	    checkPath(item.getParentItem(), checked, grayed);
 	}
 
-	protected void checkItems(TreeItem item, boolean checked) {
+	private void checkItems(TreeItem item, boolean checked) {
 	    item.setGrayed(false);
 	    item.setChecked(checked);
 	    TreeItem[] items = item.getItems();
@@ -120,12 +111,7 @@ public abstract class FeedbackDialog extends DialogAbstract {
 		}		
 	}
 	
-	protected void putExceptionInTree(Throwable t) {
-		TreeItem root = newTreeItem(report, "JavaException");
-		putExceptionInTree(root, t);
-	}
-	
-	protected void putClientInfoInTree(String clientVersion) {
+	private void putClientInfoInTree(String clientVersion) {
 		newTreeItem(report, "Timestamp: " + getCurrentTimeStamp().toString());
 		newTreeItem(report, "Version: " + clientVersion);
 		newTreeItem(report, "Java version: " + System.getProperty("java.version"));
@@ -137,7 +123,7 @@ public abstract class FeedbackDialog extends DialogAbstract {
 		newTreeItem(report, "OS Architecture: " + System.getProperty("os.arch"));
 	}
 	
-	protected void completed(Feedback.SendStatus sendStatus) {
+	private void completed(Feedback.SendStatus sendStatus) {
 		String failHeading = "Feedback Failed";
 		try {
 			if (sendStatus.getResponse() != null && sendStatus.getResponse().startsWith("Success")) {
@@ -162,30 +148,33 @@ public abstract class FeedbackDialog extends DialogAbstract {
 		}
 	}
 
-	protected abstract String getFeedbackType();
-		
-	private FeedbackInfo getFeedbackInfo() {
-		FeedbackInfo report = new FeedbackInfo(getFeedbackType());
-		report.addString("Feedback", textFeedback.getText());
-		report.addString("Email", textEmailAddress.getText());
+	private FeedbackInfo getFeedbackInfo(String feedback, String email, Tree treeDetails) {
+		FeedbackInfo report = new FeedbackInfo(feedbackType);
+		report.addString("Feedback", feedback);
+		report.addString("Email", email);
 		report.addTree(treeDetails.getItems()[0]);
 		return report;
 	}
 	
-	protected void doSend() {
-		phoneHome.doSend(getFeedbackInfo().toString());
+	private void doSend(String feedback, String email, Tree treeDetails) {
+		phoneHome.doSend(getFeedbackInfo(feedback, email, treeDetails).toString());
 	}
 	
-	protected void doCancel() {
+	private void doCancel() {
 		phoneHome.doCancel();
 	}
 	
-	protected void quit() {
+	private void quit() {
 		shell.dispose();
 	}
 	
 	protected void populateTree() {
 		putClientInfoInTree(Version.getVersion());		
+	}
+	
+	protected void putExceptionInTree(Throwable t) {
+		TreeItem root = newTreeItem(report, "JavaException");
+		putExceptionInTree(root, t);
 	}
 	
 	protected void buildContents(String iconName, String instructions, String step1) {
@@ -215,7 +204,7 @@ public abstract class FeedbackDialog extends DialogAbstract {
 		lblStep1.setLayoutData(fd_lblStep1);
 		lblStep1.setText(step1);
 
-		textFeedback = new Text(shell, SWT.BORDER | SWT.WRAP | SWT.V_SCROLL);
+		var textFeedback = new Text(shell, SWT.BORDER | SWT.WRAP | SWT.V_SCROLL);
 		FormData fd_textWhatHappened = new FormData();
 		fd_textWhatHappened.top = new FormAttachment(lblStep1, 6);
 		fd_textWhatHappened.left = new FormAttachment(0, 10);
@@ -228,7 +217,7 @@ public abstract class FeedbackDialog extends DialogAbstract {
 		lblStep2.setText(
 				"2. What is your email address?  (optional - we'll only use it if we need to ask you further questions)");
 
-		textEmailAddress = new Text(shell, SWT.BORDER);
+		var textEmailAddress = new Text(shell, SWT.BORDER);
 		FormData fd_textEmailAddress = new FormData();
 		textEmailAddress.setLayoutData(fd_textEmailAddress);
 
@@ -237,7 +226,7 @@ public abstract class FeedbackDialog extends DialogAbstract {
 		lblStep3.setLayoutData(fd_lblStep3);
 		lblStep3.setText("3. Examine these further details and un-check anything you don't want to send.");
 
-		treeDetails = new Tree(shell, SWT.BORDER | SWT.CHECK);
+		Tree treeDetails = new Tree(shell, SWT.BORDER | SWT.CHECK);
 		FormData fd_treeDetails = new FormData();
 		treeDetails.setLayoutData(fd_treeDetails);
 		fd_treeDetails.height = 75;
@@ -250,31 +239,31 @@ public abstract class FeedbackDialog extends DialogAbstract {
 			}
 		});
 
-		lblProgress = new Label(shell, SWT.NONE);
+		var lblProgress = new Label(shell, SWT.NONE);
 		fd_treeDetails.bottom = new FormAttachment(lblProgress, -10);
 		FormData fd_lblProgress = new FormData();
 		fd_lblProgress.right = new FormAttachment(textFeedback, 0, SWT.RIGHT);
 		lblProgress.setLayoutData(fd_lblProgress);
 		lblProgress.setText("Progress...");
 
-		progressBar = new ProgressBar(shell, SWT.NONE);
+		var progressBar = new ProgressBar(shell, SWT.NONE);
 		FormData fd_progressBar = new FormData();
 		progressBar.setLayoutData(fd_progressBar);
 
-		btnCancel = new Button(shell, SWT.NONE);
+		var btnCancel = new Button(shell, SWT.NONE);
 		FormData fd_btnCancel = new FormData();
 		btnCancel.setLayoutData(fd_btnCancel);
 		btnCancel.setText("Cancel");
 		btnCancel.addListener(SWT.Selection, e -> doCancel());
 
-		btnSend = new Button(shell, SWT.NONE);
+		var btnSend = new Button(shell, SWT.NONE);
 		fd_btnCancel.right = new FormAttachment(btnSend, -6);
 		FormData fd_btnSend = new FormData();
 		fd_btnSend.bottom = new FormAttachment(100, -10);
 		fd_btnSend.right = new FormAttachment(100, -10);
 		btnSend.setLayoutData(fd_btnSend);
 		btnSend.setText("Send");
-		btnSend.addListener(SWT.Selection, e -> doSend());
+		btnSend.addListener(SWT.Selection, e -> doSend(textFeedback.getText().trim(), textEmailAddress.getText().trim(), treeDetails));
 
 		fd_btnCancel.bottom = new FormAttachment(100, -10);
 		fd_btnCancel.right = new FormAttachment(btnSend, -10);
