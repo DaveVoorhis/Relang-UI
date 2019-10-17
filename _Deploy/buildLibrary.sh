@@ -21,11 +21,11 @@ ant -S
 popd
 cp ../swtNative/swt_win/lib/* ../_Deploy/lib/swt/win_64
 
-echo 'Build RelangDesktop'
-pushd ../RelangDesktop
+echo 'Build launchDesktop'
+pushd ../launchDesktop
 ant -S
 popd
-cp ../RelangDesktop/lib/* ../_Deploy/lib/relang
+cp ../launchDesktop/lib/* ../_Deploy/lib/relang
 
 echo 'Build platformWeb'
 pushd ../platformWeb
@@ -51,10 +51,8 @@ ant -S
 popd
 cp ../dBrowser/lib/* ../_Deploy/lib/relang
 
-echo 'Build RelangWeb'
-pushd ../RelangWeb
+echo 'Build launchWeb'
+pushd ../launchWeb
 rm WebContent/WEB-INF/lib/*
 ant -S
 popd
-
-

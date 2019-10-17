@@ -9,7 +9,7 @@ public class MainDev {
 
 	public static void main(String[] args) {
 		Stream.generate("=== DEVELOPMENT LAUNCH. NOT FOR PRODUCTION!!! ==="::toString).limit(3).forEach(s -> System.out.println(s));
-		var launcher = new Launcher(port, true, resources -> {
+		(new Launcher(port, true, resources -> {
 	        // --- Alternative location for "WEB-INF/classes" during development. --- 
 	        
 	        // DirResourceSet(WebResourceRoot root, java.lang.String webAppMount, java.lang.String base, java.lang.String internalPath)
@@ -29,12 +29,6 @@ public class MainDev {
 	        
 	        additionWebInfClasses = new File("../platformWeb/bin");
 	        resources.addPreResources(new DirResourceSet(resources, "/WEB-INF/classes", additionWebInfClasses.getAbsolutePath(), "/"));
-		});
-		System.out.println("Development launch base directory: " + launcher.getBaseDir());
-		System.out.println("Please wait for start...");
-		if (!launcher.go())
-			return;
-		System.out.println("...started!");
-		System.out.println("Development launch listening at " + launcher.getURL());
+		})).start();
 	}
 }

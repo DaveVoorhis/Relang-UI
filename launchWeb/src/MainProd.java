@@ -4,27 +4,50 @@ import java.util.logging.FileHandler;
 import java.util.logging.Level;
 
 import org.apache.catalina.webresources.DirResourceSet;
+import org.apache.commons.cli.CommandLine;
+import org.apache.commons.cli.DefaultParser;
+import org.apache.commons.cli.HelpFormatter;
+import org.apache.commons.cli.Option;
+import org.apache.commons.cli.Options;
+import org.apache.commons.cli.ParseException;
+import org.reldb.relang.version.Version;
 import org.reldb.relang.web.Launcher;
 
 public class MainProd {
-    private static final int port = 8080;
-
+    private static final int portDefault = 8080;
+    
 	public static void main(String[] args) throws SecurityException, IOException {
-		var launcher = new Launcher(port, new FileHandler("tomcat.log", true), Level.WARNING, resources -> {
-	        // DirResourceSet(WebResourceRoot root, java.lang.String webAppMount, java.lang.String base, java.lang.String internalPath)
-	        //  root - The WebResourceRoot this new WebResourceSet will be added to.
-	        //  webAppMount - The path within the web application at which this WebResourceSet will be mounted. 
-	        //      For example, to add a directory of JARs to a web application, the directory would be mounted at "/WEB-INF/lib/"
-	        //  base - The absolute path to the directory on the file system from which the resources will be served.
-	        //  internalPath - The path within this new WebResourceSet where resources will be served from.
-	        var additionWebInfClasses = new File("bin");
-	        resources.addPreResources(new DirResourceSet(resources, "/WEB-INF/classes", additionWebInfClasses.getAbsolutePath(), "/"));
-		});
-		System.out.println("Base directory: " + launcher.getBaseDir());
-		System.out.println("Please wait for start...");
-		if (!launcher.go())
-			return;
-		System.out.println("...started!");
-		System.out.println("Listening at " + launcher.getURL());
+        var options = new Options();
+        
+        var portOption = new Option("p", "port", true, "network port");
+        portOption.setOptionalArg(false);
+        options.addOption(portOption);
+
+        var parser = new DefaultParser();
+        var formatter = new HelpFormatter();
+        CommandLine cmd = null;
+
+        try {
+            cmd = parser.parse(options, args);
+        } catch (ParseException e) {
+            System.out.println(e.getMessage());
+        	formatter.printHelp(Version.getAppName(), options);
+            System.exit(1);
+        }
+
+        var portOptionValue = cmd.getOptionValue("port");
+        int port = portDefault;
+        try {
+        	port = (portOptionValue == null) ? portDefault : Integer.valueOf(portOptionValue);
+        } catch (Exception e) {
+        	System.out.println(e.getMessage());
+        	formatter.printHelp(Version.getAppName(), options);
+        	System.exit(2);
+        }
+        
+		(new Launcher(port, new FileHandler("tomcat.log", true), Level.WARNING, resources -> {
+	        resources.addPreResources(new DirResourceSet(resources, "/WEB-INF/classes", new File("bin").getAbsolutePath(), "/"));
+		})).start();
 	}
+
 }

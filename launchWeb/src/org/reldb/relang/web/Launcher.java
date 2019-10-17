@@ -26,9 +26,8 @@ public class Launcher {
         tomcat.setSilent(silent);
     	
         // Force creation of default connector.
-        var connector = tomcat.getConnector();
-		
-		// tomcat.setBaseDir(basedir);
+        var connector = tomcat.getConnector();        
+		connector.setPort(port);
         
         InetAddress inetAddress;
 		try {
@@ -38,8 +37,6 @@ public class Launcher {
 			e1.printStackTrace();
 			return;
 		}
-        
-		tomcat.setPort(port);
 
 		baseDir = new File(webappDirLocation).getAbsolutePath();
 
@@ -87,7 +84,7 @@ public class Launcher {
 		return baseDir;
 	}
 	
-	public boolean go() {  
+	protected boolean go() {  
 		try {
 			tomcat.start();
 		} catch (Throwable e) {
@@ -96,6 +93,15 @@ public class Launcher {
 			return false;
 		}
 		return true;
+	}
+
+	public void start() {
+		System.out.println("Base directory: " + getBaseDir());
+		System.out.println("Please wait for start...");
+		if (!go())
+			return;
+		System.out.println("...started!");
+		System.out.println("Listening at " + getURL());
 	}
 
 }
