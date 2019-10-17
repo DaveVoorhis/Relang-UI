@@ -48,6 +48,10 @@ public class Version {
 		};
 	}
 
+	public static String getFavIconImage() {
+		return getIconsPaths()[4];
+	}
+	
 	public static String getPreferencesRepositoryName() {
 		return ".relang";
 	}
