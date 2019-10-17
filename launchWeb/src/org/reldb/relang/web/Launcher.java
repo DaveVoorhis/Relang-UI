@@ -23,7 +23,7 @@ public class Launcher {
     private void init(int port, Configuration configuration, boolean silent) {
         tomcat = new Tomcat();
         
-        tomcat.setSilent(true);
+        tomcat.setSilent(silent);
     	
         // Force creation of default connector.
         var connector = tomcat.getConnector();
