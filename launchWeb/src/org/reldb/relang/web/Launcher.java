@@ -51,8 +51,7 @@ public class Launcher {
 	    String ip = inetAddress.getHostAddress();
 	    int listeningPort = connector.getPort();
 	    String contextPath = context.getServletContext().getContextPath();
-	    url = scheme + "://" + ip + ":" + listeningPort + contextPath;
-    	
+	    url = scheme + "://" + ip + ":" + listeningPort + contextPath;    	
     }
     
     public Launcher(int port, boolean silent, Configuration configuration) {
