@@ -12,12 +12,14 @@ public class Launcher {
     private static final String webappDirLocation = "WebContent";
     
     private Tomcat tomcat;
+    private String url;
+    private String baseDir;
 
 	public Launcher(int port, Configuration configuration) {
         tomcat = new Tomcat();
     	
         // Force creation of default connector.
-        tomcat.getConnector();
+        var connector = tomcat.getConnector();
 		
 		// tomcat.setBaseDir(basedir);
         
@@ -32,15 +34,29 @@ public class Launcher {
         
 		tomcat.setPort(port);
 
-		var location = new File(webappDirLocation).getAbsolutePath();
-        System.out.println("Configuring Tomcat with basedir: " + location);
+		baseDir = new File(webappDirLocation).getAbsolutePath();
 
-        var context = tomcat.addWebapp("", location); 
+        var context = tomcat.addWebapp("", baseDir); 
         var resources = new StandardRoot(context);
         configuration.configure(resources);
         context.setResources(resources);
+        
+        // Determine URL
+	    String scheme = connector.getScheme();
+	    String ip = inetAddress.getHostAddress();
+	    int listeningPort = connector.getPort();
+	    String contextPath = context.getServletContext().getContextPath();
+	    url = scheme + "://" + ip + ":" + listeningPort + contextPath;
 	}
 
+	public String getURL() {
+		return url;
+	}
+
+	public String getBaseDir() {
+		return baseDir;
+	}
+	
 	public void go() {  
 		try {
 			tomcat.start();

@@ -1,6 +1,5 @@
 ** TO DO **
 
-- Show test URL in MainDev Web launch console.
 - Fix browser tab title to show product name, rather than "POI".
 - Re-enable crash trapping on Web version.
 - Work on general-purpose property set/get that allows manipulating and saving any properties of an instance, via reflection. Should display in a grid.

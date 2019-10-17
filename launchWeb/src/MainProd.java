@@ -17,6 +17,8 @@ public class MainProd {
 	        var additionWebInfClasses = new File("bin");
 	        resources.addPreResources(new DirResourceSet(resources, "/WEB-INF/classes", additionWebInfClasses.getAbsolutePath(), "/"));
 		});
+		System.out.println("Base directory: " + launcher.getBaseDir());
 		launcher.go();
+		System.out.println("Listening at " + launcher.getURL());
 	}
 }

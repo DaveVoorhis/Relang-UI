@@ -1,4 +1,5 @@
 import java.io.File;
+import java.util.stream.Stream;
 
 import org.apache.catalina.webresources.DirResourceSet;
 import org.reldb.relang.web.Launcher;
@@ -7,8 +8,7 @@ public class MainDev {
     private static final int port = 8080;
 
 	public static void main(String[] args) {
-		for (int i=0; i<3; i++)
-			System.out.println("=== DEVELOPMENT LAUNCH. NOT FOR PRODUCTION!!! ===");
+		Stream.generate("=== DEVELOPMENT LAUNCH. NOT FOR PRODUCTION!!! ==="::toString).limit(3).forEach(s -> System.out.println(s));
 		var launcher = new Launcher(port, resources -> {
 	        // --- Alternative location for "WEB-INF/classes" during development. --- 
 	        
@@ -30,6 +30,8 @@ public class MainDev {
 	        additionWebInfClasses = new File("../platformWeb/bin");
 	        resources.addPreResources(new DirResourceSet(resources, "/WEB-INF/classes", additionWebInfClasses.getAbsolutePath(), "/"));
 		});
+		System.out.println("Development launch base directory: " + launcher.getBaseDir());
 		launcher.go();
+		System.out.println("Development launch listening at " + launcher.getURL());
 	}
 }
