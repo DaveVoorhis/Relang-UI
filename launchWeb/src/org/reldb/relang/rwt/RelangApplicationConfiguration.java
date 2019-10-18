@@ -24,26 +24,28 @@ public class RelangApplicationConfiguration implements ApplicationConfiguration 
 		return RelangEntryPoint.class;
 	}
 	
-	private RegisteredImageResource registerImage(Application application, String imageFileName) {
-		var stream = getClass().getClassLoader().getResourceAsStream(imageFileName);
-		if (stream == null) {
+	protected RegisteredImageResource registerImage(Application application, String imageFileName) {
+		// This rather laborious machinery is necessary because Display.getCurrent() -- normally
+		// needed to instantiate an Image so that we can obtain ImageData -- will return null
+		// during app configuration. So this is the workaround. Note that it will not work on
+		// .ico files, but .png files work as favicon images.
+		var resourceStream = getClass().getClassLoader().getResourceAsStream(imageFileName);
+		if (resourceStream == null) {
 			System.out.println("RelangApplicationConfiguration: Unable to obtain stream for " + imageFileName);
 			return null;
 		}
-		BufferedImage readImage;
+		BufferedImage imageData;
 		try {
-			readImage = ImageIO.read(stream);
+			imageData = ImageIO.read(resourceStream);
 		} catch (IOException e) {
 			System.out.println("RelangApplicationConfiguration: Unable to read image file " + imageFileName);
 			return null;
 		}
-		if (readImage == null) {
+		if (imageData == null) {
 			System.out.println("RelangApplicationConfiguration: BufferedImage is null for " + imageFileName);
 			return null;
 		}
-	    int h = readImage.getHeight();
-	    int w = readImage.getWidth();
-	    return new RegisteredImageResource(application, imageFileName, w, h);
+	    return new RegisteredImageResource(application, imageFileName, imageData.getWidth(), imageData.getHeight());
 	}
 	
 	private void registerResources(Application application) {
@@ -53,8 +55,9 @@ public class RelangApplicationConfiguration implements ApplicationConfiguration 
 	}
 	
     public void configure(Application application) {
-		// Setup exception handler per http://www.eclipse.org/rap/developers-guide/devguide.php?topic=application-configuration.html&version=3.2
+		// Set up exception handler per http://www.eclipse.org/rap/developers-guide/devguide.php?topic=application-configuration.html&version=3.2
 		application.setExceptionHandler(exception -> CrashDialog.launch(Display.getCurrent().getActiveShell(), exception));
+		// Set up page attributes.
         Map<String, String> properties = new HashMap<String, String>();
 		properties.put(WebClient.PAGE_TITLE, Version.getAppName());
 		properties.put(WebClient.PAGE_OVERFLOW, "scrollY" );
@@ -62,6 +65,7 @@ public class RelangApplicationConfiguration implements ApplicationConfiguration 
 		if (Version.getFavIconImage() != null)
 			properties.put(WebClient.FAVICON, Version.getFavIconImage());
 		// properties.put(WebClient.THEME_ID, "MyCustomTheme");
+		// Set up entry point.
         application.addEntryPoint("/", getEntryPoint(), properties);
         registerResources(application);
     }

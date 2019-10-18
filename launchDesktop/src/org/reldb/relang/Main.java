@@ -1,3 +1,4 @@
+package org.reldb.relang;
 import org.reldb.relang.launcher.Launcher;
 import org.reldb.relang.utilities.MessageDialog;
 
