@@ -1,6 +1,5 @@
 package org.reldb.relang.rwt;
 
-
 import org.eclipse.rap.rwt.RWT;
 import org.eclipse.rap.rwt.application.Application;
 
