@@ -1,6 +1,5 @@
 package org.reldb.relang.rwt;
 
-
 import java.io.IOException;
 import java.io.InputStream;
 
@@ -16,11 +15,11 @@ public class RegisterResource {
 	 */
 	public static void register(Application application, String resource) {
         application.addResource(resource, new ResourceLoader() {
-        	  @Override
-        	  public InputStream getResourceAsStream(String resourceName) throws IOException {
-        	    return this.getClass().getClassLoader().getResourceAsStream(resource);
-        	  }
-        	});
+			@Override
+			public InputStream getResourceAsStream(String resourceName) throws IOException {
+				return this.getClass().getClassLoader().getResourceAsStream(resource);
+			}
+        });
 	}
 
 	// Give us something to load, so we can access its class loader.
