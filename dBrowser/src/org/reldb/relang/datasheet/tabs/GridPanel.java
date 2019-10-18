@@ -59,6 +59,7 @@ public class GridPanel extends Composite {
 		while (fields.contains(columnName));
 		data.extend(columnName, String.class);
 		refresh();
+		System.out.println("GridPanel: Add column should have happened here.");
 	}
 
 	private void addColumnAdderColumn() {
@@ -66,7 +67,10 @@ public class GridPanel extends Composite {
 		column.setHeaderTooltip("Add column.");
 		column.setWidth(75);
 		column.setText("+");
-		column.addListener(SWT.Selection, evt -> Launcher.addTask(() -> addColumn()));
+		column.addListener(SWT.Selection, evt -> {
+			System.out.println("GridPanel: Add column requested here.");
+			Launcher.addTask(() -> addColumn());
+		});
 	}
 	
 	private void load(int focusRow, int focusColumn) {

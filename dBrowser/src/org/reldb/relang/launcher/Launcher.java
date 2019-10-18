@@ -24,7 +24,6 @@ import org.eclipse.wb.swt.SWTResourceManager;
 import org.reldb.relang.about.AboutDialog;
 import org.reldb.relang.commands.AcceleratedMenuItem;
 import org.reldb.relang.commands.Commands;
-import org.reldb.relang.platform.Animate;
 import org.reldb.relang.platform.IconLoader;
 import org.reldb.relang.platform.Platform;
 import org.reldb.relang.platform.UniversalClipboard;
@@ -416,18 +415,11 @@ public class Launcher {
 	}
 	
 	private static void doWaitingTasks() {
-		var display = Display.getCurrent();
-		if (display == null)
+		if (shell == null)
 			return;
-		display.syncExec(() -> {
-			Animate animator = new Animate();
-			animator.start();
-			try {
-				while (!tasks.isEmpty())
-					tasks.remove().run();
-			} finally {
-				animator.stop();
-			}
+		shell.getDisplay().syncExec(() -> {
+			while (!tasks.isEmpty())
+				tasks.remove().run();
 		});
 	}
 	
