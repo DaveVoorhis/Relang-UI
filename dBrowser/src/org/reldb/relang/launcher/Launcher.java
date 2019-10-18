@@ -24,6 +24,7 @@ import org.eclipse.wb.swt.SWTResourceManager;
 import org.reldb.relang.about.AboutDialog;
 import org.reldb.relang.commands.AcceleratedMenuItem;
 import org.reldb.relang.commands.Commands;
+import org.reldb.relang.platform.Animate;
 import org.reldb.relang.platform.IconLoader;
 import org.reldb.relang.platform.Platform;
 import org.reldb.relang.platform.UniversalClipboard;
@@ -337,9 +338,14 @@ public class Launcher {
 		
 	}
 	
+	private static boolean menubarCreated = false;
+	
 	private static Shell createShell() {
 		final Shell shell = new Shell(SWT.SHELL_TRIM);
-		createMenuBar(shell);
+		if (!PlatformDetect.isWeb() && !menubarCreated) {
+			createMenuBar(shell);
+			menubarCreated = true;
+		}
 		shell.setImage(IconLoader.loadIcon("RelangIcon"));
 		shell.setImages(loadIcons(Display.getCurrent()));
 		shell.setText(Version.getAppID());
@@ -410,8 +416,19 @@ public class Launcher {
 	}
 	
 	private static void doWaitingTasks() {
-		while (!tasks.isEmpty())
-			tasks.remove().run();
+		var display = Display.getCurrent();
+		if (display == null)
+			return;
+		display.syncExec(() -> {
+			Animate animator = new Animate();
+			animator.start();
+			try {
+				while (!tasks.isEmpty())
+					tasks.remove().run();
+			} finally {
+				animator.stop();
+			}
+		});
 	}
 	
 	/** Desktop launcher. */

@@ -66,7 +66,7 @@ public class GridPanel extends Composite {
 		column.setHeaderTooltip("Add column.");
 		column.setWidth(75);
 		column.setText("+");
-		column.addListener(SWT.Selection, evt -> Launcher.addTask(() -> addColumn()));		
+		column.addListener(SWT.Selection, evt -> Launcher.addTask(() -> addColumn()));
 	}
 	
 	private void load(int focusRow, int focusColumn) {

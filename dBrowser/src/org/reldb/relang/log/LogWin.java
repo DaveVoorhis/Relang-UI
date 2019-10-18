@@ -179,8 +179,12 @@ public class LogWin {
 	 * @param parent
 	 */
 	public static void open() {
-		if (shell.isVisible())
+		if (shell.isVisible()) {
+			shell.forceActive();
 			return;
+		} else {
+			shell.setVisible(true);
+		}
 		shell.open();
 		shell.layout();
 	}
