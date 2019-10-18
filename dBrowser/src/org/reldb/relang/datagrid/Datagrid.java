@@ -33,6 +33,7 @@ public class Datagrid {
 		focusRow = rowNumber;
 		focusColumn = columnNumber;
 		grid.showSelection();
+		System.out.println("focusOnCell invoked in Datagrid");
 	}
 
 	public void setupControl(GridWidgetInterface control) {
