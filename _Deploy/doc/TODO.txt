@@ -1,4 +1,5 @@
 ** TO DO **
 
+- Fix web-based datasheet administration. Adding columns, etc., doesn't yet work.
 - Work on general-purpose property set/get that allows manipulating and saving any properties of an instance, via reflection. Should display in a grid.
 - Work on keys for Data, based on natural keys. Don't use row numbers; that won't work as soon as a row is deleted.
