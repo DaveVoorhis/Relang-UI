@@ -32,7 +32,9 @@ public class Datagrid {
 			parent.forceFocus();
 		focusRow = rowNumber;
 		focusColumn = columnNumber;
-		grid.showSelection();
+		grid.showSelection();							// might not work on Web, so...
+		grid.showColumn(grid.getColumn(focusColumn)); 	// for Web, do this, and...
+		grid.showItem(grid.getItem);					// ...this.
 		System.out.println("focusOnCell invoked in Datagrid");
 	}
 
