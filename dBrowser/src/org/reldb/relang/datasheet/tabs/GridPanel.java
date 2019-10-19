@@ -40,7 +40,7 @@ public class GridPanel extends Composite {
 		
 		setLayout(new FillLayout());
 		
-		load(0, 0);
+		reload(0, 0);
 	}
 
 	public void refresh() {
@@ -59,7 +59,8 @@ public class GridPanel extends Composite {
 		while (fields.contains(columnName));
 		data.extend(columnName, String.class);
 		refresh();
-		System.out.println("GridPanel: Add column should have happened here.");
+		var lastDataColumnIndex = grid.getColumnCount() - 2;
+		grid.focusOnCell(grid.getFocusRow(), lastDataColumnIndex);
 	}
 
 	private void addColumnAdderColumn() {
@@ -67,13 +68,10 @@ public class GridPanel extends Composite {
 		column.setHeaderTooltip("Add column.");
 		column.setWidth(75);
 		column.setText("+");
-		column.addListener(SWT.Selection, evt -> {
-			System.out.println("GridPanel: Add column requested here.");
-			Launcher.addTask(() -> addColumn());
-		});
+		column.addListener(SWT.Selection, evt -> Launcher.addTask(() -> addColumn()));
 	}
 	
-	private void load(int focusRow, int focusColumn) {
+	private void load() {
 		if (grid != null)
 			grid.dispose();
 
@@ -188,15 +186,14 @@ public class GridPanel extends Composite {
 					}
 				});
 				editor.setEditor(text, row, columnIndex);
-				if (columnIndex == focusColumn && rowIndex == focusRow)
-					grid.focusOnCell(focusRow, focusColumn);
 			}
 		});
 	}
 	
 	private void reload(int focusRow, int focusColumn) {
-		load(focusRow, focusColumn);
+		load();
 		grid.getGrid().getParent().layout();
+		grid.focusOnCell(focusRow, focusColumn);
 	}
 	
 	private void showColumnDialog(Event evt) {
