@@ -1,7 +1,6 @@
 ** TO DO **
 
 - Avoid delays in UI update when adding column by moving Display.async() call to individual updates?
-- Why is GridPanel line 203, column is null when clicking on column heading in Web.
 - Make sure grid auto-scrolls to follow cursor.
 - Work on general-purpose property set/get that allows manipulating and saving any properties of an instance, via reflection. Should display in a grid.
 - Work on keys for Data, based on natural keys. Don't use row numbers; that won't work as soon as a row is deleted.
