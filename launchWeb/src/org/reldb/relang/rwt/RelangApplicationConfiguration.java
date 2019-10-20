@@ -10,7 +10,6 @@ import javax.imageio.ImageIO;
 import org.eclipse.rap.rwt.application.Application;
 import org.eclipse.rap.rwt.application.ApplicationConfiguration;
 import org.eclipse.rap.rwt.client.WebClient;
-import org.eclipse.swt.widgets.Display;
 import org.reldb.relang.feedback.CrashDialog;
 import org.reldb.relang.version.Version;
 
@@ -58,7 +57,7 @@ public class RelangApplicationConfiguration implements ApplicationConfiguration 
 		// Set up exception handler per http://www.eclipse.org/rap/developers-guide/devguide.php?topic=application-configuration.html&version=3.2
 		application.setExceptionHandler(exception -> {
 			exception.printStackTrace();
-			CrashDialog.launch(Display.getCurrent().getActiveShell(), exception);
+			CrashDialog.launch(exception);
 		});
 		// Set up page attributes.
         Map<String, String> properties = new HashMap<String, String>();

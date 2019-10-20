@@ -538,7 +538,7 @@ public class Launcher {
 				}
 			} catch (Throwable exception) {
 				exception.printStackTrace();
-				CrashDialog.launch(shell, exception);
+				CrashDialog.launch(exception);
 			}
 		}
 	}

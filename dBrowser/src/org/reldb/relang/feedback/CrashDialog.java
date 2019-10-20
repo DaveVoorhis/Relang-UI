@@ -1,14 +1,17 @@
 package org.reldb.relang.feedback;
 
+import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Shell;
 
 public class CrashDialog extends TypicalFeedbackDialog {
 	private Throwable exception;
 
 	/** Launch the dialog. */
-	public static void launch(Shell shell, Throwable t) {
+	public static void launch(Throwable t) {
 		try {
-			shell.getDisplay().syncExec(() -> (new CrashDialog(shell, t)).open());
+			var display = Display.getCurrent();
+			var shell = display.getActiveShell();
+			display.syncExec(() -> (new CrashDialog(shell, t)).open());
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
