@@ -3,7 +3,6 @@ package org.reldb.relang.datagrid;
 import java.util.HashMap;
 
 import org.eclipse.nebula.widgets.grid.Grid;
-import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.widgets.Composite;
 import org.reldb.relang.platform.GridHelper;
 
@@ -35,8 +34,6 @@ public class Datagrid {
 		focusColumn = columnNumber;
 		grid.showItem(grid.getItem(focusRow));
 		grid.showColumn(grid.getColumn(focusColumn));
-		System.out.println("Datagrid: focusOnCell at " + focusColumn + ", " + focusRow);
-//		grid.setCellSelection(new Point(focusColumn, focusRow));
 	}
 
 	public void setupControl(GridWidgetInterface control) {

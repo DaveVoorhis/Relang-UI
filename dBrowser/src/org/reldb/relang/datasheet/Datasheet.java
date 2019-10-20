@@ -444,10 +444,12 @@ public class Datasheet extends Composite {
 		if (lastSelection != null && !lastSelection.isDisposed() && lastSelection instanceof Tab)
 			((Tab)lastSelection).populateToolbar(tabToolbar);
 		toolbarPanel.layout(true);
+		boolean toolbarHasVisibleItems = Stream.of(tabToolbar.getItems()).anyMatch(toolItem -> toolItem.getEnabled());
+		tabToolbar.setVisible(toolbarHasVisibleItems);
 	}
 	
 	private void setToolbarState(ToolBar toolBar, boolean enabled) {
-		Stream.of(toolBar.getItems()).forEach(toolItem -> toolItem.setEnabled(enabled));				
+		Stream.of(toolBar.getItems()).forEach(toolItem -> toolItem.setEnabled(enabled));
 	}
 	
 	private void setToolbarState(boolean enabled) {

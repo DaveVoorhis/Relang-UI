@@ -47,7 +47,7 @@ public class GridPanel extends Composite {
 		reload(grid.getFocusRow(), grid.getFocusColumn());
 	}
 	
-	private void addColumn() {
+	private void doAddColumn() {
 		var type = data.getType();
 		var fields = Stream.of(type.getFields())
 				.map(entry -> entry.getName())
@@ -62,13 +62,17 @@ public class GridPanel extends Composite {
 		var lastDataColumnIndex = grid.getColumnCount() - 2;
 		grid.focusOnCell(grid.getFocusRow(), lastDataColumnIndex);
 	}
+	
+	public void addColumn() {
+		Launcher.addTask(() -> doAddColumn());
+	}
 
 	private void addColumnAdderColumn() {
 		var column = new GridColumn(grid.getGrid(), SWT.NONE);
 		column.setHeaderTooltip("Add column.");
 		column.setWidth(75);
 		column.setText("+");
-		column.addListener(SWT.Selection, evt -> Launcher.addTask(() -> addColumn()));
+		column.addListener(SWT.Selection, evt -> addColumn());
 	}
 	
 	private void load() {

@@ -22,6 +22,10 @@ public class GridTab extends Tab {
 		var refresh = new ToolItem(toolBar, SWT.NONE);
 		refresh.setText("Refresh");
 		refresh.addListener(SWT.Selection, evt -> grid.refresh());
+		
+		var addColumn = new ToolItem(toolBar, SWT.NONE);
+		addColumn.setText("Add Column");
+		addColumn.addListener(SWT.Selection, evt -> grid.addColumn());
 	}
 	
 }
