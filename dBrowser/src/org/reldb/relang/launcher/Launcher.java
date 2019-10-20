@@ -536,10 +536,9 @@ public class Launcher {
 					doWaitingTasks();
 					display.sleep();
 				}
-			} catch (Throwable t) {
-				System.out.println(Version.getAppName() + ": Exception: " + t);
-				t.printStackTrace();
-				CrashDialog.launch(shell, t);
+			} catch (Throwable exception) {
+				exception.printStackTrace();
+				CrashDialog.launch(shell, exception);
 			}
 		}
 	}
