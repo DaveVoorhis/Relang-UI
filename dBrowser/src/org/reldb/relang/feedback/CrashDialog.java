@@ -7,11 +7,12 @@ public class CrashDialog extends TypicalFeedbackDialog {
 	private Throwable exception;
 
 	/** Launch the dialog. */
-	public static void launch(Throwable t) {
+	public static void launch(Throwable exception) {
 		try {
+			exception.printStackTrace();
 			var display = Display.getCurrent();
 			var shell = display.getActiveShell();
-			display.syncExec(() -> (new CrashDialog(shell, t)).open());
+			display.syncExec(() -> (new CrashDialog(shell, exception)).open());
 		} catch (Exception e) {
 			e.printStackTrace();
 		}

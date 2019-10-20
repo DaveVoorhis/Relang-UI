@@ -537,7 +537,6 @@ public class Launcher {
 					display.sleep();
 				}
 			} catch (Throwable exception) {
-				exception.printStackTrace();
 				CrashDialog.launch(exception);
 			}
 		}

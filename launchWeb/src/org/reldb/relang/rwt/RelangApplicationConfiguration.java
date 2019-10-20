@@ -55,10 +55,7 @@ public class RelangApplicationConfiguration implements ApplicationConfiguration 
 	
     public void configure(Application application) {
 		// Set up exception handler per http://www.eclipse.org/rap/developers-guide/devguide.php?topic=application-configuration.html&version=3.2
-		application.setExceptionHandler(exception -> {
-			exception.printStackTrace();
-			CrashDialog.launch(exception);
-		});
+		application.setExceptionHandler(exception -> CrashDialog.launch(exception));
 		// Set up page attributes.
         Map<String, String> properties = new HashMap<String, String>();
 		properties.put(WebClient.PAGE_TITLE, Version.getAppName());
