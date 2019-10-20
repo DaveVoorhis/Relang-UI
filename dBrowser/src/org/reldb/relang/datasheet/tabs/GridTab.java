@@ -10,9 +10,11 @@ import org.reldb.relang.dengine.data.Data;
 public class GridTab extends Tab {
 
 	private GridPanel grid;
+	private Data<?, ?> data;
 	
 	public GridTab(CTabFolder folder, Data<?, ?> data, int style) {
 		super(folder, style);
+		this.data = data;
 		grid = new GridPanel(getParent(), data);
 		setText(data.getName());
 		setControl(grid);
@@ -23,9 +25,11 @@ public class GridTab extends Tab {
 		refresh.setText("Refresh");
 		refresh.addListener(SWT.Selection, evt -> grid.refresh());
 		
-		var addColumn = new ToolItem(toolBar, SWT.NONE);
-		addColumn.setText("Add Column");
-		addColumn.addListener(SWT.Selection, evt -> grid.addColumn());
+		if (data.isExtendable()) {
+			var addColumn = new ToolItem(toolBar, SWT.NONE);
+			addColumn.setText("Add Column");
+			addColumn.addListener(SWT.Selection, evt -> grid.addColumn());
+		}
 	}
 	
 }

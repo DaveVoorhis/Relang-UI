@@ -59,20 +59,12 @@ public class GridPanel extends Composite {
 		while (fields.contains(columnName));
 		data.extend(columnName, String.class);
 		refresh();
-		var lastDataColumnIndex = grid.getColumnCount() - 2;
+		var lastDataColumnIndex = grid.getColumnCount() - 1;
 		grid.focusOnCell(grid.getFocusRow(), lastDataColumnIndex);
 	}
 	
 	public void addColumn() {
-		Launcher.addTask(() -> doAddColumn());
-	}
-
-	private void addColumnAdderColumn() {
-		var column = new GridColumn(grid.getGrid(), SWT.NONE);
-		column.setHeaderTooltip("Add column.");
-		column.setWidth(75);
-		column.setText("+");
-		column.addListener(SWT.Selection, evt -> addColumn());
+		doAddColumn();
 	}
 	
 	private void load() {
@@ -99,9 +91,6 @@ public class GridPanel extends Composite {
 			column.setWordWrap(true);
 			column.setMoveable(true);
 		}
-		
-		if (data.isExtendable())
-			addColumnAdderColumn();
 		
 		GridHelper.setupGrid(grid.getGrid());
 		
@@ -196,6 +185,8 @@ public class GridPanel extends Composite {
 	
 	private void reload(int focusRow, int focusColumn) {
 		load();
+		if (grid.getColumnCount() == 0)
+			doAddColumn();
 		grid.getGrid().getParent().layout();
 		grid.focusOnCell(focusRow, focusColumn);
 	}
