@@ -24,6 +24,7 @@ import org.eclipse.wb.swt.SWTResourceManager;
 import org.reldb.relang.about.AboutDialog;
 import org.reldb.relang.commands.AcceleratedMenuItem;
 import org.reldb.relang.commands.Commands;
+import org.reldb.relang.commands.Commands.Do;
 import org.reldb.relang.platform.IconLoader;
 import org.reldb.relang.platform.Platform;
 import org.reldb.relang.platform.UniversalClipboard;
@@ -270,9 +271,14 @@ public class Launcher {
 		Menu menu = new Menu(dataItem);
 		dataItem.setMenu(menu);
 
-		Commands.linkCommand(Commands.Do.NewGrid, new AcceleratedMenuItem(menu, "New Grid...\tCtrl-G", SWT.MOD1 | 'G', "newgrid"));
-		Commands.linkCommand(Commands.Do.Link, new AcceleratedMenuItem(menu, "Link...\tCtrl-L", SWT.MOD1 | 'L', "link"));
-		Commands.linkCommand(Commands.Do.Import, new AcceleratedMenuItem(menu, "Import...\tCtrl-I", SWT.MOD1 | 'I', "import"));
+		Commands.linkCommand(Do.NewGrid, new AcceleratedMenuItem(menu, "New Grid...\tCtrl-G", SWT.MOD1 | 'G', "newgrid"));
+		Commands.linkCommand(Do.Link, new AcceleratedMenuItem(menu, "Link...\tCtrl-L", SWT.MOD1 | 'L', "link"));
+		Commands.linkCommand(Do.Import, new AcceleratedMenuItem(menu, "Import...\tCtrl-I", SWT.MOD1 | 'I', "import"));
+		
+		new MenuItem(menu, SWT.SEPARATOR);
+		
+		Commands.linkCommand(Do.Refresh, new AcceleratedMenuItem(menu, "Refresh\tCtrl-R", SWT.MOD1 | 'R', "reload"));
+		Commands.linkCommand(Do.AddColumn, new AcceleratedMenuItem(menu, "Add column", 0, "addcolumn"));
 	}
 
 	@SuppressWarnings("null")

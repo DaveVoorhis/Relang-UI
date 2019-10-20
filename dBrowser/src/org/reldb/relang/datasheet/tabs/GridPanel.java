@@ -154,7 +154,6 @@ public class GridPanel extends Composite {
 									field.set(tuple, newContent);
 									container.put((long)gridWidget.getRow(), tuple);
 								} catch (IllegalArgumentException | IllegalAccessException e) {
-									// TODO Auto-generated catch block
 									e.printStackTrace();
 								}
 							} else {
@@ -165,7 +164,6 @@ public class GridPanel extends Composite {
 									field.set(tuple, newContent);
 									container.put((long)container.size(), tuple);
 								} catch (NoSuchMethodException | SecurityException | InstantiationException | IllegalAccessException | IllegalArgumentException | InvocationTargetException e) {
-									// TODO Auto-generated catch block
 									e.printStackTrace();
 								}
 								Launcher.addTask(() -> {

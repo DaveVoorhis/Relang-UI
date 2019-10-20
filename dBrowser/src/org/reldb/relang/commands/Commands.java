@@ -20,6 +20,8 @@ public class Commands {
 		NewGrid,
 		Link,
 		Import,
+		Refresh,
+		AddColumn
 	}
 
 	private static Map<Do, MenuItem> menuDoMapping = new HashMap<>();

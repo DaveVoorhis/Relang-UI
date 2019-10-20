@@ -3,7 +3,8 @@ package org.reldb.relang.datasheet.tabs;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.CTabFolder;
 import org.eclipse.swt.widgets.ToolBar;
-import org.eclipse.swt.widgets.ToolItem;
+import org.reldb.relang.commands.CommandActivator;
+import org.reldb.relang.commands.Commands.Do;
 import org.reldb.relang.datasheet.Tab;
 import org.reldb.relang.dengine.data.Data;
 
@@ -21,15 +22,8 @@ public class GridTab extends Tab {
 	}
 	
 	public void populateToolbar(ToolBar toolBar) {
-		var refresh = new ToolItem(toolBar, SWT.NONE);
-		refresh.setText("Refresh");
-		refresh.addListener(SWT.Selection, evt -> grid.refresh());
-		
-		if (data.isExtendable()) {
-			var addColumn = new ToolItem(toolBar, SWT.NONE);
-			addColumn.setText("Add Column");
-			addColumn.addListener(SWT.Selection, evt -> grid.addColumn());
-		}
+		new CommandActivator(Do.Refresh, toolBar, "reload", SWT.NONE, "Refresh", evt -> grid.refresh());
+		new CommandActivator(Do.AddColumn, toolBar, "addcolumn", SWT.NONE, "Add column", evt -> grid.addColumn()).setEnabled(data.isExtendable());
 	}
 	
 }
