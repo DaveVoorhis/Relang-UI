@@ -1,6 +1,5 @@
 ** TO DO **
 
-- Why does Grid stop auto-focusing when new row is added?
 - Make sure grid auto-scrolls to follow cursor.
 - Work on general-purpose property set/get that allows manipulating and saving any properties of an instance, via reflection. Should display in a grid.
 - Work on keys for Data, based on natural keys. Don't use row numbers; that won't work as soon as a row is deleted.

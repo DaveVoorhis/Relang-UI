@@ -24,20 +24,16 @@ public class Datagrid {
 	public void focusOnCell(int rowNumber, int columnNumber) {
 		focusRow = rowNumber;
 		focusColumn = columnNumber;
-		System.out.println("Datagrid: focusOnCell column = " + focusColumn + ", row = " + focusRow);
 		grid.showItem(grid.getItem(focusRow));
 		grid.showColumn(grid.getColumn(focusColumn));
 		GridHelper.setFocusItem(grid, rowNumber, columnNumber);
 		var row = controls.get(rowNumber);
 		if (row != null) {
 			var control = row.get(columnNumber);
-			System.out.println("Datagrid: focusOnCell focus on " + control);
 			if (control == null || !control.focus())
 				parent.forceFocus();
-		} else {
-			System.out.println("Datagrid: focusOnCell row " + rowNumber + " is null.");
+		} else
 			parent.forceFocus();
-		}
 	}
 
 	public void setupControl(GridWidgetInterface control) {

@@ -177,6 +177,8 @@ public class GridPanel extends Composite {
 					}
 				});
 				editor.setEditor(text, row, columnIndex);
+				if (rowIndex == grid.getFocusRow() && columnIndex == grid.getFocusColumn())
+					text.setFocus();
 			}
 		});
 	}
